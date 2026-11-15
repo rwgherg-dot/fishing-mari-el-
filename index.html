@@ -418,16 +418,31 @@
 
   const HOUR_SLOTS = [0, 3, 6, 9, 12, 15, 18, 21];
 
-  let customSpots = JSON.parse(localStorage.getItem('mari_el_waypoints_v6') || '[]');
+  let customSpots = [];
+  try {
+    const parsed = JSON.parse(localStorage.getItem('mari_el_waypoints_v6') || '[]');
+    if (Array.isArray(parsed)) customSpots = parsed;
+  } catch (e) { customSpots = []; }
+
   let selectedFishIdx = 0;
   let selectedDayIdx = 0;
-  let selectedHourSlot = 3; // 09:00 по умолчанию
+  let selectedHourSlot = 3;
   let activeSpot = { ...BASE_SPOTS[0] };
   let weatherCache = {};
   let dataSourceLabel = '● Загрузка погоды...';
   let dataSourceWarn = false;
   let yandexMap = null;
   let tempMarker = null;
+
+  function getActiveFish() {
+    if (selectedFishIdx < 0 || selectedFishIdx >= FISH_MODELS.length) selectedFishIdx = 0;
+    return FISH_MODELS[selectedFishIdx] || FISH_MODELS[0];
+  }
+
+  function getActiveHour() {
+    if (selectedHourSlot < 0 || selectedHourSlot >= HOUR_SLOTS.length) selectedHourSlot = 3;
+    return HOUR_SLOTS[selectedHourSlot] ?? 9;
+  }
 
   function getAllSpots() { return [...BASE_SPOTS, ...customSpots]; }
 
@@ -443,15 +458,16 @@
 
   function windDirText(deg) {
     const dirs = ['С', 'СВ', 'В', 'ЮВ', 'Ю', 'ЮЗ', 'З', 'СЗ'];
-    return dirs[Math.round(deg / 45) % 8];
+    return dirs[Math.round((Number(deg) || 0) / 45) % 8];
   }
 
   function weatherDesc(code) {
-    if (code === 0) return 'Ясно';
-    if (code <= 3) return 'Переменная облачность';
-    if (code <= 48) return 'Туман / дымка';
-    if (code <= 67) return 'Дождь';
-    if (code <= 77) return 'Снег';
+    const c = Number(code) || 0;
+    if (c === 0) return 'Ясно';
+    if (c <= 3) return 'Переменная облачность';
+    if (c <= 48) return 'Туман / дымка';
+    if (c <= 67) return 'Дождь';
+    if (c <= 77) return 'Снег';
     return 'Осадки / порывы';
   }
 
@@ -499,7 +515,7 @@
   function estimateWaterTemp(airTemp) {
     const month = new Date().getMonth();
     const base = [1.2, 1.0, 1.5, 4.5, 11.5, 18.5, 22.0, 21.0, 16.0, 9.5, 4.8, 2.0][month];
-    return +(base * 0.78 + airTemp * 0.22).toFixed(1);
+    return +(base * 0.78 + (Number(airTemp) || 0) * 0.22).toFixed(1);
   }
 
   function getSprayRecommendation(fishId, waterTemp, isBaroShock, isHighFlow) {
@@ -590,7 +606,8 @@
     };
   }
 
-  function buildReadyKit(fish, ctx) {
+  function buildReadyKit(fishObj, ctx) {
+    const fish = fishObj || getActiveFish();
     const isCold = ctx.waterTemp < 8.5;
     const isWarm = ctx.waterTemp >= 14.5;
     const isStill = ctx.spot.flow === 'still';
@@ -811,7 +828,8 @@
   }
 
   function evaluateBite(params) {
-    const { hour, pressMm, pressDelta24, pressDelta6, wind, gusts, cloud, waterTemp, astro, fish, spot } = params;
+    const { hour, pressMm, pressDelta24, pressDelta6, wind, gusts, cloud, waterTemp, astro, spot } = params;
+    const fish = params.fish || getActiveFish();
     const factors = [];
 
     let timeScore = 26;
@@ -846,7 +864,7 @@
     });
 
     let tempScore = 0;
-    const [optMin, optMax] = fish.optimalTemp;
+    const [optMin, optMax] = fish.optimalTemp || [4, 20];
     if (fish.id === 'catfish' && waterTemp < 10) tempScore = -32;
     else if (fish.id === 'ide' && waterTemp < 7) tempScore = -26;
     else if (waterTemp >= optMin && waterTemp <= optMax) tempScore = +12;
@@ -880,7 +898,6 @@
     }
   }
 
-  // Резервный генератор почасовой сетки, если метеосервер недоступен
   function buildFallbackHourly() {
     const month = new Date().getMonth();
     const baseT = [-9, -8, -2, 6, 14, 19, 22, 20, 14, 6, 1, -6][month];
@@ -915,7 +932,6 @@
     };
   }
 
-  // Единый пакетный запрос погоды для всех точек сразу (1 HTTP-запрос вместо 8)
   async function syncAllWeather(spots) {
     const uncached = spots.filter(sp => !weatherCache[`${sp.lat.toFixed(4)}_${sp.lon.toFixed(4)}`]);
     if (uncached.length === 0) return;
@@ -938,21 +954,22 @@
         }
       });
 
-      localStorage.setItem('mari_el_weather_backup_v1', JSON.stringify({
-        ts: Date.now(),
-        cache: weatherCache
-      }));
+      try {
+        localStorage.setItem('mari_el_weather_backup_v1', JSON.stringify({ ts: Date.now(), cache: weatherCache }));
+      } catch (e) {}
+
       const timeStr = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
       dataSourceLabel = `● Погода ICON/ECMWF загружена (${timeStr})`;
       dataSourceWarn = false;
     } catch (err) {
-      const saved = JSON.parse(localStorage.getItem('mari_el_weather_backup_v1') || 'null');
+      let saved = null;
+      try { saved = JSON.parse(localStorage.getItem('mari_el_weather_backup_v1') || 'null'); } catch (e) {}
       if (saved && saved.cache) {
         Object.assign(weatherCache, saved.cache);
         dataSourceLabel = '● Кэш погоды (сервер не ответил вовремя)';
         dataSourceWarn = true;
       } else {
-        dataSourceLabel = '● Автономный сезонный расчёт (нет связи с API)';
+        dataSourceLabel = '● Автономный сезонный расчёт';
         dataSourceWarn = true;
       }
       uncached.forEach(sp => {
@@ -967,7 +984,7 @@
     return weatherCache[key] || buildFallbackHourly();
   }
 
-  function extractSlotContext(dataObj, spot, dayIdx, hour) {
+  function extractSlotContext(dataObj, spot, dayIdx, hour, fish) {
     const h = dataObj.hourly;
     const maxLen = h.temperature_2m.length - 1;
     const idx = Math.min(maxLen, (2 + dayIdx) * 24 + hour);
@@ -992,7 +1009,7 @@
     const astro = getAstronomy(spot.lat, spot.lon, dayIdx, hour);
 
     return {
-      spot, dayIdx, hour, temp, pressMm, pressDelta6, pressDelta24,
+      spot, fish: fish || getActiveFish(), dayIdx, hour, temp, pressMm, pressDelta6, pressDelta24,
       wind, gusts, windDir, cloud, precip, wCode, waterTemp, astro,
       isFallback: !!dataObj.isFallback
     };
@@ -1036,12 +1053,12 @@
       statusEl.textContent = dataSourceLabel;
       if (dataSourceWarn) statusEl.classList.add('warn');
 
-      const fish = FISH_MODELS[selectedFishIdx];
-      const hour = HOUR_SLOTS[selectedHourSlot];
+      const fish = getActiveFish();
+      const hour = getActiveHour();
 
       const spotResults = spots.map(sp => {
         const pack = getPointWeather(sp);
-        const ctx = extractSlotContext(pack, sp, selectedDayIdx, hour);
+        const ctx = extractSlotContext(pack, sp, selectedDayIdx, hour, fish);
         const res = evaluateBite(ctx);
         return { spot: sp, pack, ctx, res };
       });
@@ -1078,7 +1095,7 @@
         `2. Почасовая активность: ${activeSpot.name} • ${fish.name} • ${dayLabels[selectedDayIdx]}`;
 
       document.getElementById('hourly-grid').innerHTML = HOUR_SLOTS.map((hVal, sIdx) => {
-        const c = extractSlotContext(activePack, activeSpot, selectedDayIdx, hVal);
+        const c = extractSlotContext(activePack, activeSpot, selectedDayIdx, hVal, fish);
         const ev = evaluateBite(c);
         const tag = c.astro.nearDawnDusk ? 'ЗОРЬКА' : (c.astro.nearMoon ? 'ЛУНА' : (ev.pct >= 65 ? 'ПИК' : ''));
         return `
@@ -1091,7 +1108,7 @@
         `;
       }).join('');
 
-      const curCtx = extractSlotContext(activePack, activeSpot, selectedDayIdx, hour);
+      const curCtx = extractSlotContext(activePack, activeSpot, selectedDayIdx, hour, fish);
       const curEval = evaluateBite(curCtx);
       const kit = buildReadyKit(fish, curCtx);
 
@@ -1156,7 +1173,7 @@
       `;
 
       document.getElementById('shift-grid').innerHTML = [0, 1, 2].map(dIdx => {
-        const dCtx = extractSlotContext(activePack, activeSpot, dIdx, 9);
+        const dCtx = extractSlotContext(activePack, activeSpot, dIdx, 9, fish);
         const dEv = evaluateBite(dCtx);
         const dKit = buildReadyKit(fish, dCtx);
         return `
@@ -1194,7 +1211,8 @@
 
       renderSavedList();
     } catch (fatalErr) {
-      statusEl.textContent = '● Ошибка расчёта: ' + fatalErr.message;
+      console.error(fatalErr);
+      statusEl.textContent = '● Ошибка расчёта: ' + (fatalErr && fatalErr.message ? fatalErr.message : fatalErr);
       statusEl.classList.add('warn');
     }
   }
@@ -1237,7 +1255,7 @@
       roadNote: depth ? `Глубина по эхолоту: ${depth}` : 'Пользовательская точка'
     };
     customSpots.push(newSpot);
-    localStorage.setItem('mari_el_waypoints_v6', JSON.stringify(customSpots));
+    try { localStorage.setItem('mari_el_waypoints_v6', JSON.stringify(customSpots)); } catch (e) {}
     document.getElementById('custom-name').value = '';
     document.getElementById('custom-depth').value = '';
     activeSpot = { ...newSpot };
@@ -1248,7 +1266,7 @@
   function deleteCustomSpot(id, e) {
     e.stopPropagation();
     customSpots = customSpots.filter(s => s.id !== id);
-    localStorage.setItem('mari_el_waypoints_v6', JSON.stringify(customSpots));
+    try { localStorage.setItem('mari_el_waypoints_v6', JSON.stringify(customSpots)); } catch (e) {}
     if (activeSpot.id === id) activeSpot = { ...BASE_SPOTS[0] };
     renderAll();
   }
