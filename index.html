@@ -243,7 +243,6 @@
     }
 
     function calculateBiteRating(fact, info, actigator) {
-      // Если Actigator вернул F.Индекс (0..100), переводим его в 1..5 рыбок
       if (actigator && actigator.f_index != null) {
         const idx = actigator.f_index;
         let count = 3;
@@ -258,7 +257,6 @@
         };
       }
 
-      // Резервный расчёт по давлению и ветру
       const pressure = fact?.pressure_mm;
       const normalPressure = info?.def_pressure_mm ?? 752;
       const windSpeed = fact?.wind_speed;
