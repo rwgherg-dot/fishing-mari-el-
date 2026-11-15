@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Гидрометео-навигатор клёва • Марий Эл</title>
+  <title>Гидрометео-навигатор клёва и снастей • Марий Эл</title>
   <script src="https://api-maps.yandex.ru/2.1/?apikey=42977bb2-731e-4eb1-8131-5ca94473b359&lang=ru_RU"></script>
   <style>
     :root {
@@ -22,446 +22,215 @@
       --red: #ef4444;
       --red-bg: rgba(239, 68, 68, 0.14);
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.45;
-      padding-bottom: 3rem;
+      background: var(--bg); color: var(--text); line-height: 1.45; padding-bottom: 3rem;
     }
-
-    .container {
-      max-width: 1220px;
-      margin: 0 auto;
-      padding: 1rem 1.25rem;
-    }
-
+    .container { max-width: 1240px; margin: 0 auto; padding: 1rem 1.25rem; }
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-      padding: 0.9rem 0 1.2rem;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 1.25rem;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem; padding: 0.9rem 0 1.2rem;
+      border-bottom: 1px solid var(--border); margin-bottom: 1.25rem;
     }
-
-    .title-group h1 {
-      font-size: 1.35rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-
-    .title-group p {
-      font-size: 0.82rem;
-      color: var(--muted);
-      margin-top: 0.2rem;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-      flex-wrap: wrap;
-    }
-
+    .title-group h1 { font-size: 1.32rem; font-weight: 800; letter-spacing: -0.02em; }
+    .title-group p { font-size: 0.82rem; color: var(--muted); margin-top: 0.2rem; }
+    .header-right { display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap; }
     .status-pill {
-      font-size: 0.76rem;
-      color: var(--green);
-      background: var(--green-bg);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      padding: 0.35rem 0.75rem;
-      border-radius: 999px;
-      font-weight: 600;
+      font-size: 0.76rem; color: var(--green); background: var(--green-bg);
+      border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.35rem 0.75rem;
+      border-radius: 999px; font-weight: 600;
     }
-
     .btn {
-      background: var(--accent);
-      color: #04131d;
-      border: none;
-      padding: 0.5rem 0.95rem;
-      border-radius: 9px;
-      font-weight: 700;
-      font-size: 0.83rem;
-      cursor: pointer;
-      transition: opacity 0.15s;
+      background: var(--accent); color: #04131d; border: none;
+      padding: 0.5rem 0.95rem; border-radius: 9px; font-weight: 700;
+      font-size: 0.83rem; cursor: pointer;
     }
-
     .btn:hover { opacity: 0.9; }
-
     .btn-outline {
-      background: var(--card-2);
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 0.46rem 0.85rem;
-      border-radius: 9px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
+      background: var(--card-2); color: var(--text); border: 1px solid var(--border);
+      padding: 0.46rem 0.85rem; border-radius: 9px; font-size: 0.82rem;
+      font-weight: 600; cursor: pointer; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.35rem;
     }
-
     .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-
     .controls-panel {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      padding: 0.9rem 1rem;
-      margin-bottom: 1.25rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
+      background: var(--card); border: 1px solid var(--border); border-radius: 13px;
+      padding: 0.9rem 1rem; margin-bottom: 1.25rem; display: flex;
+      justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
     }
-
-    .pill-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      align-items: center;
-    }
-
+    .pill-group { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
     .group-label {
-      font-size: 0.74rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--muted);
-      margin-right: 0.3rem;
+      font-size: 0.74rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--muted); margin-right: 0.3rem;
     }
-
     .pill {
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 0.4rem 0.82rem;
-      border-radius: 8px;
-      font-size: 0.84rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
+      background: var(--card-2); border: 1px solid var(--border); color: var(--text);
+      padding: 0.4rem 0.82rem; border-radius: 8px; font-size: 0.84rem;
+      font-weight: 600; cursor: pointer; transition: all 0.15s;
     }
-
     .pill:hover { border-color: #3a526d; }
-
-    .pill.active {
-      background: var(--accent-bg);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .day-pill.active {
-      background: var(--green-bg);
-      border-color: var(--green);
-      color: var(--green);
-    }
-
+    .pill.active { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+    .day-pill.active { background: var(--green-bg); border-color: var(--green); color: var(--green); }
     .sec-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 0.75rem;
+      display: flex; justify-content: space-between; align-items: baseline;
+      flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem;
     }
-
-    .sec-head h2 {
-      font-size: 1.05rem;
-      font-weight: 700;
-    }
-
-    .sec-head span {
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    /* Spot Comparison Grid */
+    .sec-head h2 { font-size: 1.05rem; font-weight: 700; }
+    .sec-head span { font-size: 0.8rem; color: var(--muted); }
     .spots-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 0.85rem;
-      margin-bottom: 1.5rem;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 0.85rem; margin-bottom: 1.5rem;
     }
-
     .spot-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1rem;
-      cursor: pointer;
-      position: relative;
-      transition: transform 0.12s, border-color 0.15s;
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1rem; cursor: pointer; position: relative; transition: transform 0.12s, border-color 0.15s;
     }
-
     .spot-card:hover { transform: translateY(-2px); border-color: #3a526d; }
-
     .spot-card.selected {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent);
+      border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent);
       background: linear-gradient(180deg, rgba(56, 189, 248, 0.08) 0%, var(--card) 100%);
     }
-
     .best-badge {
-      position: absolute;
-      top: -9px;
-      right: 12px;
-      background: var(--green);
-      color: #03261d;
-      font-size: 0.68rem;
-      font-weight: 800;
-      padding: 0.12rem 0.5rem;
-      border-radius: 6px;
-      text-transform: uppercase;
+      position: absolute; top: -9px; right: 12px; background: var(--green);
+      color: #03261d; font-size: 0.68rem; font-weight: 800; padding: 0.12rem 0.5rem;
+      border-radius: 6px; text-transform: uppercase;
     }
-
-    .spot-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 0.45rem;
-    }
-
+    .spot-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.45rem; }
     .spot-title { font-size: 1.02rem; font-weight: 700; }
     .spot-type { font-size: 0.76rem; color: var(--muted); }
-
-    .score-badge {
-      font-size: 0.95rem;
-      font-weight: 800;
-      padding: 0.25rem 0.6rem;
-      border-radius: 8px;
-    }
-
+    .score-badge { font-size: 0.95rem; font-weight: 800; padding: 0.25rem 0.6rem; border-radius: 8px; }
     .s-high { background: var(--green-bg); color: var(--green); }
     .s-mid { background: var(--amber-bg); color: var(--amber); }
     .s-low { background: var(--red-bg); color: var(--red); }
-
-    .spot-note {
-      font-size: 0.77rem;
-      color: var(--muted);
-      margin-bottom: 0.6rem;
-      min-height: 2.1em;
-    }
-
+    .spot-note { font-size: 0.77rem; color: var(--muted); margin-bottom: 0.6rem; min-height: 2.1em; }
     .spot-metrics {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.79rem;
-      color: var(--text);
-      padding-top: 0.55rem;
-      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; font-size: 0.79rem;
+      color: var(--text); padding-top: 0.55rem; border-top: 1px solid var(--border);
     }
-
-    /* Hourly Strip */
     .hourly-grid {
-      display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      gap: 0.55rem;
-      margin-bottom: 1.25rem;
+      display: grid; grid-template-columns: repeat(8, 1fr); gap: 0.55rem; margin-bottom: 1.5rem;
     }
-
-    @media (max-width: 860px) {
-      .hourly-grid { grid-template-columns: repeat(4, 1fr); }
-    }
-
+    @media (max-width: 860px) { .hourly-grid { grid-template-columns: repeat(4, 1fr); } }
     .hour-box {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 11px;
-      padding: 0.7rem 0.45rem;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.15s;
+      background: var(--card); border: 1px solid var(--border); border-radius: 11px;
+      padding: 0.7rem 0.45rem; text-align: center; cursor: pointer; transition: all 0.15s;
     }
-
     .hour-box:hover { border-color: #3a526d; }
-
-    .hour-box.active {
-      border-color: var(--accent);
-      background: var(--accent-bg);
-      box-shadow: 0 0 0 1px var(--accent);
-    }
-
+    .hour-box.active { border-color: var(--accent); background: var(--accent-bg); box-shadow: 0 0 0 1px var(--accent); }
     .h-time { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.3rem; }
     .h-val { font-size: 1.2rem; font-weight: 800; margin-bottom: 0.2rem; }
     .h-sub { font-size: 0.73rem; color: var(--muted); }
     .h-tag {
-      display: inline-block;
-      margin-top: 0.35rem;
-      font-size: 0.65rem;
-      font-weight: 700;
-      padding: 0.1rem 0.4rem;
-      border-radius: 5px;
-      background: var(--green-bg);
-      color: var(--green);
+      display: inline-block; margin-top: 0.35rem; font-size: 0.65rem; font-weight: 700;
+      padding: 0.1rem 0.4rem; border-radius: 5px; background: var(--green-bg); color: var(--green);
     }
-
-    /* Detailed Breakdown 3-Column */
+    .scenario-banner {
+      background: linear-gradient(90deg, rgba(56, 189, 248, 0.12), rgba(16, 185, 129, 0.08));
+      border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px;
+      padding: 0.9rem 1.1rem; margin-bottom: 1rem;
+    }
+    .scenario-title { font-size: 0.95rem; font-weight: 800; color: var(--accent); }
+    .scenario-desc { font-size: 0.83rem; color: var(--text); margin-top: 0.25rem; }
+    .arsenal-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; margin-bottom: 1.35rem;
+    }
+    @media (max-width: 980px) { .arsenal-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 620px) { .arsenal-grid { grid-template-columns: 1fr; } }
+    .arsenal-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1rem; display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .arsenal-card.spray-card {
+      border-color: rgba(16, 185, 129, 0.45);
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.06) 0%, var(--card) 100%);
+    }
+    .arsenal-kicker {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--accent); margin-bottom: 0.45rem;
+    }
+    .arsenal-main { font-size: 0.93rem; font-weight: 700; color: var(--text); margin-bottom: 0.55rem; line-height: 1.38; }
+    .arsenal-sub {
+      font-size: 0.79rem; color: var(--muted); line-height: 1.4;
+      padding-top: 0.5rem; border-top: 1px dashed var(--border);
+    }
+    .buy-links {
+      display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem;
+    }
+    .buy-chip {
+      font-size: 0.74rem; font-weight: 700; color: var(--green);
+      background: var(--green-bg); border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 0.25rem 0.55rem; border-radius: 6px; text-decoration: none;
+    }
+    .buy-chip:hover { background: rgba(16, 185, 129, 0.25); }
+    .shift-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; margin-bottom: 1.5rem;
+    }
+    @media (max-width: 820px) { .shift-grid { grid-template-columns: 1fr; } }
+    .shift-card {
+      background: var(--card-2); border: 1px solid var(--border); border-radius: 11px; padding: 0.9rem 1rem;
+    }
+    .shift-card.current-day { border-color: var(--green); }
+    .shift-head {
+      display: flex; justify-content: space-between; font-size: 0.84rem;
+      font-weight: 800; margin-bottom: 0.35rem; color: var(--green);
+    }
+    .shift-weather { font-size: 0.76rem; color: var(--muted); margin-bottom: 0.5rem; }
+    .shift-gear { font-size: 0.81rem; color: var(--text); line-height: 1.42; }
     .details-grid {
-      display: grid;
-      grid-template-columns: 1.15fr 1fr 0.95fr;
-      gap: 0.9rem;
-      margin-bottom: 1.5rem;
+      display: grid; grid-template-columns: 1.15fr 1fr; gap: 0.9rem; margin-bottom: 1.5rem;
     }
-
-    @media (max-width: 920px) {
-      .details-grid { grid-template-columns: 1fr; }
-    }
-
+    @media (max-width: 860px) { .details-grid { grid-template-columns: 1fr; } }
     .panel {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.05rem;
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.05rem;
     }
-
     .panel-title {
-      font-size: 0.76rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--muted);
-      margin-bottom: 0.75rem;
+      font-size: 0.76rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.75rem;
     }
-
     .factor-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.42rem 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      font-size: 0.84rem;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.42rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.84rem;
     }
-
     .factor-item:last-child { border-bottom: none; }
     .f-pos { color: var(--green); font-weight: 700; }
     .f-neg { color: var(--red); font-weight: 700; }
     .f-neu { color: var(--muted); font-weight: 700; }
-
-    .tactic-box {
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      padding: 0.75rem;
-      margin-bottom: 0.65rem;
-    }
-
-    .tactic-box:last-child { margin-bottom: 0; }
-
-    .tactic-box h4 {
-      font-size: 0.84rem;
-      color: var(--accent);
-      margin-bottom: 0.25rem;
-    }
-
-    .tactic-box p {
-      font-size: 0.8rem;
-      color: var(--text);
-    }
-
-    /* Map & Radar Switcher */
     .map-toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-      margin-bottom: 0.75rem;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 0.6rem; margin-bottom: 0.75rem;
     }
-
-    .map-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-    }
-
+    .map-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; }
     .map-layout {
-      display: grid;
-      grid-template-columns: 1.6fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
+      display: grid; grid-template-columns: 1.6fr 1fr; gap: 1rem; margin-bottom: 1.5rem;
     }
-
-    @media (max-width: 900px) {
-      .map-layout { grid-template-columns: 1fr; }
-    }
-
+    @media (max-width: 900px) { .map-layout { grid-template-columns: 1fr; } }
     .map-box {
-      border-radius: 10px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      height: 430px;
-      position: relative;
-      background: #0b1118;
+      border-radius: 10px; overflow: hidden; border: 1px solid var(--border);
+      height: 430px; position: relative; background: #0b1118;
     }
-
-    .radar-frame {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: none;
-    }
-
+    .radar-frame { width: 100%; height: 100%; border: none; display: none; }
     .input {
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 0.55rem 0.75rem;
-      border-radius: 8px;
-      font-size: 0.84rem;
-      width: 100%;
-      margin-bottom: 0.55rem;
+      background: var(--card-2); border: 1px solid var(--border); color: var(--text);
+      padding: 0.55rem 0.75rem; border-radius: 8px; font-size: 0.84rem;
+      width: 100%; margin-bottom: 0.55rem;
     }
-
     .input:focus { outline: none; border-color: var(--accent); }
-
     .saved-list {
-      margin-top: 0.8rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.45rem;
-      max-height: 175px;
-      overflow-y: auto;
+      margin-top: 0.8rem; display: flex; flex-direction: column; gap: 0.45rem;
+      max-height: 175px; overflow-y: auto;
     }
-
     .saved-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      padding: 0.5rem 0.7rem;
-      border-radius: 8px;
-      font-size: 0.82rem;
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--card-2); border: 1px solid var(--border);
+      padding: 0.5rem 0.7rem; border-radius: 8px; font-size: 0.82rem;
     }
-
     .external-strip {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0.95rem 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-bottom: 1.25rem;
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 0.95rem 1rem; display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.25rem;
     }
-
-    footer {
-      text-align: center;
-      font-size: 0.78rem;
-      color: var(--muted);
-      line-height: 1.5;
-    }
+    footer { text-align: center; font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
   </style>
 </head>
 <body>
@@ -469,16 +238,15 @@
 <div class="container">
   <header>
     <div class="title-group">
-      <h1>🧭 Гидрометео-навигатор клёва • Марий Эл</h1>
-      <p>Мультимодель погоды (ICON + ECMWF), живой радар туч, барометр 48ч и астрономия NOAA</p>
+      <h1>🧭 Гидрометео-навигатор клёва и снастей • Марий Эл</h1>
+      <p>Готовый подбор приманки, оснастки, прикормки, брызгалки, крючков и лески под погоду дня и часа</p>
     </div>
     <div class="header-right">
-      <span class="status-pill" id="radar-status">● Радар туч: проверка...</span>
+      <span class="status-pill" id="radar-status">● Радар туч: загрузка...</span>
       <button class="btn" onclick="forceRefresh()">Обновить погоду ↻</button>
     </div>
   </header>
 
-  <!-- Выбор рыбы и дня выезда -->
   <div class="controls-panel">
     <div class="pill-group">
       <span class="group-label">Рыба:</span>
@@ -490,21 +258,41 @@
     </div>
   </div>
 
-  <!-- 1. Сравнение всех точек -->
+  <!-- 1. Сравнение локаций -->
   <div class="sec-head">
     <h2>1. Сравнение локаций («Куда лучше поехать»)</h2>
-    <span>Учитывается защита Затона от волжской волны при сильном ветре</span>
+    <span>Учитывается защита Затона в Кузьме от волжской волны при сильном ветре</span>
   </div>
   <div class="spots-grid" id="spots-grid"></div>
 
-  <!-- 2. Почасовой прогноз на выбранный день -->
+  <!-- 2. Почасовой прогноз -->
   <div class="sec-head">
-    <h2 id="hourly-heading">2. Почасовая активность: Мумариха • Окунь</h2>
-    <span>Кликните на любой час для полного разбора погоды, двух моделей и снасти</span>
+    <h2 id="hourly-heading">2. Почасовая активность</h2>
+    <span>Нажмите на любой час — приманка, оснастка, брызгалка и прикормка перестроятся под этот час</span>
   </div>
   <div class="hourly-grid" id="hourly-grid"></div>
 
-  <!-- 3. Детальный разбор выбранного часа -->
+  <!-- 3. Готовый комплект на рыбалку («Когда как») -->
+  <div class="sec-head">
+    <h2 id="arsenal-heading">3. Готовый комплект на рыбалку под погоду</h2>
+    <span>Строго один рабочий вариант под давление, свет, ветер и силу течения</span>
+  </div>
+
+  <div class="scenario-banner">
+    <div class="scenario-title" id="scenario-title">Анализ погодного сценария...</div>
+    <div class="scenario-desc" id="scenario-desc">Расчёт по барометру, температуре воды и освещённости.</div>
+  </div>
+
+  <div class="arsenal-grid" id="arsenal-grid"></div>
+
+  <!-- Сравнение перестройки снасти и брызгалки на 3 дня -->
+  <div class="sec-head">
+    <h2>🔄 Как менять приманку, оснастку и брызгалку по дням (Сегодня → Завтра → Послезавтра)</h2>
+    <span>Сравнение на выбранной точке в рабочее утреннее/дневное окно</span>
+  </div>
+  <div class="shift-grid" id="shift-grid"></div>
+
+  <!-- 4. Факторы и метеомодели -->
   <div class="details-grid">
     <div class="panel">
       <div class="panel-title" id="factors-title">🧮 Расчёт факторов клёва</div>
@@ -512,19 +300,14 @@
     </div>
 
     <div class="panel">
-      <div class="panel-title">🌦 Метео-сводка (ICON + ECMWF) и Астрономия</div>
+      <div class="panel-title">🌦 Метео-сводка (ICON + ECMWF) и Астрономия NOAA</div>
       <div id="meteo-details"></div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-title">🎣 Тактика и приманка под условия</div>
-      <div id="tactic-details"></div>
     </div>
   </div>
 
-  <!-- 4. Карта: Яндекс Спутник + Живой Радар туч -->
+  <!-- 5. Карта и радар туч -->
   <div class="sec-head">
-    <h2>4. Карта акватории, радар туч и свои точки с эхолота</h2>
+    <h2>5. Карта акватории, радар туч и свои точки с эхолота</h2>
     <span>Переключайте слои: Спутник Яндекс.Карт, Живой радар туч или Карта ветра</span>
   </div>
 
@@ -550,11 +333,11 @@
     <div class="panel">
       <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.35rem;">📍 Проверка и сохранение своей точки</div>
       <p style="font-size: 0.8rem; color: var(--muted); margin-bottom: 0.65rem;">
-        Нажмите в любое место на Яндекс.Карте — подставятся координаты, рассчитается прогноз, и вы сможете сохранить точку с реальной глубиной.
+        Кликните в любое место на Яндекс.Карте — подставятся координаты, рассчитается прогноз и веса снастей, а точку можно сохранить со своей глубиной.
       </p>
 
       <input type="text" id="custom-coords" class="input" readonly value="56.32353, 46.59376">
-      <input type="text" id="custom-name" class="input" placeholder="Название (например: Свал у выхода из затона)">
+      <input type="text" id="custom-name" class="input" placeholder="Название (например: Выход из Затона)">
       <input type="text" id="custom-depth" class="input" placeholder="Глубина по эхолоту (например: 6.8 м, ракушка)">
       <button class="btn" style="width: 100%;" onclick="saveCustomSpot()">Сохранить точку в список</button>
 
@@ -562,7 +345,7 @@
     </div>
   </div>
 
-  <!-- 5. Быстрая сверка с Яндекс.Погодой и рыболовными порталами -->
+  <!-- 6. Быстрая сверка -->
   <div class="external-strip">
     <div>
       <div style="font-weight: 700; font-size: 0.92rem;">🌐 Прямая сверка по Козьмодемьянску и Волге</div>
@@ -583,6 +366,7 @@
       name: 'Мумариха',
       type: 'Открытая Волга • Залив и свал',
       exposure: 'open',
+      flow: 'medium-high',
       lat: 56.311946,
       lon: 46.496244,
       roadNote: 'После дождей низину к берегу размывает — осторожнее на недоприводе.'
@@ -592,6 +376,7 @@
       name: 'Затон (Кузьма)',
       type: 'Закрытая акватория • Козьмодемьянск',
       exposure: 'sheltered',
+      flow: 'still',
       lat: 56.323525,
       lon: 46.593755,
       roadNote: 'Защищён от волжской волны; подъезд со стороны ул. Промышленная.'
@@ -601,6 +386,7 @@
       name: 'Еникеево',
       type: 'Открытая Волга • Русловая бровка',
       exposure: 'open',
+      flow: 'high',
       lat: 56.397161,
       lon: 46.435139,
       roadNote: 'Открытый плёс — при ветре выше 6 м/с поднимается сильная волна.'
@@ -610,6 +396,7 @@
       name: 'Козьмодемьянск',
       type: 'Пристань • Судовой ход',
       exposure: 'semi',
+      flow: 'high',
       lat: 56.330000,
       lon: 46.560000,
       roadNote: 'Твёрдый подъезд к набережной; сильное течение и обратки за причалами.'
@@ -617,92 +404,38 @@
   ];
 
   const FISH_MODELS = [
-    {
-      id: 'perch',
-      name: 'Окунь',
-      lightPref: 'day',
-      optimalTemp: [10, 21],
-      baitCold: 'Силикон 2–2.5" (машинное масло, фиолет) на джиге 6–12 г или отводной поводок',
-      baitWarm: 'Тейл-спиннер 10–14 г, вертушка №2 или воблер-минноу 55–70 мм',
-      depthCold: 'Держится глубже (5–8 м) на бровках с твёрдым дном и ракушкой.',
-      depthWarm: 'Выходит на поливы и косы 2.5–5 м, гоняет малька вполводы.'
-    },
-    {
-      id: 'pike',
-      name: 'Щука',
-      lightPref: 'overcast',
-      optimalTemp: [8, 18],
-      baitCold: 'Виброхвост 3.5–4.5" (натуралка/кислота) на джиге 12–18 г с длинной паузой',
-      baitWarm: 'Воблер-минноу 110–130 мм (твичинг) или колеблющаяся блесна вдоль травы',
-      depthCold: 'Скатывается на свалы 5–8 м и выход из затона, реагирует на медленную подачу.',
-      depthWarm: 'Стоит в засаде у границы камыша, коряг и на поливах 2–4.5 м.'
-    },
-    {
-      id: 'zander',
-      name: 'Судак',
-      lightPref: 'twilight',
-      optimalTemp: [9, 19],
-      baitCold: 'Поролоновая рыбка или узкий виброхвост 3.5" на джиге 14–24 г по русловой бровке',
-      baitWarm: 'Джиг 14–20 г на перепадах глубин или воблер-минноу на ночных выходах',
-      depthCold: 'Строго на русловых бровках и ямах 7–11 м с выраженным течением.',
-      depthWarm: 'Днём на глубине 6–9 м, в сумерках выходит на косы 3–5 м.'
-    },
-    {
-      id: 'bream',
-      name: 'Лещ',
-      lightPref: 'morning',
-      optimalTemp: [12, 22],
-      baitCold: 'Фидер: мотыль + 1 опарыш, поводок 0.10–0.12 мм, тёмная мелкофракционная прикормка',
-      baitWarm: 'Фидер или кольцо: пучок червей, опарыш, перловка или кукуруза',
-      depthCold: 'Собирается в плотные стаи на глубоких русловых столах 7–10 м.',
-      depthWarm: 'Кормится на поливах 4–7 м и на границе струи.'
-    },
-    {
-      id: 'ide',
-      name: 'Жерех',
-      lightPref: 'day',
-      optimalTemp: [13, 23],
-      baitCold: 'Кастмастер 14–21 г или пилькер в придонном слое на границе течения',
-      baitWarm: 'Кастмастер, стикбейт или поверхностный уокер по струе и обраткам',
-      depthCold: 'Опускается в средние и придонные слои 4–7 м на границе тяги.',
-      depthWarm: 'Охотится в верхнем слое на струе и выходах из затонов.'
-    },
-    {
-      id: 'catfish',
-      name: 'Сом',
-      lightPref: 'night',
-      optimalTemp: [17, 26],
-      baitCold: 'Вода слишком холодная — пассивен на глубоких ямах (случайные поимки на джиг)',
-      baitWarm: 'Квок (выползок, перловица) или донная снасть на крупного живца',
-      depthCold: 'Залегает в русловые ямы 9–12 м и практически не питается.',
-      depthWarm: 'Выходит из ям на бровки 5–8 м в тёплые тихие ночи.'
-    },
-    {
-      id: 'silverbream',
-      name: 'Густера',
-      lightPref: 'day',
-      optimalTemp: [11, 22],
-      baitCold: 'Лёгкий фидер (30–50 г) на мотыля в тиховодье или затоне',
-      baitWarm: 'Опарыш, червь, тесто на границе основного течения',
-      depthCold: 'Держится в затоне и на глубоких обратках 5–7 м.',
-      depthWarm: 'Активна на средних глубинах 3–6 м весь световой день.'
-    }
+    { id: 'perch', name: 'Окунь', lightPref: 'day', optimalTemp: [4, 21] },
+    { id: 'pike', name: 'Щука', lightPref: 'overcast', optimalTemp: [4, 18] },
+    { id: 'roach', name: 'Плотва', lightPref: 'day', optimalTemp: [3, 20] },
+    { id: 'zander', name: 'Судак', lightPref: 'twilight', optimalTemp: [8, 19] },
+    { id: 'bream', name: 'Лещ', lightPref: 'morning', optimalTemp: [11, 22] },
+    { id: 'silverbream', name: 'Густера', lightPref: 'day', optimalTemp: [9, 22] },
+    { id: 'ide', name: 'Жерех', lightPref: 'day', optimalTemp: [12, 23] },
+    { id: 'catfish', name: 'Сом', lightPref: 'night', optimalTemp: [17, 26] }
   ];
 
-  const DAYS = ['Сегодня', 'Завтра', 'Послезавтра'];
+  const HOUR_SLOTS = [0, 3, 6, 9, 12, 15, 18, 21];
 
-  let customSpots = JSON.parse(localStorage.getItem('mari_el_waypoints_v2') || '[]');
+  let customSpots = JSON.parse(localStorage.getItem('mari_el_waypoints_v5') || '[]');
   let selectedFishIdx = 0;
   let selectedDayIdx = 0;
-  let selectedHourSlot = 0;
+  let selectedHourSlot = 3; // 09:00 по умолчанию
   let activeSpot = { ...BASE_SPOTS[0] };
   let weatherCache = {};
   let ecmwfCache = {};
   let yandexMap = null;
   let tempMarker = null;
 
-  function getAllSpots() {
-    return [...BASE_SPOTS, ...customSpots];
+  function getAllSpots() { return [...BASE_SPOTS, ...customSpots]; }
+
+  function getDayLabels() {
+    const names = ['Сегодня', 'Завтра', 'Послезавтра'];
+    return names.map((n, i) => {
+      const d = new Date(Date.now() + i * 86400000);
+      const dd = String(d.getDate()).padStart(2, '0');
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      return `${n} (${dd}.${mm})`;
+    });
   }
 
   function windDirText(deg) {
@@ -719,37 +452,29 @@
     return 'Осадки / порывы';
   }
 
-  // Точный расчёт восхода, заката и солунар-пиков (алгоритм NOAA)
   function getAstronomy(lat, lon, dayOffset, hour) {
     const targetDate = new Date(Date.now() + dayOffset * 86400000);
     const start = new Date(targetDate.getFullYear(), 0, 0);
     const dayOfYear = Math.floor((targetDate - start) / 86400000);
     const rad = Math.PI / 180;
-
     const decl = 23.44 * Math.sin(rad * (360 / 365) * (dayOfYear - 81));
     const cosH = (Math.cos(rad * 90.833) - Math.sin(rad * lat) * Math.sin(rad * decl)) /
                  (Math.cos(rad * lat) * Math.cos(rad * decl));
     const H = Math.acos(Math.max(-1, Math.min(1, cosH))) / rad / 15;
-
     const eqTime = 9.87 * Math.sin(2 * rad * (360 / 365) * (dayOfYear - 81)) -
                    7.53 * Math.cos(rad * (360 / 365) * (dayOfYear - 81)) -
                    1.5 * Math.sin(rad * (360 / 365) * (dayOfYear - 81));
     const solarNoonUTC = 12 - (lon / 15) - (eqTime / 60);
-    const tz = 3; // Europe/Moscow
-
+    const tz = 3;
     const sunriseDec = solarNoonUTC - H + tz;
     const sunsetDec = solarNoonUTC + H + tz;
-
     const fmt = (dec) => {
       const h = Math.floor((dec + 24) % 24);
       const m = Math.round((dec - Math.floor(dec)) * 60) % 60;
       return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
     };
-
     const sunriseH = Math.floor((sunriseDec + 24) % 24);
     const sunsetH = Math.floor((sunsetDec + 24) % 24);
-
-    // Фаза Луны
     const knownNewMoon = new Date('2026-11-09T00:00:00Z').getTime();
     const cycle = 29.53058867 * 86400000;
     const age = ((targetDate.getTime() - knownNewMoon) % cycle + cycle) % cycle;
@@ -757,21 +482,14 @@
     const illum = Math.round((1 - Math.cos(2 * Math.PI * phase)) * 50);
     const moonTransit = Math.round((phase * 24 + 12) % 24);
     const moonUnder = (moonTransit + 12) % 24;
-
     const nearSunrise = Math.min(Math.abs(hour - sunriseH), 24 - Math.abs(hour - sunriseH)) <= 1;
     const nearSunset = Math.min(Math.abs(hour - sunsetH), 24 - Math.abs(hour - sunsetH)) <= 1;
     const nearMoon = Math.min(Math.abs(hour - moonTransit), Math.abs(hour - moonUnder)) <= 1;
-
     return {
-      sunriseStr: fmt(sunriseDec),
-      sunsetStr: fmt(sunsetDec),
-      sunriseH,
-      sunsetH,
-      illum,
-      growing: phase < 0.5,
+      sunriseStr: fmt(sunriseDec), sunsetStr: fmt(sunsetDec),
+      sunriseH, sunsetH, illum, growing: phase < 0.5,
       moonWindow: `${String(moonTransit).padStart(2, '0')}:00 и ${String(moonUnder).padStart(2, '0')}:00`,
-      nearDawnDusk: nearSunrise || nearSunset,
-      nearMoon
+      nearDawnDusk: nearSunrise || nearSunset, nearMoon
     };
   }
 
@@ -781,27 +499,328 @@
     return +(base * 0.78 + airTemp * 0.22).toFixed(1);
   }
 
-  // Главное ядро расчёта клёва (без внешних лимитированных ключей)
+  // Подбор точной брызгалки (спрея), дозировки и ссылок по погоде и температуре воды
+  function getSprayRecommendation(fishId, waterTemp, isBaroShock, isHighFlow) {
+    const doseNote = isBaroShock
+      ? 'Дозировка при сломе давления: строго 1 пшик в воздух и провести снасть через облачко (не перебить насадку!).'
+      : (isHighFlow
+          ? 'На волжской тяге обновлять 1–2 пшика каждые 7–8 забросов.'
+          : 'На слабом течении 1–2 точечных пшика на насадку/приманку; в общее ведро с прикормкой не лить.');
+
+    if (fishId === 'roach' || fishId === 'silverbream') {
+      if (waterTemp < 9) {
+        return {
+          spray: 'DUNAEV DIP «Кориандр» или «Эксперт Мотыль» (водно-спиртовая основа)',
+          shortSpray: 'Спрей: Кориандр / Мотыль',
+          sprayWhy: `Вода ~${waterTemp}°C: масляные и сладкие дипы застывают и пугают бель — работают только пряные и животные водно-спиртовые спреи.`,
+          doseNote,
+          links: [
+            { label: 'DUNAEV Кориандр (Ozon)', url: 'https://www.ozon.ru/category/dipy-dlya-rybalki-dunaev/' },
+            { label: 'Спрей Эксперт Мотыль (Ozon)', url: 'https://www.ozon.ru/product/aromatizator-dlya-rybalki-motyl-dip-sprey-ekspert-dlya-primanok-i-nasadok-100-ml-biotehnologiya-4990550817/' }
+          ]
+        };
+      }
+      return {
+        spray: 'DUNAEV «Белая рыба» или Pelican MIX Плотва (ваниль-бисквит / конопля)',
+        shortSpray: 'Спрей: Белая рыба / Ваниль',
+        sprayWhy: `Вода ~${waterTemp}°C: в тёплой воде сладкие и кондитерские шлейфы быстро собирают плотву и густеру на точку.`,
+        doseNote,
+        links: [
+          { label: 'DUNAEV Белая рыба (Ozon)', url: 'https://www.ozon.ru/product/aromatizator-dunaev-belaya-ryba-sprey-50-ml-dlya-rybalki-attraktant-sprey-dlya-dobavleniya-690020011/' },
+          { label: 'Спреи Pelican (fMagazin)', url: 'https://fmagazin.ru/pelican/snasti/primanki/prikormki/zhidkie_aromatizatory/dlya_nasadki/aromatizator_sprej_50_ml_.html' }
+        ]
+      };
+    }
+
+    if (fishId === 'bream') {
+      if (waterTemp < 11) {
+        return {
+          spray: 'DUNAEV DIP «Чеснок» или «Перец / Специи» (водно-спиртовой)',
+          shortSpray: 'Спрей: Чеснок / Специи',
+          sprayWhy: `Вода ~${waterTemp}°C: осенний/весенний лещ игнорирует карамель и берёт только резкий чеснок или острые специи с мотылём.`,
+          doseNote,
+          links: [
+            { label: 'DUNAEV Чеснок (Ozon)', url: 'https://www.ozon.ru/category/dipy-dlya-rybalki-dunaev/' },
+            { label: 'Эксперт Мотыль (Ozon)', url: 'https://www.ozon.ru/product/aromatizator-dlya-rybalki-motyl-dip-sprey-ekspert-dlya-primanok-i-nasadok-100-ml-biotehnologiya-4990550817/' }
+          ]
+        };
+      }
+      return {
+        spray: 'DUNAEV «Brasem» (пряная карамель) или «Слива» спрей 50 мл',
+        shortSpray: 'Спрей: Brasem / Слива',
+        sprayWhy: `Вода ~${waterTemp}°C: классический лещовый Brasem удерживает крупного леща на кормовом пятне.`,
+        doseNote,
+        links: [
+          { label: 'DUNAEV Brasem (Ozon)', url: 'https://www.ozon.ru/category/dunaev-attraktant/' },
+          { label: 'Спреи Pelican Лещ (fMagazin)', url: 'https://fmagazin.ru/pelican/snasti/primanki/prikormki/zhidkie_aromatizatory/dlya_nasadki/aromatizator_sprej_50_ml_.html' }
+        ]
+      };
+    }
+
+    if (fishId === 'perch' || fishId === 'zander' || fishId === 'pike') {
+      return {
+        spray: waterTemp < 10
+          ? 'Stinky Stuff «Рак / Краб» или гель Mega Strike (втирать в поролон / рёбра силикона)'
+          : 'SFT Спрей-аттрактант «Рыбий жир / Креветка» 150 мл',
+        shortSpray: waterTemp < 10 ? 'Аттрактант: Рак / Mega Strike' : 'Спрей: SFT Рыбий жир',
+        sprayWhy: waterTemp < 10
+          ? `Вода ~${waterTemp}°C: хищник вяло прикусывает приманку на паузе — запах рака/аминокислот заставляет дожевать её до подсечки.`
+          : 'Создаёт жирный пищевой след в воде и провоцирует атаку на догон.',
+        doseNote: 'Поролон и мандула держат запах до 25 забросов; гладкий силикон и воблер обновлять каждые 8–10 проводок.',
+        links: [
+          { label: 'Stinky Stuff Рак (fMagazin)', url: 'https://fmagazin.ru/stinky_stuff/snasti/primanki/prikormki/attraktanty/' },
+          { label: 'Гель Mega Strike (fMagazin)', url: 'https://fmagazin.ru/mega_strike/snasti/primanki/prikormki/attraktanty/attractant_mega_strike.html' },
+          { label: 'Спрей SFT (fMagazin)', url: 'https://fmagazin.ru/sft/snasti/primanki/prikormki/attraktanty/sprej_attraktant_dlya_lovli_ryby_sft.html' }
+        ]
+      };
+    }
+
+    return {
+      spray: fishId === 'catfish' && waterTemp >= 16
+        ? 'Спрей-концентрат «Выползок / Печень / Кальмар» на пучок червей'
+        : 'Без спрея — ставка на дальний заброс и точную подачу приманки',
+      shortSpray: fishId === 'catfish' && waterTemp >= 16 ? 'Спрей: Выползок / Печень' : 'Без брызгалки',
+      sprayWhy: fishId === 'ide' ? 'Жерех атакует глазами по всплеску и силуэту блесны.' : 'В холодной воде сом не питается.',
+      doseNote: 'Не перегружайте оснастку лишней химией.',
+      links: [
+        { label: 'Аттрактанты в fMagazin', url: 'https://fmagazin.ru/snasti/primanki/prikormki/attraktanty/' }
+      ]
+    };
+  }
+
+  // Ядро расчёта готовности на рыбалку («Когда как»)
+  function buildReadyKit(fish, ctx) {
+    const isCold = ctx.waterTemp < 8.5;
+    const isWarm = ctx.waterTemp >= 14.5;
+    const isStill = ctx.spot.flow === 'still';
+    const isHighFlow = ctx.spot.flow === 'high';
+    const isOvercast = ctx.cloud >= 55;
+    const isBaroShock = Math.abs(ctx.pressDelta24) > 5.5;
+    const isBaroDrop = ctx.pressDelta6 <= -1.5;
+    const isWindy = ctx.wind >= 5.5;
+
+    let scenarioName = '';
+    let scenarioWhy = '';
+    if (isBaroShock) {
+      scenarioName = `Слом барометра (${ctx.pressDelta24 >= 0 ? '+' : ''}${ctx.pressDelta24.toFixed(1)} мм за 24ч) + ${isCold ? 'холодная вода' : 'перемена погоды'}`;
+      scenarioWhy = 'Рыба придавлена ко дну — переходим на пассивную подачу, утоньшение поводков, мелкую фракцию прикормки и минимальную дозу спрея.';
+    } else if (isWindy && !isStill) {
+      scenarioName = `Сильный ветер (${ctx.wind.toFixed(1)} м/с) и волна на открытой Волге`;
+      scenarioWhy = 'Дугу шнура выдувает ветром — утяжеляем груз/кормушку на 20–30%, укорачиваем поводок и ставим контрастную приманку.';
+    } else if (isOvercast) {
+      scenarioName = `Пасмурно (${ctx.cloud}%), ровный барометр и рабочая рябь`;
+      scenarioWhy = 'Мягкий свет без бликов: рыба смелее выходит на бровки и поливы, хорошо работают контрастные приманки.';
+    } else {
+      scenarioName = `Ясно / переменная облачность (${ctx.cloud}%), прозрачная вода (${ctx.waterTemp}°C)`;
+      scenarioWhy = 'В прозрачной воде при ярком свете рыба осторожничает: ставим натуральные расцветки, тонкий флюр и тёмную прикормку под цвет дна.';
+    }
+
+    const windAdd = isWindy ? 3 : 0;
+    const feederWindAdd = isWindy ? 15 : 0;
+    const sprayObj = getSprayRecommendation(fish.id, ctx.waterTemp, isBaroShock, isHighFlow);
+
+    let gearChecklist = [];
+    if (ctx.temp <= 2) gearChecklist.push('Зимний/демисезонный костюм, термобельё, тёплые сапоги и силиконовый спрей на кольца от обмерзания.');
+    else if (ctx.temp <= 11) gearChecklist.push('Ветрозащитная мембрана, флис, перчатки с открытыми пальцами и термос.');
+    else gearChecklist.push('Лёгкая дышащая одежда, поляризационные очки от бликов и кепка.');
+    if (ctx.precip > 0.2) gearChecklist.push('Обязательно плащ-дождевик и чехол на рюкзак.');
+    if (isWindy && !isStill) gearChecklist.push('Усиленные стойки под удилища и подсак с длинной ручкой.');
+
+    if (fish.id === 'perch') {
+      const w = (isStill ? 4 : (isHighFlow ? 12 : 8)) + windAdd;
+      const bait = isBaroShock
+        ? `Пассивная съедобная «пиявка» 2" (${isOvercast ? 'шартрез/оранж' : 'машинное масло'})`
+        : (isCold
+            ? `Твистер 2.2" (${isOvercast ? 'кислота/ультрафиолет' : 'тёмное пиво/лох'})`
+            : (isOvercast ? 'Тейл-спиннер 12 г (серебро/кислота)' : 'Воблер-минноу 60 мм суспендер (натурал)'));
+      const rig = isBaroShock || isCold
+        ? `Отводной поводок (1.1 м) или джиг-риг с грузом ${w} г`
+        : `Классический шарнирный джиг (чебурашка ${w} г)`;
+      return {
+        scenarioName, scenarioWhy, ...sprayObj,
+        bait, shortBait: bait.split('(')[0].trim(),
+        baitWhy: isBaroShock ? 'На сломе давления окунь берёт только волочащуюся по дну приманку.' : 'Подобрано под текущую освещённость и температуру воды.',
+        rig, shortRig: rig,
+        rigWhy: isStill ? 'В Затоне без течения нужен лёгкий груз для плавного зависания.' : 'На волжской тяге вес подобран для чёткого стука по ракушке.',
+        lineHook: isBaroShock || isCold
+          ? 'Шнур #0.4 PE + флюорокарбоновый поводок 0.14 мм (1.1 м); одинарник с большим ушком №6'
+          : 'Шнур #0.6 PE + флюорокарбон 0.18 мм (60 см); офсет или двойник №4',
+        lineWhy: 'Тонкий флюр не настораживает окуня в прозрачной воде и держит ракушку.',
+        groundbait: 'Прикормка не нужна — поиск стаи по бровкам, косам и границе струи.',
+        tactic: isCold
+          ? 'Волочение по дну с микроподрывами и паузой 4–5 сек на нижней бровке.'
+          : 'Ступенька 2 оборота — пауза 2 сек; при выходе котла — равномерка вполводы.',
+        checklist: gearChecklist.join(' ')
+      };
+    }
+
+    if (fish.id === 'pike') {
+      const w = (isStill ? 6 : (isHighFlow ? 16 : 12)) + windAdd;
+      const bait = isBaroShock
+        ? `Поролоновая рыбка 9.5 см (${isOvercast ? 'жёлто-чёрная' : 'серая/натурал'})`
+        : (isCold
+            ? `Виброхвост 4.2" с широкой пяткой (${isOvercast ? 'шартрез/морковка' : 'натуральная плотва'})`
+            : (isOvercast ? 'Колеблющаяся блесна 18 г (медь/латунь)' : 'Воблер-минноу 115 мм суспендер (серебро)'));
+      const rig = isStill
+        ? `Джиг-головка ${w} г вдоль кромки камыша и выхода из затона`
+        : `Шарнирный джиг ${w} г с двойником по свалу в русло`;
+      return {
+        scenarioName, scenarioWhy, ...sprayObj,
+        bait, shortBait: bait.split('(')[0].trim(),
+        baitWhy: isBaroShock ? 'Поролон на перегрузе провоцирует пассивную щуку на хватку в противоход.' : 'Размер 4" отсекает мелочь и даёт нужную амплитуду.',
+        rig, shortRig: rig,
+        rigWhy: isStill ? 'Открытый крючок джиг-головки даёт лучшую реализацию в стоячей воде.' : 'Шарнир дальше летит при ветре и пробивает струю.',
+        lineHook: 'Шнур #1.5 PE (4-жильный) + поводок струна №2 (0.35 мм, 28 см); двойник №2/0',
+        lineWhy: 'Жёсткая струна не путается при забросе и на 100% спасает от среза.',
+        groundbait: 'Прикормка не нужна — облов бровки веером по 5–7 забросов с точки.',
+        tactic: isBaroDrop
+          ? 'Перед падением давления щука выходит на поливы 3–4.5 м — облавливаем меляки.'
+          : 'Медленная ступенька с плавной потяжкой удилищем и паузой 3–4 секунды у дна.',
+        checklist: gearChecklist.join(' ')
+      };
+    }
+
+    if (fish.id === 'zander') {
+      const w = (isStill ? 10 : (isHighFlow ? 22 : 16)) + windAdd;
+      const bait = isBaroShock
+        ? 'Мандула 8.5 см («билайн» или «спартак»)'
+        : (isCold
+            ? `Узкий прогонистый виброхвост 3.5" (${isOvercast ? 'кислотный лимон' : 'фиолет / машинное масло'})`
+            : (ctx.astro.nearDawnDusk ? 'Сумеречный воблер-минноу 90 мм (заглубление до 2 м)' : 'Поролоновая рыбка 9 см (чёрная)'));
+      const rig = `Классический джиг с разборной чебурашкой ${w} г (бровки 7–10 м)`;
+      return {
+        scenarioName, scenarioWhy, ...sprayObj,
+        bait, shortBait: bait.split('(')[0].trim(),
+        baitWhy: isBaroShock ? 'Мандула стоит вертикально на паузе и раздражает клыкастого.' : 'Узкий профиль легче всасывается судаком на течении.',
+        rig, shortRig: rig,
+        rigWhy: 'Судак требует чёткого удара груза о твёрдое дно (ракушку или камень).',
+        lineHook: 'Шнур #1.0–#1.2 PE + шок-лидер из флюорокарбона 0.35 мм (70 см); двойник №1/0',
+        lineWhy: 'Толстый флюорокарбон защищает шнур от среза об острую волжскую ракушку.',
+        groundbait: 'Прикормка не нужна — поиск перепада глубин и обраток за косами. Подсечка жёсткая.',
+        tactic: 'Короткая ступенька: 1–2 быстрых оборота, пауза 1.5–2 сек. Пик выхода — на закате.',
+        checklist: gearChecklist.join(' ')
+      };
+    }
+
+    if (fish.id === 'roach') {
+      const fw = (isStill ? 20 : (isHighFlow ? 60 : 40)) + feederWindAdd;
+      const bait = isCold || isBaroShock
+        ? 'Бутерброд: 1 крупный мотыль чулком + 1 белый опарыш'
+        : (isWarm ? 'Распаренная перловка в панировке или 1 зерно кукурузы' : '2 опарыша (белый + красный) с мотылём');
+      const rig = isStill
+        ? `Лёгкий фидер: монтаж «инлайн» с кормушкой-напёрстком ${fw} г`
+        : `Фидерная оснастка «патерностер» с металлической сеткой ${fw} г`;
+      return {
+        scenarioName, scenarioWhy, ...sprayObj,
+        bait, shortBait: bait,
+        baitWhy: isCold ? 'В холодной воде плотва берёт только мелкую животную насадку.' : 'Контраст цвета провоцирует поклёвку на падении.',
+        rig, shortRig: rig,
+        rigWhy: isStill ? 'Малая кормушка не пугает стаю всплеском в тихом Затоне.' : 'Металлическая сетка быстрее отдаёт корм на волжском течении.',
+        lineHook: isCold || isBaroShock
+          ? 'Основа шнур #0.6 PE + поводок 0.09–0.10 мм (90 см); тонкий крючок №16–№18'
+          : 'Основа шнур #0.8 PE + поводок 0.12 мм (60 см); крючок №14',
+        lineWhy: 'Тонкий поводок 0.09 мм и лёгкий крючок №16 позволяют плотве втянуть насадку без сопротивления.',
+        groundbait: isCold
+          ? '1 кг чёрной мелкофракционной прикормки («Плотва Холодная вода») + 30% тёмного кротового грунта + 100 г кормового мотыля.'
+          : '1 кг активной лифтинговой прикормки (жёлто-коричневой) + 150 г панировки + горсть варёной конопли.',
+        tactic: 'Стартовый закорм: 5 кормушек в клипсу. Перезаброс строго каждые 3–4 минуты для столба мути.',
+        checklist: gearChecklist.join(' ')
+      };
+    }
+
+    if (fish.id === 'bream') {
+      const fw = (isStill ? 30 : (isHighFlow ? 80 : 60)) + feederWindAdd;
+      const bait = isCold || isBaroShock
+        ? 'Пучок из 4–5 мотылей, закрытый 1 утопленным опарышем'
+        : (isWarm ? 'Пучок навозного червя + 2 опарыша' : '3 опарыша + 3 мотыля («спартак»)');
+      const rig = isStill
+        ? `Фидерный монтаж «инлайн» с кормушкой средней кормоёмкости ${fw} г`
+        : `Фидерный монтаж «патерностер» с кормушкой-клеткой ${fw} г`;
+      return {
+        scenarioName, scenarioWhy, ...sprayObj,
+        bait, shortBait: bait,
+        baitWhy: 'Лещ пылесосит дно: мягкий пучок мотыля не вызывает подозрений.',
+        rig, shortRig: rig,
+        rigWhy: 'Кормушка должна мёртво стоять на нижней границе ракушечного свала.',
+        lineHook: isCold || isBaroShock
+          ? 'Шнур #0.8 PE + фидергам 0.6 мм (12 см) + поводок 0.10–0.12 мм (100 см); крючок №14–№16'
+          : 'Шнур #1.0 PE + поводок 0.14 мм (70 см); крючок №12',
+        lineWhy: 'Фидергам гасит рывки крупного леща на тонком поводке 0.10–0.12 мм.',
+        groundbait: isCold
+          ? '1.5 кг тёмной инертной смеси («Лещ Чёрный») + 20% речной глины + 150 г кормового мотыля и резаного опарыша.'
+          : '2 кг крупнофракционной жёлтой прикормки + 300 г пшённой каши/гороха + рубленый червь.',
+        tactic: 'Стартовый закорм: 7–8 больших закормочных кормушек на нижнюю бровку, далее перезаброс раз в 5–7 минут.',
+        checklist: gearChecklist.join(' ')
+      };
+    }
+
+    if (fish.id === 'silverbream') {
+      const fw = (isStill ? 25 : (isHighFlow ? 70 : 50)) + feederWindAdd;
+      const bait = isCold ? '2 мотыля + 1 красный опарыш' : '2 опарыша + кусочек навозного червя';
+      const rig = `Фидерная оснастка «инлайн» с кормушкой ${fw} г`;
+      return {
+        scenarioName, scenarioWhy, ...sprayObj,
+        bait, shortBait: bait,
+        baitWhy: 'Густера предпочитает шевелящуюся животную насадку на границе струи.',
+        rig, shortRig: rig,
+        rigWhy: 'Инлайн даёт максимальную чувствительность к быстрым подёргиваниям.',
+        lineHook: 'Шнур #0.8 PE + поводок 0.12 мм (60 см); крючок №14 с длинным цевьём',
+        lineWhy: 'Длинное цевьё позволяет быстро снимать густеру при глубоком заглатывании.',
+        groundbait: isCold
+          ? '1 кг тёмной плотвино-лещовой смеси + 100 г мелкого мотыля.'
+          : '1.5 кг универсальной речной сыпучки + панировка + кормовой опарыш.',
+        tactic: 'Стартовый закорм: 5 кормушек. Активный темп с перезабросом каждые 3–4 минуты.',
+        checklist: gearChecklist.join(' ')
+      };
+    }
+
+    if (fish.id === 'ide') {
+      const bait = isCold ? 'Пилькер или кастмастер 18 г (серебро с синей спинкой)' : 'Классический кастмастер 14 г или стикбейт 75 мм';
+      const rig = 'Прямой монтаж на застёжке без вертлюжка (или со стримером в 35 см выше блесны)';
+      return {
+        scenarioName, scenarioWhy, ...sprayObj,
+        bait, shortBait: bait.split('(')[0].trim(),
+        baitWhy: isCold ? 'В холодной воде жерех уходит в глубину на границу течения.' : 'Дальнобойная компактная блесна достаёт осторожного жереха с 50+ м.',
+        rig, shortRig: rig,
+        rigWhy: 'Отсутствие лишней фурнитуры уменьшает количество всплесков и настороженность.',
+        lineHook: 'Гладкий 8-жильный шнур #0.8 PE + флюорокарбон 0.24 мм (1.2 м); тройник №6',
+        lineWhy: '8-жильный шнур даёт максимальный вылет, длинный флюр маскирует оснастку.',
+        groundbait: 'Прикормка не используется. Ориентир — чайки и граница основной струи.',
+        tactic: isCold
+          ? 'Джиговая ступенька в придонном слое (2–3 м от дна) на русловых свалах.'
+          : 'Заброс по дуге чуть выше всплеска и скоростная проводка с короткими сбоями.',
+        checklist: gearChecklist.join(' ')
+      };
+    }
+
+    const bait = isCold ? 'Крупный виброхвост 5" на тяжёлом джиге (сом в анабиозе)' : 'Пучок из 6–8 выползков с мясом ракушки-перловицы';
+    const rig = isCold ? 'Тяжёлый джиг 26–32 г по самым глубоким русловым ямам' : 'Донная оснастка с подводным поплавком и грузом 120 г';
+    return {
+      scenarioName, scenarioWhy, ...sprayObj,
+      bait, shortBait: bait.split('(')[0].trim(),
+      baitWhy: isCold ? 'Ниже +10 °C сом стоит в ямах и не питается.' : 'Выползок + перловица дают мощный пищевой след на течении.',
+      rig, shortRig: rig,
+      rigWhy: 'Подводный поплавок поднимает насадку на 40 см над дном.',
+      lineHook: 'Шнур #3.5 PE + кевларовый/флюорокарбоновый поводок 0.90 мм; крючок №6/0–№8/0',
+      lineWhy: 'Щётка сома перетирает любую обычную леску за секунды.',
+      groundbait: 'Прикормка не требуется. Выход строго в тёплые ночи с 22:00 до 03:00.',
+      tactic: 'Ждём уверенной потяжки с загибом удилища — при первых щипках не подсекаем.',
+      checklist: gearChecklist.join(' ')
+    };
+  }
+
   function evaluateBite(params) {
-    const { hour, temp, pressMm, pressDelta24, pressDelta6, wind, gusts, cloud, precip, waterTemp, astro, fish, spot } = params;
+    const { hour, pressMm, pressDelta24, pressDelta6, wind, gusts, cloud, waterTemp, astro, fish, spot } = params;
     const factors = [];
 
-    // 1. Суточный ритм выбранной рыбы
     let timeScore = 26;
-    if (fish.lightPref === 'twilight') {
-      timeScore = (astro.nearDawnDusk || hour >= 20 || hour <= 4) ? 46 : 18;
-    } else if (fish.lightPref === 'morning') {
-      timeScore = ((hour >= astro.sunriseH - 1 && hour <= astro.sunriseH + 4) || astro.nearDawnDusk) ? 44 : 24;
-    } else if (fish.lightPref === 'night') {
-      timeScore = (hour >= 21 || hour <= 4) ? 45 : 15;
-    } else if (fish.lightPref === 'overcast') {
-      timeScore = (astro.nearDawnDusk || (hour >= 8 && hour <= 17)) ? 38 : 22;
-    } else {
-      timeScore = (hour >= 7 && hour <= 16) ? 38 : 20;
-    }
+    if (fish.lightPref === 'twilight') timeScore = (astro.nearDawnDusk || hour >= 20 || hour <= 4) ? 46 : 18;
+    else if (fish.lightPref === 'morning') timeScore = ((hour >= astro.sunriseH - 1 && hour <= astro.sunriseH + 4) || astro.nearDawnDusk) ? 44 : 24;
+    else if (fish.lightPref === 'night') timeScore = (hour >= 21 || hour <= 4) ? 45 : 15;
+    else if (fish.lightPref === 'overcast') timeScore = (astro.nearDawnDusk || (hour >= 8 && hour <= 17)) ? 38 : 22;
+    else timeScore = (hour >= 7 && hour <= 16) ? 38 : 20;
     factors.push({ name: `Суточный ритм (${fish.name}, ${String(hour).padStart(2, '0')}:00)`, val: timeScore, base: true });
 
-    // 2. Барометр: тренд за 24ч + резкий скачок за 6ч
     let baroScore = 0;
     const abs24 = Math.abs(pressDelta24);
     const abs6 = Math.abs(pressDelta6);
@@ -809,27 +828,15 @@
     else if (abs24 <= 6 && abs6 <= 2.5) baroScore = +7;
     else if (abs24 <= 10) baroScore = -12;
     else baroScore = -22;
+    if (fish.id === 'pike' && pressDelta6 < -1.5 && pressDelta6 > -4.5) baroScore += 8;
+    factors.push({ name: `Барометр (${pressMm} мм, за 24ч: ${pressDelta24 >= 0 ? '+' : ''}${pressDelta24.toFixed(1)} мм)`, val: baroScore });
 
-    if (fish.id === 'pike' && pressDelta6 < -1.5 && pressDelta6 > -4.5) {
-      baroScore += 8; // щука активизируется перед падением давления
-    }
-    factors.push({
-      name: `Барометр (${pressMm} мм, за 24ч: ${pressDelta24 >= 0 ? '+' : ''}${pressDelta24.toFixed(1)} мм)`,
-      val: baroScore
-    });
-
-    // 3. Физика акватории и ветер (Затон против открытой Волги)
     let windScore = 0;
     const isSheltered = spot.exposure === 'sheltered';
-    if (wind >= 1.5 && wind <= 5.0) {
-      windScore = +12;
-    } else if (wind < 1.5) {
-      windScore = fish.id === 'bream' || fish.id === 'silverbream' ? +8 : +2;
-    } else if (wind <= 8.0) {
-      windScore = isSheltered ? +9 : -8;
-    } else {
-      windScore = isSheltered ? +4 : -20;
-    }
+    if (wind >= 1.5 && wind <= 5.0) windScore = +12;
+    else if (wind < 1.5) windScore = (fish.id === 'bream' || fish.id === 'silverbream' || fish.id === 'roach') ? +8 : +2;
+    else if (wind <= 8.0) windScore = isSheltered ? +9 : -8;
+    else windScore = isSheltered ? +4 : -20;
     factors.push({
       name: isSheltered && wind > 5
         ? `Защита Затона от волны (ветер ${wind.toFixed(1)} м/с)`
@@ -837,482 +844,433 @@
       val: windScore
     });
 
-    // 4. Температура воды и сезонность
     let tempScore = 0;
     const [optMin, optMax] = fish.optimalTemp;
-    if (fish.id === 'catfish' && waterTemp < 10) tempScore = -30;
+    if (fish.id === 'catfish' && waterTemp < 10) tempScore = -32;
+    else if (fish.id === 'ide' && waterTemp < 7) tempScore = -26;
     else if (waterTemp >= optMin && waterTemp <= optMax) tempScore = +12;
-    else if (waterTemp < 6) tempScore = -9;
+    else if (waterTemp < 6) tempScore = -8;
     else tempScore = +2;
     factors.push({ name: `Температура воды (~${waterTemp}°C)`, val: tempScore });
 
-    // 5. Облачность и освещённость
     let lightScore = 0;
-    if (cloud >= 45 && cloud <= 90) {
-      lightScore = (fish.lightPref === 'overcast' || fish.lightPref === 'twilight') ? +10 : +6;
-    } else if (cloud < 25 && hour >= 10 && hour <= 15) {
-      lightScore = (fish.lightPref === 'twilight' || fish.lightPref === 'overcast') ? -10 : +3;
-    } else {
-      lightScore = +2;
-    }
+    if (cloud >= 45 && cloud <= 90) lightScore = (fish.lightPref === 'overcast' || fish.lightPref === 'twilight') ? +10 : +6;
+    else if (cloud < 25 && hour >= 10 && hour <= 15) lightScore = (fish.lightPref === 'twilight' || fish.lightPref === 'overcast') ? -10 : +3;
+    else lightScore = +2;
     factors.push({ name: `Облачность и свет (${cloud}%)`, val: lightScore });
 
-    // 6. Солунар-пик Луны
     let astroScore = astro.nearMoon ? +10 : (astro.growing ? +4 : +1);
     factors.push({ name: `Луна (${astro.illum}%, пик ${astro.moonWindow.split(' ')[0]})`, val: astroScore });
 
-    const total = Math.max(5, Math.min(96, Math.round(factors.reduce((s, f) => s + f.val, 0))));
+    const total = Math.max(4, Math.min(96, Math.round(factors.reduce((s, f) => s + f.val, 0))));
     return { pct: total, factors };
   }
 
-  // Загрузка двух независимых метеомоделей (ICON + ECMWF)
   async function loadWeatherForPoint(lat, lon) {
     const key = `${lat.toFixed(4)}_${lon.toFixed(4)}`;
     if (!weatherCache[key]) {
       const urlIcon = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,surface_pressure,wind_speed_10m,wind_gusts_10m,wind_direction_10m,cloud_cover,precipitation,weather_code&past_days=2&forecast_days=3&wind_speed_unit=ms&timezone=Europe%2FMoscow`;
-      const urlEcmwf = `https://api.open-meteo.com/v1/ecmwf?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,wind_speed_10m,precipitation&forecast_days=3&wind_speed_unit=ms&timezone=Europe%2FMoscow`;
-
-      const [res1, res2] = await Promise.all([
-        fetch(urlIcon),
-        fetch(urlEcmwf).catch(() => null)
-      ]);
-      weatherCache[key] = await res1.json();
-      ecmwfCache[key] = res2 && res2.ok ? await res2.json() : null;
+      const res = await fetch(urlIcon);
+      weatherCache[key] = await res.json();
     }
-    return { icon: weatherCache[key], ecmwf: ecmwfCache[key] };
+    if (!ecmwfCache[key]) {
+      try {
+        const urlEcmwf = `https://api.open-meteo.com/v1/ecmwf?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,surface_pressure,wind_speed_10m,cloud_cover,precipitation&forecast_days=3&wind_speed_unit=ms&timezone=Europe%2FMoscow`;
+        const res2 = await fetch(urlEcmwf);
+        if (res2.ok) ecmwfCache[key] = await res2.json();
+      } catch (e) { /* резерв на ICON */ }
+    }
+    return { icon: weatherCache[key], ecmwf: ecmwfCache[key] || null };
   }
 
-  // Проверка статуса живого радара туч RainViewer
-  async function checkRainViewerRadar() {
-    try {
-      const res = await fetch('https://api.rainviewer.com/public/weather-maps.json');
-      if (res.ok) {
-        const data = await res.json();
-        const past = data?.radar?.past;
-        if (Array.isArray(past) && past.length > 0) {
-          const lastTs = past[past.length - 1].time * 1000;
-          const timeStr = new Date(lastTs).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-          document.getElementById('radar-status').textContent = `● Радар туч онлайн (скан ${timeStr})`;
-          return;
-        }
+  function extractSlotContext(dataPack, spot, dayIdx, hour) {
+    const h = dataPack.icon.hourly;
+    const idx = (2 + dayIdx) * 24 + hour;
+    const idx6 = Math.max(0, idx - 6);
+    const idx24 = Math.max(0, idx - 24);
+
+    const temp = h.temperature_2m[idx];
+    const pNow = h.surface_pressure[idx];
+    const p6 = h.surface_pressure[idx6];
+    const p24 = h.surface_pressure[idx24];
+
+    const pressMm = Math.round(pNow * 0.750062);
+    const pressDelta6 = +((pNow - p6) * 0.750062).toFixed(1);
+    const pressDelta24 = +((pNow - p24) * 0.750062).toFixed(1);
+    const wind = h.wind_speed_10m[idx];
+    const gusts = h.wind_gusts_10m[idx];
+    const windDir = h.wind_direction_10m[idx];
+    const cloud = h.cloud_cover[idx];
+    const precip = h.precipitation[idx];
+    const wCode = h.weather_code[idx];
+    const waterTemp = estimateWaterTemp(temp);
+    const astro = getAstronomy(spot.lat, spot.lon, dayIdx, hour);
+
+    let ecmwfSummary = null;
+    if (dataPack.ecmwf && dataPack.ecmwf.hourly) {
+      const eh = dataPack.ecmwf.hourly;
+      const eIdx = dayIdx * 24 + hour;
+      if (eh.temperature_2m[eIdx] !== undefined) {
+        ecmwfSummary = {
+          temp: eh.temperature_2m[eIdx],
+          pressMm: Math.round(eh.surface_pressure[eIdx] * 0.750062),
+          wind: eh.wind_speed_10m[eIdx],
+          cloud: eh.cloud_cover[eIdx],
+          precip: eh.precipitation[eIdx]
+        };
       }
-    } catch (e) {}
-    document.getElementById('radar-status').textContent = '● Метеодвижок ICON + ECMWF активен';
+    }
+
+    return {
+      spot, dayIdx, hour, temp, pressMm, pressDelta6, pressDelta24,
+      wind, gusts, windDir, cloud, precip, wCode, waterTemp, astro, ecmwfSummary
+    };
   }
 
-  function scoreClass(v) {
-    if (v >= 65) return 's-high';
-    if (v >= 40) return 's-mid';
+  function scoreClass(pct) {
+    if (pct >= 62) return 's-high';
+    if (pct >= 38) return 's-mid';
     return 's-low';
   }
 
-  function renderTopControls() {
-    document.getElementById('fish-pills').innerHTML = FISH_MODELS.map((f, i) => `
-      <button class="pill ${i === selectedFishIdx ? 'active' : ''}" onclick="selectFish(${i})">${f.name}</button>
-    `).join('');
-
-    document.getElementById('day-pills').innerHTML = DAYS.map((d, i) => `
-      <button class="pill day-pill ${i === selectedDayIdx ? 'active' : ''}" onclick="selectDay(${i})">${d}</button>
-    `).join('');
+  function scoreColor(pct) {
+    if (pct >= 62) return 'var(--green)';
+    if (pct >= 38) return 'var(--amber)';
+    return 'var(--red)';
   }
 
-  function selectFish(i) {
-    selectedFishIdx = i;
-    renderTopControls();
-    renderAll();
+  function renderPills() {
+    const fishWrap = document.getElementById('fish-pills');
+    fishWrap.innerHTML = FISH_MODELS.map((f, i) =>
+      `<button class="pill ${i === selectedFishIdx ? 'active' : ''}" onclick="selectFish(${i})">${f.name}</button>`
+    ).join('');
+
+    const dayWrap = document.getElementById('day-pills');
+    const dayLabels = getDayLabels();
+    dayWrap.innerHTML = dayLabels.map((lbl, i) =>
+      `<button class="pill day-pill ${i === selectedDayIdx ? 'active' : ''}" onclick="selectDay(${i})">${lbl}</button>`
+    ).join('');
   }
 
-  function selectDay(i) {
-    selectedDayIdx = i;
-    selectedHourSlot = 0;
-    renderTopControls();
-    renderAll();
+  async function renderAll() {
+    renderPills();
+    const statusEl = document.getElementById('radar-status');
+    statusEl.textContent = '● Синхронизация метеомоделей...';
+
+    const spots = getAllSpots();
+    const fish = FISH_MODELS[selectedFishIdx];
+    const hour = HOUR_SLOTS[selectedHourSlot];
+
+    const spotResults = await Promise.all(spots.map(async (sp) => {
+      const pack = await loadWeatherForPoint(sp.lat, sp.lon);
+      const ctx = extractSlotContext(pack, sp, selectedDayIdx, hour);
+      const res = evaluateBite(ctx);
+      return { spot: sp, pack, ctx, res };
+    }));
+
+    statusEl.textContent = `● Модели ICON + ECMWF активны (${new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })})`;
+
+    let bestPct = -1;
+    spotResults.forEach(r => { if (r.res.pct > bestPct) bestPct = r.res.pct; });
+
+    const spotsGrid = document.getElementById('spots-grid');
+    spotsGrid.innerHTML = spotResults.map(r => {
+      const isSelected = r.spot.id === activeSpot.id;
+      const isBest = r.res.pct === bestPct;
+      return `
+        <div class="spot-card ${isSelected ? 'selected' : ''}" onclick="selectSpotById('${r.spot.id}')">
+          ${isBest ? '<div class="best-badge">Лучшая точка</div>' : ''}
+          <div class="spot-top">
+            <div>
+              <div class="spot-title">${r.spot.name}</div>
+              <div class="spot-type">${r.spot.type}</div>
+            </div>
+            <div class="score-badge ${scoreClass(r.res.pct)}">${r.res.pct}%</div>
+          </div>
+          <div class="spot-note">${r.spot.roadNote || 'Пользовательская точка с карты'}</div>
+          <div class="spot-metrics">
+            <span>💨 ${r.ctx.wind.toFixed(1)} м/с (${windDirText(r.ctx.windDir)})</span>
+            <span>🌡 Вода ~${r.ctx.waterTemp}°C</span>
+            <span>⏲ ${r.ctx.pressDelta24 >= 0 ? '+' : ''}${r.ctx.pressDelta24} мм</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    const activePack = await loadWeatherForPoint(activeSpot.lat, activeSpot.lon);
+    const dayLabels = getDayLabels();
+    document.getElementById('hourly-heading').textContent =
+      `2. Почасовая активность: ${activeSpot.name} • ${fish.name} • ${dayLabels[selectedDayIdx]}`;
+
+    const hourlyGrid = document.getElementById('hourly-grid');
+    hourlyGrid.innerHTML = HOUR_SLOTS.map((hVal, sIdx) => {
+      const c = extractSlotContext(activePack, activeSpot, selectedDayIdx, hVal);
+      const ev = evaluateBite(c);
+      const tag = c.astro.nearDawnDusk ? 'ЗОРЬКА' : (c.astro.nearMoon ? 'ЛУНА' : (ev.pct >= 65 ? 'ПИК' : ''));
+      return `
+        <div class="hour-box ${sIdx === selectedHourSlot ? 'active' : ''}" onclick="selectHourSlot(${sIdx})">
+          <div class="h-time">${String(hVal).padStart(2, '0')}:00</div>
+          <div class="h-val" style="color:${scoreColor(ev.pct)}">${ev.pct}%</div>
+          <div class="h-sub">${c.temp > 0 ? '+' : ''}${Math.round(c.temp)}° • ${c.wind.toFixed(1)} м/с</div>
+          ${tag ? `<div class="h-tag">${tag}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+
+    const curCtx = extractSlotContext(activePack, activeSpot, selectedDayIdx, hour);
+    const curEval = evaluateBite(curCtx);
+    const kit = buildReadyKit(fish, curCtx);
+
+    document.getElementById('arsenal-heading').textContent =
+      `3. Готовый комплект: ${fish.name} • ${activeSpot.name} (${String(hour).padStart(2, '0')}:00)`;
+    document.getElementById('scenario-title').textContent = `Погодный сценарий: ${kit.scenarioName}`;
+    document.getElementById('scenario-desc').textContent = kit.scenarioWhy;
+
+    document.getElementById('arsenal-grid').innerHTML = `
+      <div class="arsenal-card">
+        <div>
+          <div class="arsenal-kicker">🎯 1. Приманка / Насадка и цвет</div>
+          <div class="arsenal-main">${kit.bait}</div>
+        </div>
+        <div class="arsenal-sub">${kit.baitWhy}</div>
+      </div>
+
+      <div class="arsenal-card">
+        <div>
+          <div class="arsenal-kicker">⚙️ 2. Оснастка и вес груза / кормушки</div>
+          <div class="arsenal-main">${kit.rig}</div>
+        </div>
+        <div class="arsenal-sub">${kit.rigWhy}</div>
+      </div>
+
+      <div class="arsenal-card">
+        <div>
+          <div class="arsenal-kicker">🪝 3. Шнур / Леска, поводок и крючки</div>
+          <div class="arsenal-main">${kit.lineHook}</div>
+        </div>
+        <div class="arsenal-sub">${kit.lineWhy}</div>
+      </div>
+
+      <div class="arsenal-card">
+        <div>
+          <div class="arsenal-kicker">🪣 4. Прикормка и физика смеси</div>
+          <div class="arsenal-main">${kit.groundbait}</div>
+        </div>
+        <div class="arsenal-sub">${kit.tactic}</div>
+      </div>
+
+      <div class="arsenal-card spray-card">
+        <div>
+          <div class="arsenal-kicker" style="color:var(--green)">💨 5. Брызгалка (Спрей-аттрактант)</div>
+          <div class="arsenal-main">${kit.spray}</div>
+        </div>
+        <div class="arsenal-sub">
+          ${kit.sprayWhy}<br><strong style="color:var(--text)">Применение:</strong> ${kit.doseNote}
+          <div class="buy-links">
+            ${kit.links.map(l => `<a class="buy-chip" href="${l.url}" target="_blank" rel="noopener">${l.label} ↗</a>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="arsenal-card">
+        <div>
+          <div class="arsenal-kicker">🎒 6. Снаряжение и одежда на берег</div>
+          <div class="arsenal-main">${kit.checklist}</div>
+        </div>
+        <div class="arsenal-sub">Подъезд: ${activeSpot.roadNote || 'Проверяйте грунтовку после осадков.'}</div>
+      </div>
+    `;
+
+    // Перестройка на 3 дня (Сегодня -> Завтра -> Послезавтра) на 09:00
+    document.getElementById('shift-grid').innerHTML = [0, 1, 2].map(dIdx => {
+      const dCtx = extractSlotContext(activePack, activeSpot, dIdx, 9);
+      const dEv = evaluateBite(dCtx);
+      const dKit = buildReadyKit(fish, dCtx);
+      return `
+        <div class="shift-card ${dIdx === selectedDayIdx ? 'current-day' : ''}">
+          <div class="shift-head">
+            <span>${dayLabels[dIdx]} (09:00)</span>
+            <span style="color:${scoreColor(dEv.pct)}">${dEv.pct}%</span>
+          </div>
+          <div class="shift-weather">
+            ${weatherDesc(dCtx.wCode)} • ${dCtx.temp > 0 ? '+' : ''}${Math.round(dCtx.temp)}°C • Ветер ${dCtx.wind.toFixed(1)} м/с • Δ24ч: ${dCtx.pressDelta24 >= 0 ? '+' : ''}${dCtx.pressDelta24} мм
+          </div>
+          <div class="shift-gear">
+            <strong>Приманка:</strong> ${dKit.shortBait}<br>
+            <strong>Оснастка:</strong> ${dKit.shortRig}<br>
+            <strong>${dKit.shortSpray}</strong>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    document.getElementById('factors-title').textContent = `🧮 Расчёт факторов клёва (Итог: ${curEval.pct}%)`;
+    document.getElementById('factors-list').innerHTML = curEval.factors.map(f => {
+      const cls = f.base ? 'f-neu' : (f.val > 0 ? 'f-pos' : (f.val < 0 ? 'f-neg' : 'f-neu'));
+      const prefix = f.base ? 'База ' : (f.val > 0 ? '+' : '');
+      return `<div class="factor-item"><span>${f.name}</span><span class="${cls}">${prefix}${f.val}%</span></div>`;
+    }).join('');
+
+    const ec = curCtx.ecmwfSummary;
+    document.getElementById('meteo-details').innerHTML = `
+      <div class="factor-item"><span>Модель ICON (основная):</span><span>${curCtx.temp > 0 ? '+' : ''}${curCtx.temp}°C • ${curCtx.pressMm} мм • ${curCtx.wind.toFixed(1)} м/с</span></div>
+      <div class="factor-item"><span>Модель ECMWF (сверка):</span><span>${ec ? `${ec.temp > 0 ? '+' : ''}${ec.temp}°C • ${ec.pressMm} мм • ${ec.wind.toFixed(1)} м/с` : 'Нет данных'}</span></div>
+      <div class="factor-item"><span>Осадки / Облачность:</span><span>${curCtx.precip} мм • ${curCtx.cloud}% (${weatherDesc(curCtx.wCode)})</span></div>
+      <div class="factor-item"><span>Восход / Закат (NOAA):</span><span>${curCtx.astro.sunriseStr} / ${curCtx.astro.sunsetStr}</span></div>
+      <div class="factor-item"><span>Луна и транзиты:</span><span>${curCtx.astro.illum}% (${curCtx.astro.growing ? 'растущая' : 'убывающая'}) • пики ${curCtx.astro.moonWindow}</span></div>
+    `;
+
+    renderSavedList();
   }
 
-  function selectSpot(id) {
+  function selectFish(idx) { selectedFishIdx = idx; renderAll(); }
+  function selectDay(idx) { selectedDayIdx = idx; renderAll(); }
+  function selectHourSlot(idx) { selectedHourSlot = idx; renderAll(); }
+
+  function selectSpotById(id) {
     const found = getAllSpots().find(s => s.id === id);
     if (found) {
       activeSpot = { ...found };
       document.getElementById('custom-coords').value = `${found.lat.toFixed(5)}, ${found.lon.toFixed(5)}`;
+      if (yandexMap) yandexMap.setCenter([found.lat, found.lon], 13);
       renderAll();
-      if (yandexMap) yandexMap.panTo([found.lat, found.lon], { flying: true });
     }
   }
 
-  function selectHour(slot) {
-    selectedHourSlot = slot;
+  function forceRefresh() {
+    weatherCache = {};
+    ecmwfCache = {};
     renderAll();
   }
 
-  // Находим базовый индекс часа в массиве Open-Meteo (past_days=2 => первые 48 часов - прошлое)
-  function getBaseIndexForDay(hourlyTimes, dayIdx) {
-    const now = new Date();
-    const target = new Date(now.getTime() + dayIdx * 86400000);
-    const yyyy = target.getFullYear();
-    const mm = String(target.getMonth() + 1).padStart(2, '0');
-    const dd = String(target.getDate()).padStart(2, '0');
-    const targetHour = dayIdx === 0 ? String(now.getHours()).padStart(2, '0') : '03';
-    const prefix = `${yyyy}-${mm}-${dd}T${targetHour}`;
-    const idx = hourlyTimes.findIndex(t => t.startsWith(prefix));
-    return idx >= 24 ? idx : 48 + dayIdx * 24;
+  function saveCustomSpot() {
+    const coordsStr = document.getElementById('custom-coords').value;
+    const name = document.getElementById('custom-name').value.trim();
+    const depth = document.getElementById('custom-depth').value.trim();
+    if (!name) { alert('Введите название точки'); return; }
+    const parts = coordsStr.split(',').map(Number);
+    if (parts.length !== 2 || isNaN(parts[0])) return;
+
+    const newSpot = {
+      id: 'custom_' + Date.now(),
+      name,
+      type: depth ? `Своя точка • Эхолот: ${depth}` : 'Своя точка с карты',
+      exposure: 'open',
+      flow: 'medium-high',
+      lat: parts[0],
+      lon: parts[1],
+      roadNote: depth ? `Глубина по эхолоту: ${depth}` : 'Пользовательская точка'
+    };
+    customSpots.push(newSpot);
+    localStorage.setItem('mari_el_waypoints_v5', JSON.stringify(customSpots));
+    document.getElementById('custom-name').value = '';
+    document.getElementById('custom-depth').value = '';
+    activeSpot = { ...newSpot };
+    addMarkerToYandex(newSpot);
+    renderAll();
   }
 
-  async function renderAll() {
-    const fish = FISH_MODELS[selectedFishIdx];
-    const spots = getAllSpots();
-
-    // Параллельно считаем рейтинг всех локаций для выбранного дня и рыбы
-    const spotEvaluations = await Promise.all(spots.map(async (spot) => {
-      const { icon, ecmwf } = await loadWeatherForPoint(spot.lat, spot.lon);
-      const baseIdx = getBaseIndexForDay(icon.hourly.time, selectedDayIdx);
-
-      const pressMm = Math.round(icon.hourly.surface_pressure[baseIdx] * 0.750062);
-      const press24 = Math.round(icon.hourly.surface_pressure[Math.max(0, baseIdx - 24)] * 0.750062);
-      const press6 = Math.round(icon.hourly.surface_pressure[Math.max(0, baseIdx - 6)] * 0.750062);
-      const temp = icon.hourly.temperature_2m[baseIdx];
-      const wind = icon.hourly.wind_speed_10m[baseIdx];
-      const gusts = icon.hourly.wind_gusts_10m[baseIdx];
-      const cloud = icon.hourly.cloud_cover[baseIdx];
-      const precip = icon.hourly.precipitation[baseIdx];
-      const hour = parseInt(icon.hourly.time[baseIdx].slice(11, 13), 10);
-      const waterTemp = estimateWaterTemp(temp);
-      const astro = getAstronomy(spot.lat, spot.lon, selectedDayIdx, hour);
-
-      const evalRes = evaluateBite({
-        hour,
-        temp,
-        pressMm,
-        pressDelta24: pressMm - press24,
-        pressDelta6: pressMm - press6,
-        wind,
-        gusts,
-        cloud,
-        precip,
-        waterTemp,
-        astro,
-        fish,
-        spot
-      });
-
-      return { spot, icon, ecmwf, baseIdx, temp, pressMm, wind, evalRes };
-    }));
-
-    const topScore = Math.max(...spotEvaluations.map(e => e.evalRes.pct));
-
-    document.getElementById('spots-grid').innerHTML = spotEvaluations.map(item => {
-      const isSelected = item.spot.id === activeSpot.id;
-      const isBest = item.evalRes.pct === topScore && spotEvaluations.length > 1;
-      return `
-        <div class="spot-card ${isSelected ? 'selected' : ''}" onclick="selectSpot('${item.spot.id}')">
-          ${isBest ? '<div class="best-badge">Лучший выбор</div>' : ''}
-          <div class="spot-top">
-            <div>
-              <div class="spot-title">${item.spot.name}</div>
-              <div class="spot-type">${item.spot.type}</div>
-            </div>
-            <div class="score-badge ${scoreClass(item.evalRes.pct)}">${item.evalRes.pct}%</div>
-          </div>
-          <div class="spot-note">${item.spot.roadNote || 'Точка на карте водохранилища'}</div>
-          <div class="spot-metrics">
-            <span>🌡 ${item.temp > 0 ? '+' : ''}${Math.round(item.temp)}°C</span>
-            <span>🧭 ${item.pressMm} мм</span>
-            <span>💨 ${item.wind.toFixed(1)} м/с</span>
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    // Детальный разбор активной точки (или точки, по которой кликнули на карте)
-    let currentData = spotEvaluations.find(e => e.spot.id === activeSpot.id);
-    if (!currentData) {
-      const { icon, ecmwf } = await loadWeatherForPoint(activeSpot.lat, activeSpot.lon);
-      const baseIdx = getBaseIndexForDay(icon.hourly.time, selectedDayIdx);
-      currentData = { spot: activeSpot, icon, ecmwf, baseIdx };
-    }
-
-    renderHourlyAndDetails(currentData, fish);
-    renderExternalLinks(currentData.spot);
+  function deleteCustomSpot(id, e) {
+    e.stopPropagation();
+    customSpots = customSpots.filter(s => s.id !== id);
+    localStorage.setItem('mari_el_waypoints_v5', JSON.stringify(customSpots));
+    if (activeSpot.id === id) activeSpot = { ...BASE_SPOTS[0] };
+    renderAll();
   }
 
-  function renderHourlyAndDetails(data, fish) {
-    const { spot, icon, ecmwf, baseIdx } = data;
-    document.getElementById('hourly-heading').textContent =
-      `2. Почасовая активность: ${spot.name} • ${fish.name} (${DAYS[selectedDayIdx]})`;
-
-    const slots = [];
-    for (let i = 0; i < 8; i++) {
-      const idx = Math.min(baseIdx + i * 3, icon.hourly.time.length - 1);
-      const tStr = icon.hourly.time[idx];
-      const hour = parseInt(tStr.slice(11, 13), 10);
-      const temp = icon.hourly.temperature_2m[idx];
-      const pressMm = Math.round(icon.hourly.surface_pressure[idx] * 0.750062);
-      const press24 = Math.round(icon.hourly.surface_pressure[Math.max(0, idx - 24)] * 0.750062);
-      const press6 = Math.round(icon.hourly.surface_pressure[Math.max(0, idx - 6)] * 0.750062);
-      const wind = icon.hourly.wind_speed_10m[idx];
-      const gusts = icon.hourly.wind_gusts_10m[idx];
-      const windDir = windDirText(icon.hourly.wind_direction_10m[idx]);
-      const cloud = icon.hourly.cloud_cover[idx];
-      const precip = icon.hourly.precipitation[idx];
-      const wCode = icon.hourly.weather_code[idx];
-      const waterTemp = estimateWaterTemp(temp);
-      const astro = getAstronomy(spot.lat, spot.lon, selectedDayIdx, hour);
-
-      // Данные второй модели (ECMWF) для сверки
-      let ecmwfTemp = null;
-      let ecmwfWind = null;
-      if (ecmwf?.hourly?.time) {
-        const eIdx = ecmwf.hourly.time.findIndex(t => t === tStr);
-        if (eIdx !== -1) {
-          ecmwfTemp = ecmwf.hourly.temperature_2m[eIdx];
-          ecmwfWind = ecmwf.hourly.wind_speed_10m[eIdx];
-        }
-      }
-
-      const bite = evaluateBite({
-        hour,
-        temp,
-        pressMm,
-        pressDelta24: pressMm - press24,
-        pressDelta6: pressMm - press6,
-        wind,
-        gusts,
-        cloud,
-        precip,
-        waterTemp,
-        astro,
-        fish,
-        spot
-      });
-
-      slots.push({
-        label: (selectedDayIdx === 0 && i === 0) ? 'Сейчас' : tStr.slice(11, 16),
-        hour,
-        temp,
-        pressMm,
-        pressDelta24: pressMm - press24,
-        wind,
-        gusts,
-        windDir,
-        cloud,
-        precip,
-        wCode,
-        waterTemp,
-        astro,
-        ecmwfTemp,
-        ecmwfWind,
-        ...bite
-      });
-    }
-
-    document.getElementById('hourly-grid').innerHTML = slots.map((s, idx) => {
-      const color = s.pct >= 65 ? 'var(--green)' : (s.pct >= 40 ? 'var(--amber)' : 'var(--red)');
-      return `
-        <div class="hour-box ${idx === selectedHourSlot ? 'active' : ''}" onclick="selectHour(${idx})">
-          <div class="h-time">${s.label}</div>
-          <div class="h-val" style="color: ${color};">${s.pct}%</div>
-          <div class="h-sub">${s.temp > 0 ? '+' : ''}${Math.round(s.temp)}° • ${s.wind.toFixed(1)} м/с</div>
-          ${s.astro.nearDawnDusk ? '<div class="h-tag">Зорька</div>' : (s.astro.nearMoon ? '<div class="h-tag">Пик Луны</div>' : '')}
-        </div>
-      `;
-    }).join('');
-
-    const cur = slots[selectedHourSlot] || slots[0];
-    document.getElementById('factors-title').textContent =
-      `🧮 Расчёт клёва: ${fish.name} в ${cur.label} (Итог: ${cur.pct}%)`;
-
-    document.getElementById('factors-list').innerHTML = cur.factors.map(f => {
-      const sign = f.base ? '' : (f.val > 0 ? '+' : '');
-      const cls = f.base ? 'f-neu' : (f.val > 0 ? 'f-pos' : 'f-neg');
-      return `
-        <div class="factor-item">
-          <span>${f.name}</span>
-          <span class="${cls}">${sign}${f.val}%</span>
-        </div>
-      `;
-    }).join('');
-
-    const ecmwfLine = cur.ecmwfTemp != null
-      ? `${cur.ecmwfTemp > 0 ? '+' : ''}${cur.ecmwfTemp.toFixed(1)}°C / ${cur.ecmwfWind.toFixed(1)} м/с`
-      : 'синхронизировано';
-
-    document.getElementById('meteo-details').innerHTML = `
-      <div class="factor-item"><span>Модель ICON (t° / ветер)</span><strong>${cur.temp > 0 ? '+' : ''}${cur.temp.toFixed(1)}°C / ${cur.wind.toFixed(1)} м/с (${cur.windDir})</strong></div>
-      <div class="factor-item"><span>Модель ECMWF (сверка)</span><strong>${ecmwfLine}</strong></div>
-      <div class="factor-item"><span>Условия и осадки</span><strong>${weatherDesc(cur.wCode)} (${cur.precip} мм)</strong></div>
-      <div class="factor-item"><span>Восход / Закат солнца</span><strong>${cur.astro.sunriseStr} / ${cur.astro.sunsetStr}</strong></div>
-      <div class="factor-item"><span>Фаза Луны и транзит</span><strong>${cur.astro.illum}% (${cur.astro.growing ? 'растёт' : 'убывает'}) • ${cur.astro.moonWindow}</strong></div>
-    `;
-
-    const isCold = cur.waterTemp < 11;
-    document.getElementById('tactic-details').innerHTML = `
-      <div class="tactic-box">
-        <h4>🎣 Рекомендуемая снасть и приманка</h4>
-        <p>${isCold ? fish.baitCold : fish.baitWarm}</p>
-      </div>
-      <div class="tactic-box">
-        <h4>🌊 Горизонт и рельеф (${spot.name})</h4>
-        <p>${isCold ? fish.depthCold : fish.depthWarm}</p>
-      </div>
-    `;
-  }
-
-  // Переключение слоёв карты: Яндекс.Карта / Радар туч / Карта ветра
-  function switchMapMode(mode) {
-    const yEl = document.getElementById('yandex-map');
-    const wEl = document.getElementById('windy-iframe');
-
-    document.getElementById('tab-yandex').classList.toggle('active', mode === 'yandex');
-    document.getElementById('tab-radar').classList.toggle('active', mode === 'radar');
-    document.getElementById('tab-wind').classList.toggle('active', mode === 'wind');
-
-    if (mode === 'yandex') {
-      yEl.style.display = 'block';
-      wEl.style.display = 'none';
-    } else {
-      yEl.style.display = 'none';
-      wEl.style.display = 'block';
-      const overlay = mode === 'radar' ? 'radar' : 'wind';
-      wEl.src = `https://embed.windy.com/embed2.html?lat=${activeSpot.lat}&lon=${activeSpot.lon}&detailLat=${activeSpot.lat}&detailLon=${activeSpot.lon}&width=650&height=450&zoom=10&level=surface&overlay=${overlay}&product=${overlay}&menu=&message=true&marker=true&calendar=now&pressure=true&type=map&location=coordinates&metricWind=m%2Fs&metricTemp=%C2%B0C&radarRange=-1`;
-    }
-  }
-
-  function renderExternalLinks(spot) {
-    const lat = spot.lat.toFixed(5);
-    const lon = spot.lon.toFixed(5);
-    document.getElementById('external-links').innerHTML = `
-      <a class="btn-outline" href="https://yandex.ru/pogoda/kozmodemyansk/maps/nowcast" target="_blank" rel="noopener">🌧 Тучи на Яндекс.Погоде ↗</a>
-      <a class="btn-outline" href="https://yandex.ru/pogoda/kozmodemyansk" target="_blank" rel="noopener">⛅ Яндекс.Погода (10 дней) ↗</a>
-      <a class="btn-outline" href="https://nalovlu.ru/" target="_blank" rel="noopener">🐟 Наловлю.ру ↗</a>
-      <a class="btn-outline" href="https://www.windy.com/${lat}/${lon}?${lat},${lon},11" target="_blank" rel="noopener">💨 Windy Полный экран ↗</a>
-    `;
-  }
-
-  function renderSavedSpots() {
-    const list = document.getElementById('saved-list');
-    if (customSpots.length === 0) {
-      list.innerHTML = `<div style="font-size: 0.78rem; color: var(--muted);">Своих точек пока нет. Кликните в любое место воды на Яндекс.Карте.</div>`;
+  function renderSavedList() {
+    const wrap = document.getElementById('saved-list');
+    if (!customSpots.length) {
+      wrap.innerHTML = '<div style="font-size:0.78rem; color:var(--muted);">Сохранённых точек с эхолота пока нет.</div>';
       return;
     }
-    list.innerHTML = customSpots.map((s, idx) => `
-      <div class="saved-row">
-        <div style="cursor:pointer;" onclick="selectSpot('${s.id}')">
-          <strong>${s.name}</strong> <span style="color: var(--accent);">(${s.type})</span>
+    wrap.innerHTML = customSpots.map(s => `
+      <div class="saved-row" style="cursor:pointer" onclick="selectSpotById('${s.id}')">
+        <div>
+          <strong>${s.name}</strong>
+          <div style="font-size:0.73rem; color:var(--muted)">${s.type} (${s.lat.toFixed(4)}, ${s.lon.toFixed(4)})</div>
         </div>
-        <button style="background:none; border:none; color:var(--red); font-weight:700; cursor:pointer;" onclick="removeCustomSpot(${idx})">✕</button>
+        <button class="btn-outline" style="padding:0.2rem 0.5rem; color:var(--red)" onclick="deleteCustomSpot('${s.id}', event)">✕</button>
       </div>
     `).join('');
   }
 
-  function saveCustomSpot() {
-    const coords = document.getElementById('custom-coords').value.trim();
-    const name = document.getElementById('custom-name').value.trim();
-    const depth = document.getElementById('custom-depth').value.trim();
-
-    if (!name) {
-      alert('Укажите название точки (например: Выход из Затона)');
-      return;
-    }
-    const [lat, lon] = coords.split(',').map(v => parseFloat(v.trim()));
-    if (isNaN(lat) || isNaN(lon)) return;
-
-    const spot = {
-      id: 'wp_' + Date.now(),
-      name,
-      type: depth ? `Эхолот: ${depth}` : 'Своя точка',
-      exposure: 'open',
-      roadNote: depth ? `Отметка эхолота: ${depth}` : 'Пользовательская точка на карте.',
-      lat,
-      lon
-    };
-
-    customSpots.push(spot);
-    localStorage.setItem('mari_el_waypoints_v2', JSON.stringify(customSpots));
-    document.getElementById('custom-name').value = '';
-    document.getElementById('custom-depth').value = '';
-
-    renderSavedSpots();
-    rebuildMarkers();
-    selectSpot(spot.id);
-  }
-
-  function removeCustomSpot(idx) {
-    const removed = customSpots.splice(idx, 1)[0];
-    localStorage.setItem('mari_el_waypoints_v2', JSON.stringify(customSpots));
-    if (activeSpot.id === removed.id) activeSpot = { ...BASE_SPOTS[0] };
-    renderSavedSpots();
-    rebuildMarkers();
-    renderAll();
-  }
-
-  function rebuildMarkers() {
-    if (!yandexMap) return;
-    yandexMap.geoObjects.removeAll();
-    getAllSpots().forEach(s => {
-      const isCustom = s.id.startsWith('wp_');
-      const mark = new ymaps.Placemark(
-        [s.lat, s.lon],
-        {
-          balloonContentHeader: `<strong>${s.name}</strong>`,
-          balloonContentBody: `${s.type}<br><small>${s.roadNote || ''}</small>`,
-          hintContent: s.name
-        },
-        { preset: isCustom ? 'islands#amberDotIcon' : 'islands#blueWaterIcon' }
-      );
-      mark.events.add('click', () => selectSpot(s.id));
-      yandexMap.geoObjects.add(mark);
+  function switchMapMode(mode) {
+    ['yandex', 'radar', 'wind'].forEach(m => {
+      document.getElementById(`tab-${m}`).classList.toggle('active', m === mode);
     });
+    const yDiv = document.getElementById('yandex-map');
+    const wFrame = document.getElementById('windy-iframe');
+
+    if (mode === 'yandex') {
+      yDiv.style.display = 'block';
+      wFrame.style.display = 'none';
+    } else {
+      yDiv.style.display = 'none';
+      wFrame.style.display = 'block';
+      const overlay = mode === 'radar' ? 'radar' : 'wind';
+      wFrame.src = `https://embed.windy.com/embed2.html?lat=${activeSpot.lat}&lon=${activeSpot.lon}&detailLat=${activeSpot.lat}&detailLon=${activeSpot.lon}&width=650&height=430&zoom=10&level=surface&overlay=${overlay}&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=&metricWind=m%2Fs&metricTemp=%C2%B0C`;
+    }
   }
 
-  function initMap() {
+  function addMarkerToYandex(sp) {
+    if (!yandexMap || typeof ymaps === 'undefined') return;
+    const pm = new ymaps.Placemark([sp.lat, sp.lon], {
+      balloonContentHeader: sp.name,
+      balloonContentBody: sp.type
+    }, { preset: 'islands#blueFishingIcon' });
+    pm.events.add('click', () => selectSpotById(sp.id));
+    yandexMap.geoObjects.add(pm);
+  }
+
+  function initYandexMap() {
     if (typeof ymaps === 'undefined') return;
     ymaps.ready(() => {
       yandexMap = new ymaps.Map('yandex-map', {
-        center: [56.345, 46.52],
-        zoom: 11,
+        center: [56.323525, 46.593755],
+        zoom: 12,
         type: 'yandex#hybrid',
-        controls: ['zoomControl', 'typeSelector', 'fullscreenControl', 'rulerControl']
+        controls: ['zoomControl', 'typeSelector', 'rulerControl']
       });
-
-      rebuildMarkers();
+      getAllSpots().forEach(addMarkerToYandex);
 
       yandexMap.events.add('click', (e) => {
-        const [lat, lon] = e.get('coords');
-        document.getElementById('custom-coords').value = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-
+        const coords = e.get('coords');
+        document.getElementById('custom-coords').value = `${coords[0].toFixed(5)}, ${coords[1].toFixed(5)}`;
         if (tempMarker) yandexMap.geoObjects.remove(tempMarker);
-        tempMarker = new ymaps.Placemark(
-          [lat, lon],
-          { hintContent: 'Точка по клику' },
-          { preset: 'islands#redCircleDotIcon' }
-        );
+        tempMarker = new ymaps.Placemark(coords, {}, { preset: 'islands#redDotIcon' });
         yandexMap.geoObjects.add(tempMarker);
 
         activeSpot = {
-          id: 'clicked_point',
-          name: 'Точка на воде',
-          type: `${lat.toFixed(4)}, ${lon.toFixed(4)}`,
+          id: 'temp_click',
+          name: `Точка (${coords[0].toFixed(3)}, ${coords[1].toFixed(3)})`,
+          type: 'Выбранная точка на карте',
           exposure: 'open',
-          roadNote: 'Произвольная точка по клику на спутниковой карте.',
-          lat,
-          lon
+          flow: 'medium-high',
+          lat: coords[0],
+          lon: coords[1],
+          roadNote: 'Временная точка клика — нажмите «Сохранить», чтобы закрепить.'
         };
         renderAll();
       });
     });
   }
 
-  function forceRefresh() {
-    weatherCache = {};
-    ecmwfCache = {};
-    checkRainViewerRadar();
-    renderAll();
+  function initExternalLinks() {
+    const links = [
+      { name: 'Яндекс.Погода (Козьмодемьянск)', url: 'https://yandex.ru/pogoda/kozmodemyansk' },
+      { name: 'Карта осадков Яндекс', url: 'https://yandex.ru/pogoda/kozmodemyansk/maps/nowcast' },
+      { name: 'Windguru (Волга / Чебоксарское)', url: 'https://www.windguru.cz/502234' },
+      { name: 'RP5 Козьмодемьянск', url: 'https://rp5.ru/Погода_в_Козьмодемьянске' }
+    ];
+    document.getElementById('external-links').innerHTML = links.map(l =>
+      `<a class="btn-outline" href="${l.url}" target="_blank" rel="noopener">${l.name} ↗</a>`
+    ).join('');
   }
 
-  renderTopControls();
-  renderSavedSpots();
-  checkRainViewerRadar();
+  initExternalLinks();
+  initYandexMap();
   renderAll();
-  initMap();
 </script>
 </body>
 </html>
