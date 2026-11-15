@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Рыбалка в Марий Эл — Карта и прогноз клёва</title>
-  <!-- Замените YOUR_MAPS_KEY на ваш ключ API Яндекс.Карт с ограничением по домену GitHub Pages -->
-  <script src="https://api-maps.yandex.ru/2.1/?apikey=YOUR_MAPS_KEY&lang=ru_RU"></script>
+  <script src="https://api-maps.yandex.ru/2.1/?apikey=42977bb2-731e-4eb1-8131-5ca94473b359&lang=ru_RU"></script>
   <style>
     :root {
       --bg-color: #f4f7f9;
@@ -180,21 +179,16 @@
 
   <header>
     <h1>Рыбалка в Марий Эл</h1>
-    <p>Популярные точки на Волге и прогноз клёва по метеоданным</p>
+    <p>Популярные точки на Волге и прогноз клёва по метеоданным и Actigator</p>
   </header>
 
   <main class="container">
-    <!-- Контейнер карты -->
     <div class="map-wrapper">
       <div id="map" style="width:100%; height:500px"></div>
     </div>
 
-    <!-- Карточки локаций -->
-    <section class="cards-grid" id="cards-container">
-      <!-- Карточки генерируются через JS -->
-    </section>
+    <section class="cards-grid" id="cards-container"></section>
 
-    <!-- Блок правил рыболовства -->
     <section class="rules-block">
       <h2>Правила рыболовства</h2>
       <ul>
@@ -206,32 +200,29 @@
   </main>
 
   <footer>
-    Оценка клёва — автоматическая эвристика по погоде. Точный прогноз — в FishGO или nalovlu.ru. Источники: Приказ Минсельхоза № 695.
+    Оценка клёва — автоматическая эвристика по погоде и Actigator API. Точный прогноз — в FishGO или nalovlu.ru. Источники: Приказ Минсельхоза № 695.
   </footer>
 
   <script>
-    // Замените 'YOUR_VERCEL_URL' на URL вашего проекта на Vercel (например, 'https://fishing-mari-el.vercel.app')
-    // Если фронтенд и бэкенд размещены на одном домене Vercel, оставьте пустую строку ''
-    const API_BASE_URL = 'YOUR_VERCEL_URL';
+    const API_BASE_URL = 'https://fishing-mari-el.vercel.app';
 
     const SPOTS = [
       { id: 'mumariha', name: 'Мумариха', lat: 56.311946, lon: 46.496244 },
-      { id: 'enikeevo', name: 'Еникеево', lat: 56.15, lon: 46.60 },
+      { id: 'enikeevo', name: 'Еникеево', lat: 56.397161, lon: 46.435139 },
       { id: 'kozmodemyansk', name: 'Козьмодемьянск', lat: 56.33, lon: 46.56 }
     ];
 
-    // Инициализация Яндекс.Карт
     if (typeof ymaps !== 'undefined') {
       ymaps.ready(initMap);
     } else {
       document.getElementById('map').innerHTML =
-        '<div class="error-msg" style="padding-top: 220px;">Не удалось загрузить Яндекс.Карты. Проверьте API-ключ.</div>';
+        '<div class="error-msg" style="padding-top: 220px;">Не удалось загрузить Яндекс.Карты. Проверьте привязку домена в кабинете Яндекса.</div>';
     }
 
     function initMap() {
       const map = new ymaps.Map('map', {
-        center: [56.26, 46.55],
-        zoom: 10,
+        center: [56.35, 46.50],
+        zoom: 11,
         controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
       });
 
@@ -251,42 +242,56 @@
       });
     }
 
-    // Расчёт оценки клёва по давлению и ветру
-    function calculateBiteRating(fact, info) {
+    function calculateBiteRating(fact, info, actigator) {
+      // Если Actigator вернул F.Индекс (0..100), переводим его в 1..5 рыбок
+      if (actigator && actigator.f_index != null) {
+        const idx = actigator.f_index;
+        let count = 3;
+        if (idx >= 80) count = 5;
+        else if (idx >= 65) count = 4;
+        else if (idx >= 45) count = 3;
+        else if (idx >= 25) count = 2;
+        else count = 1;
+
+        return {
+          text: `${'🐟'.repeat(count)} (${count}/5) • F.Индекс: ${idx}/100`
+        };
+      }
+
+      // Резервный расчёт по давлению и ветру
       const pressure = fact?.pressure_mm;
-      const normalPressure = info?.def_pressure_mm;
+      const normalPressure = info?.def_pressure_mm ?? 752;
       const windSpeed = fact?.wind_speed;
 
-      if (pressure == null || normalPressure == null || windSpeed == null) {
-        return { count: 3, text: '🐟🐟🐟 (3/5)' };
+      if (pressure == null || windSpeed == null) {
+        return { text: '🐟🐟🐟 (3/5)' };
       }
 
       const pressureDiff = Math.abs(pressure - normalPressure);
 
       if (pressureDiff < 3 && windSpeed < 6) {
         const count = (pressureDiff < 1.5 && windSpeed < 3.5) ? 5 : 4;
-        return { count, text: `${'🐟'.repeat(count)} (${count}/5)` };
+        return { text: `${'🐟'.repeat(count)} (${count}/5)` };
       }
 
       if (pressureDiff > 7 || windSpeed > 10) {
         const count = (pressureDiff > 11 || windSpeed > 14) ? 1 : 2;
-        return { count, text: `${'🐟'.repeat(count)} (${count}/5)` };
+        return { text: `${'🐟'.repeat(count)} (${count}/5)` };
       }
 
-      return { count: 3, text: '🐟🐟🐟 (3/5)' };
+      return { text: '🐟🐟🐟 (3/5)' };
     }
 
-    // Рендеринг карточки
     function renderCardSkeleton(spot) {
       return `
         <article class="card" id="card-${spot.id}">
           <div>
             <div class="card-header">
               <h3 class="card-title">${spot.name}</h3>
-              <span class="card-coords">${spot.lat.toFixed(2)}, ${spot.lon.toFixed(2)}</span>
+              <span class="card-coords">${spot.lat.toFixed(4)}, ${spot.lon.toFixed(4)}</span>
             </div>
             <div class="card-body">
-              <p style="color: var(--text-muted); font-size: 0.9rem;">Загрузка погоды...</p>
+              <p style="color: var(--text-muted); font-size: 0.9rem;">Загрузка данных...</p>
             </div>
           </div>
           <div class="bite-box">
@@ -304,18 +309,17 @@
 
       const fact = data?.fact;
       const info = data?.info;
+      const actigator = data?.actigator;
 
-      if (!fact) {
+      if (!fact && !actigator) {
         showCardError(spot);
         return;
       }
 
-      const temp = fact.temp !== undefined ? `${fact.temp > 0 ? '+' : ''}${fact.temp} °C` : 'нет данных';
-      const pressure = fact.pressure_mm !== undefined ? `${fact.pressure_mm} мм рт. ст.` : 'нет данных';
-      const wind = fact.wind_speed !== undefined ? `${fact.wind_speed} м/с` : 'нет данных';
-      const waterTemp = (fact.temp_water !== undefined && fact.temp_water !== null)
-        ? `${fact.temp_water > 0 ? '+' : ''}${fact.temp_water} °C`
-        : 'нет данных';
+      const temp = fact?.temp != null ? `${fact.temp > 0 ? '+' : ''}${Math.round(fact.temp)} °C` : 'нет данных';
+      const pressure = fact?.pressure_mm != null ? `${fact.pressure_mm} мм рт. ст.` : 'нет данных';
+      const wind = fact?.wind_speed != null ? `${fact.wind_speed} м/с` : 'нет данных';
+      const waterTemp = fact?.temp_water != null ? `${fact.temp_water > 0 ? '+' : ''}${fact.temp_water} °C` : 'нет данных';
 
       body.innerHTML = `
         <div class="weather-row">
@@ -336,7 +340,7 @@
         </div>
       `;
 
-      const bite = calculateBiteRating(fact, info);
+      const bite = calculateBiteRating(fact, info, actigator);
       biteEl.textContent = `Клёв: ${bite.text}`;
     }
 
@@ -349,26 +353,18 @@
       biteEl.textContent = 'Клёв: нет данных';
     }
 
-    // Загрузка данных для всех точек
     async function loadWeatherForAllSpots() {
       const container = document.getElementById('cards-container');
       container.innerHTML = SPOTS.map(renderCardSkeleton).join('');
 
-      const baseUrl = API_BASE_URL === 'YOUR_VERCEL_URL' ? '' : API_BASE_URL.replace(/\/$/, '');
-
       await Promise.all(SPOTS.map(async (spot) => {
         try {
-          if (API_BASE_URL === 'YOUR_VERCEL_URL') {
-            throw new Error('API_BASE_URL is not configured');
-          }
-          const response = await fetch(`${baseUrl}/api/weather?lat=${spot.lat}&lon=${spot.lon}`);
-          if (!response.ok) {
-            throw new Error(`HTTP error ${response.status}`);
-          }
+          const response = await fetch(`${API_BASE_URL}/api/weather?lat=${spot.lat}&lon=${spot.lon}`);
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
           const data = await response.json();
           updateCardWithData(spot, data);
         } catch (err) {
-          console.error(`Ошибка загрузки погоды для ${spot.name}:`, err);
+          console.error(`Ошибка для ${spot.name}:`, err);
           showCardError(spot);
         }
       }));
