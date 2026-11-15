@@ -1,1 +1,379 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Рыбалка в Марий Эл — Карта и прогноз клёва</title>
+  <script src="https://api-maps.yandex.ru/2.1/?apikey=42977bb2-731e-4eb1-8131-5ca94473b359&lang=ru_RU"></script>
+  <style>
+    :root {
+      --bg-color: #f4f7f9;
+      --card-bg: #ffffff;
+      --primary: #1b4965;
+      --accent: #2d6a4f;
+      --text-main: #1d2d35;
+      --text-muted: #6c757d;
+      --border: #dee2e6;
+      --danger: #d9534f;
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    header {
+      background-color: var(--primary);
+      color: #ffffff;
+      padding: 1.5rem 1rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      margin-bottom: 0.25rem;
+    }
+
+    header p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+    }
+
+    .map-wrapper {
+      background: var(--card-bg);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      margin-bottom: 2rem;
+      border: 1px solid var(--border);
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 1.25rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .card-coords {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .weather-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .weather-label {
+      color: var(--text-muted);
+    }
+
+    .weather-value {
+      font-weight: 600;
+    }
+
+    .bite-box {
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px dashed var(--border);
+    }
+
+    .bite-score {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .bite-disclaimer {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    .error-msg {
+      color: var(--danger);
+      font-weight: 600;
+      padding: 1rem 0;
+      text-align: center;
+    }
+
+    .rules-block {
+      background: var(--card-bg);
+      border-left: 4px solid var(--primary);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
+
+    .rules-block h2 {
+      font-size: 1.2rem;
+      color: var(--primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .rules-block ul {
+      padding-left: 1.25rem;
+    }
+
+    .rules-block li {
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem 1rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      background-color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Рыбалка в Марий Эл</h1>
+    <p>Популярные точки на Волге и прогноз клёва по метеоданным</p>
+  </header>
+
+  <main class="container">
+    <!-- Контейнер карты -->
+    <div class="map-wrapper">
+      <div id="map" style="width:100%; height:500px"></div>
+    </div>
+
+    <!-- Карточки локаций -->
+    <section class="cards-grid" id="cards-container">
+      <!-- Карточки генерируются через JS -->
+    </section>
+
+    <!-- Блок правил рыболовства -->
+    <section class="rules-block">
+      <h2>Правила рыболовства</h2>
+      <ul>
+        <li><strong>Чебоксарское водохранилище:</strong> нерестовый запрет с <strong>10 апреля по 10 июня</strong> (разрешена только одна поплавочная или донная удочка с берега вне мест нереста, общее количество крючков — не более 2 штук).</li>
+        <li><strong>Куйбышевское водохранилище:</strong> нерестовый запрет с <strong>25 апреля по 5 июня</strong>.</li>
+        <li><strong>Налим:</strong> запрет на вылов с <strong>15 декабря по 31 января</strong>.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    Оценка клёва — автоматическая эвристика по погоде. Точный прогноз — в FishGO или nalovlu.ru. Источники: Приказ Минсельхоза № 695.
+  </footer>
+
+  <script>
+    // Замените 'YOUR_VERCEL_URL' на URL вашего проекта на Vercel (например, 'https://fishing-mari-el.vercel.app')
+    // Если фронтенд и бэкенд размещены на одном домене Vercel, оставьте пустую строку ''
+    const API_BASE_URL = 'YOUR_VERCEL_URL';
+
+    const SPOTS = [
+      { id: 'mumariha', name: 'Мумариха', lat: 56.311946, lon: 46.496244 },
+      { id: 'enikeevo', name: 'Еникеево', lat: 56.397161, lon: 46.435139 },
+      { id: 'kozmodemyansk', name: 'Козьмодемьянск', lat: 56.33, lon: 46.56 }
+    ];
+
+    // Инициализация Яндекс.Карт
+    if (typeof ymaps !== 'undefined') {
+      ymaps.ready(initMap);
+    } else {
+      document.getElementById('map').innerHTML =
+        '<div class="error-msg" style="padding-top: 220px;">Не удалось загрузить Яндекс.Карты. Проверьте API-ключ.</div>';
+    }
+
+    function initMap() {
+      const map = new ymaps.Map('map', {
+        center: [56.35, 46.50],
+        zoom: 11,
+        controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
+      });
+
+      SPOTS.forEach(spot => {
+        const placemark = new ymaps.Placemark(
+          [spot.lat, spot.lon],
+          {
+            balloonContentHeader: `<strong>${spot.name}</strong>`,
+            balloonContentBody: `Координаты: ${spot.lat}, ${spot.lon}`,
+            hintContent: spot.name
+          },
+          {
+            preset: 'islands#blueWaterIcon'
+          }
+        );
+        map.geoObjects.add(placemark);
+      });
+    }
+
+    // Расчёт оценки клёва по давлению и ветру
+    function calculateBiteRating(fact, info) {
+      const pressure = fact?.pressure_mm;
+      const normalPressure = info?.def_pressure_mm;
+      const windSpeed = fact?.wind_speed;
+
+      if (pressure == null || normalPressure == null || windSpeed == null) {
+        return { count: 3, text: '🐟🐟🐟 (3/5)' };
+      }
+
+      const pressureDiff = Math.abs(pressure - normalPressure);
+
+      if (pressureDiff < 3 && windSpeed < 6) {
+        const count = (pressureDiff < 1.5 && windSpeed < 3.5) ? 5 : 4;
+        return { count, text: `${'🐟'.repeat(count)} (${count}/5)` };
+      }
+
+      if (pressureDiff > 7 || windSpeed > 10) {
+        const count = (pressureDiff > 11 || windSpeed > 14) ? 1 : 2;
+        return { count, text: `${'🐟'.repeat(count)} (${count}/5)` };
+      }
+
+      return { count: 3, text: '🐟🐟🐟 (3/5)' };
+    }
+
+    // Рендеринг карточки
+    function renderCardSkeleton(spot) {
+      return `
+        <article class="card" id="card-${spot.id}">
+          <div>
+            <div class="card-header">
+              <h3 class="card-title">${spot.name}</h3>
+              <span class="card-coords">${spot.lat.toFixed(4)}, ${spot.lon.toFixed(4)}</span>
+            </div>
+            <div class="card-body">
+              <p style="color: var(--text-muted); font-size: 0.9rem;">Загрузка погоды...</p>
+            </div>
+          </div>
+          <div class="bite-box">
+            <div class="bite-score" id="bite-${spot.id}">Оценка клёва: —</div>
+            <div class="bite-disclaimer">Автоматическая оценка по погоде. Не гарантия улова.</div>
+          </div>
+        </article>
+      `;
+    }
+
+    function updateCardWithData(spot, data) {
+      const card = document.getElementById(`card-${spot.id}`);
+      const body = card.querySelector('.card-body');
+      const biteEl = document.getElementById(`bite-${spot.id}`);
+
+      const fact = data?.fact;
+      const info = data?.info;
+
+      if (!fact) {
+        showCardError(spot);
+        return;
+      }
+
+      const temp = fact.temp !== undefined ? `${fact.temp > 0 ? '+' : ''}${fact.temp} °C` : 'нет данных';
+      const pressure = fact.pressure_mm !== undefined ? `${fact.pressure_mm} мм рт. ст.` : 'нет данных';
+      const wind = fact.wind_speed !== undefined ? `${fact.wind_speed} м/с` : 'нет данных';
+      const waterTemp = (fact.temp_water !== undefined && fact.temp_water !== null)
+        ? `${fact.temp_water > 0 ? '+' : ''}${fact.temp_water} °C`
+        : 'нет данных';
+
+      body.innerHTML = `
+        <div class="weather-row">
+          <span class="weather-label">Температура воздуха:</span>
+          <span class="weather-value">${temp}</span>
+        </div>
+        <div class="weather-row">
+          <span class="weather-label">Давление:</span>
+          <span class="weather-value">${pressure}</span>
+        </div>
+        <div class="weather-row">
+          <span class="weather-label">Ветер:</span>
+          <span class="weather-value">${wind}</span>
+        </div>
+        <div class="weather-row">
+          <span class="weather-label">Температура воды:</span>
+          <span class="weather-value">${waterTemp}</span>
+        </div>
+      `;
+
+      const bite = calculateBiteRating(fact, info);
+      biteEl.textContent = `Клёв: ${bite.text}`;
+    }
+
+    function showCardError(spot) {
+      const card = document.getElementById(`card-${spot.id}`);
+      const body = card.querySelector('.card-body');
+      const biteEl = document.getElementById(`bite-${spot.id}`);
+
+      body.innerHTML = `<div class="error-msg">Данные недоступны</div>`;
+      biteEl.textContent = 'Клёв: нет данных';
+    }
+
+    // Загрузка данных для всех точек
+    async function loadWeatherForAllSpots() {
+      const container = document.getElementById('cards-container');
+      container.innerHTML = SPOTS.map(renderCardSkeleton).join('');
+
+      const baseUrl = API_BASE_URL === 'YOUR_VERCEL_URL' ? '' : API_BASE_URL.replace(/\/$/, '');
+
+      await Promise.all(SPOTS.map(async (spot) => {
+        try {
+          if (API_BASE_URL === 'YOUR_VERCEL_URL') {
+            throw new Error('API_BASE_URL is not configured');
+          }
+          const response = await fetch(`${baseUrl}/api/weather?lat=${spot.lat}&lon=${spot.lon}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error ${response.status}`);
+          }
+          const data = await response.json();
+          updateCardWithData(spot, data);
+        } catch (err) {
+          console.error(`Ошибка загрузки погоды для ${spot.name}:`, err);
+          showCardError(spot);
+        }
+      }));
+    }
+
+    loadWeatherForAllSpots();
+  </script>
+</body>
+</html>
