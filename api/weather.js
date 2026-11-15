@@ -18,10 +18,12 @@ export default async function handler(req, res) {
   }
 
   try {
+    // 1. Правильный адрес Actigator API (/v1/forecast и параметр lng)
     const actigatorUrl = `https://api.actigator.com/v1/forecast?api_key=${encodeURIComponent(key)}&fish_id=14&lat=${lat}&lng=${lon}&lang=ru`;
     const actRes = await fetch(actigatorUrl);
     const actData = actRes.ok ? await actRes.json() : null;
 
+    // 2. Текущая погода (температура, давление, ветер)
     const meteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,surface_pressure,wind_speed_10m&wind_speed_unit=ms`;
     const meteoRes = await fetch(meteoUrl);
     const meteoData = meteoRes.ok ? await meteoRes.json() : null;
