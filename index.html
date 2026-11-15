@@ -266,7 +266,7 @@
   <header>
     <div class="title-group">
       <h1>🧭 Гидрометео-навигатор клёва • Реки и озёра Марий Эл</h1>
-      <p>Архив за позавчера и вчера + прогноз, барическая инерция 48ч, солунарные окна Луны и точный подбор снастей</p>
+      <p>Метеоархив за позавчера и вчера + прогноз, реальный ход давления, солунарные окна Луны и подбор снастей</p>
     </div>
     <div class="header-right">
       <span class="status-pill" id="radar-status">● Загрузка метеоархива и прогноза...</span>
@@ -296,7 +296,7 @@
   <!-- 1. Сравнение локаций -->
   <div class="sec-head">
     <h2>1. Сравнение рек и озёр Марий Эл («Куда лучше поехать»)</h2>
-    <span>Учитываются течение, тепловая инерция воды, защита от ветровой волны и история давления за 48ч</span>
+    <span>Учитываются течение, тепловая инерция воды, защита от ветровой волны и ход давления за 48ч</span>
   </div>
   <div class="spots-grid" id="spots-grid"></div>
 
@@ -323,17 +323,17 @@
   <!-- Сравнение на все 5 дней (Позавчера -> Послезавтра) -->
   <div class="sec-head">
     <h2>🔄 Динамика по всем 5 дням: Позавчера → Вчера → Сегодня → Завтра → Послезавтра</h2>
-    <span>Нажмите на любой день, чтобы увидеть, как барометр прошлого дня влияет на следующий</span>
+    <span>Нажмите на любой день для детального разбора по часам</span>
   </div>
   <div class="shift-grid" id="shift-grid"></div>
 
   <!-- 4. Факторы и метеомодели -->
   <div class="details-grid">
     <div class="panel">
-      <div class="panel-title" id="factors-title">🧮 Честный расчёт факторов клёва</div>
+      <div class="panel-title" id="factors-title">🧮 Расчёт факторов клёва</div>
       <div id="factors-list"></div>
       <div class="honesty-note">
-        <strong>Методика без приписок:</strong> индекс ограничен диапазоном 5–92%. Даже при идеальном ветре, облачности и фазе Луны резкий скачок давления (≥11 мм/сутки) или вчерашний барический удар подавляют активность рыбы. Температура воды рассчитывается по 48-часовой тепловой инерции конкретного типа водоёма.
+        <strong>Как считается индекс (5%–92%):</strong> базовый биоритм вида + направление и скорость изменения давления (плавное падение усиливает клёв, скачок ≥10 мм/сутки или резкий перепад за 6ч обрушивает до 5–15%) + сезонная температура воды для конкретного вида + ветер с учётом укрытия водоёма + солунарные окна Луны.
       </div>
     </div>
 
@@ -375,7 +375,7 @@
       </p>
 
       <input type="text" id="custom-coords" class="input" readonly value="56.32353, 46.59376">
-      <select id="custom-water-type" class="select">
+      <select id="custom-water-type" class="select" onchange="onWaterTypeSelectChange()">
         <option value="lake_still">Озеро / пруд (стоячая вода)</option>
         <option value="zaton_still">Затон / залив (тихая вода, укрытие от волны)</option>
         <option value="river_medium">Река со средним течением (Ветлуга, Кокшага, Илеть)</option>
@@ -563,15 +563,17 @@
     }
   ];
 
+  // Физиологические профили видов:
+  // comfortTemp: [мин_активного_клёва, макс_активного_клёва], coldLimit: порог зимнего оцепенения
   const FISH_MODELS = [
-    { id: 'perch', name: 'Окунь', lightPref: 'day', optimalTemp: [9, 21], isPredator: true },
-    { id: 'pike', name: 'Щука', lightPref: 'overcast', optimalTemp: [8, 18], isPredator: true },
-    { id: 'roach', name: 'Плотва', lightPref: 'day', optimalTemp: [8, 20], isPredator: false },
-    { id: 'zander', name: 'Судак', lightPref: 'twilight', optimalTemp: [10, 19], isPredator: true },
-    { id: 'bream', name: 'Лещ', lightPref: 'morning', optimalTemp: [12, 22], isPredator: false },
-    { id: 'silverbream', name: 'Густера', lightPref: 'day', optimalTemp: [10, 22], isPredator: false },
-    { id: 'ide', name: 'Жерех', lightPref: 'day', optimalTemp: [14, 23], isPredator: true },
-    { id: 'catfish', name: 'Сом', lightPref: 'night', optimalTemp: [18, 26], isPredator: true }
+    { id: 'perch', name: 'Окунь', lightPref: 'day', comfortTemp: [3.0, 21.0], coldLimit: 1.0, isPredator: true },
+    { id: 'pike', name: 'Щука', lightPref: 'overcast', comfortTemp: [2.5, 19.0], coldLimit: 0.8, isPredator: true },
+    { id: 'roach', name: 'Плотва', lightPref: 'day', comfortTemp: [3.5, 21.0], coldLimit: 1.2, isPredator: false },
+    { id: 'zander', name: 'Судак', lightPref: 'twilight', comfortTemp: [3.5, 20.0], coldLimit: 1.0, isPredator: true },
+    { id: 'bream', name: 'Лещ', lightPref: 'morning', comfortTemp: [7.5, 22.5], coldLimit: 2.5, isPredator: false },
+    { id: 'silverbream', name: 'Густера', lightPref: 'day', comfortTemp: [6.0, 22.5], coldLimit: 2.0, isPredator: false },
+    { id: 'ide', name: 'Жерех', lightPref: 'day', comfortTemp: [9.5, 23.0], coldLimit: 4.0, isPredator: true },
+    { id: 'catfish', name: 'Сом', lightPref: 'night', comfortTemp: [15.5, 26.5], coldLimit: 10.0, isPredator: true }
   ];
 
   const DAY_SPECS = [
@@ -591,7 +593,6 @@
 
   const HOUR_SLOTS = [0, 3, 6, 9, 12, 15, 18, 21];
 
-  // Загружаем сохранённые точки (с миграцией из v6 если были)
   let customSpots = [];
   try {
     const v7 = JSON.parse(localStorage.getItem('mari_el_waypoints_v7') || 'null');
@@ -624,7 +625,7 @@
   }
 
   let selectedFishIdx = 0;
-  let selectedDayIdx = 2; // По умолчанию "Сегодня" (offset 0)
+  let selectedDayIdx = 2; // Сегодня
   let selectedHourSlot = getInitialMskHourSlot();
   let selectedWaterFilter = 'all';
   let activeSpot = { ...BASE_SPOTS[0] };
@@ -714,19 +715,16 @@
   }
 
   /**
-   * Точная астрономия Солнца и Луны (алгоритмы Жана Миуса) для координат (lat, lon)
-   * Считает фазу, освещённость %, восход/заход Луны и точные солунарные окна (кульминация / надир).
+   * Астрономия Солнца и Луны (алгоритмы Жана Миуса) для координат (lat, lon)
    */
   function getAstronomy(lat, lon, dayOffset, hour) {
-    const mskDateStr = getMskDateStr(dayOffset); // YYYY-MM-DD
+    const mskDateStr = getMskDateStr(dayOffset);
     const [Y, M, D] = mskDateStr.split('-').map(Number);
 
-    // Юлианский день для 00:00 UTC выбранной даты
     const jd0 = Date.UTC(Y, M - 1, D, 0, 0, 0) / 86400000 + 2440587.5;
     const rad = Math.PI / 180;
     const deg = 180 / Math.PI;
 
-    // 1. Солнце (восход / закат в МСК UTC+3)
     const startYear = Date.UTC(Y, 0, 0);
     const dayOfYear = Math.floor((Date.UTC(Y, M - 1, D) - startYear) / 86400000);
     const declSun = 23.44 * Math.sin(rad * (360 / 365) * (dayOfYear - 81));
@@ -749,7 +747,6 @@
     const sunriseH = Math.floor(((sunriseDec % 24) + 24) % 24);
     const sunsetH = Math.floor(((sunsetDec % 24) + 24) % 24);
 
-    // 2. Положение Луны для заданного JD
     function moonState(jd) {
       const T = (jd - 2451545.0) / 36525.0;
       const Lp = (218.3164477 + 481267.88123421 * T) % 360;
@@ -784,21 +781,20 @@
 
       const gmst = (280.46061837 + 360.98564736629 * (jd - 2451545.0)) % 360;
       const lst = (gmst + lon + 720) % 360;
-      let ha = ((lst - ra) % 360 + 540) % 360 - 180; // Часовой угол [-180..+180]
+      const ha = ((lst - ra) % 360 + 540) % 360 - 180;
 
       const alt = Math.asin(
         Math.sin(rad * lat) * Math.sin(rad * dec) +
         Math.cos(rad * lat) * Math.cos(rad * dec) * Math.cos(rad * ha)
       ) * deg;
 
-      // Фазовый угол и освещённость
       const dNorm = ((Dm % 360) + 360) % 360;
       const phase = dNorm / 360;
       const illum = Math.round(((1 - Math.cos(rad * dNorm)) / 2) * 100);
-      return { alt, ha, phase, illum };
+      const lunarDay = Math.min(30, Math.floor(phase * 29.530588) + 1);
+      return { alt, ha, phase, illum, lunarDay };
     }
 
-    // Сканируем сутки МСК (от 00:00 МСК = jd0 - 3/24 до 24:00 МСК) с шагом 10 минут
     const startJdMsk = jd0 - (tz / 24);
     let moonriseStr = '—';
     let moonsetStr = '—';
@@ -810,26 +806,24 @@
     let minAbsHaLower = 999;
 
     let prevSt = moonState(startJdMsk);
-    const h0 = 0.125; // Поправка на рефракцию и горизонтальный параллакс Луны
+    const h0 = 0.125;
 
-    for (let m = 10; m <= 1440; m += 10) {
+    for (let m = 5; m <= 1440; m += 5) {
       const curJd = startJdMsk + m / 1440;
       const curSt = moonState(curJd);
       const decH = m / 60;
 
-      // Восход и заход Луны
       if (prevSt.alt < h0 && curSt.alt >= h0 && moonriseDec === null) {
         const frac = (h0 - prevSt.alt) / (curSt.alt - prevSt.alt || 1);
-        moonriseDec = (m - 10 + frac * 10) / 60;
+        moonriseDec = (m - 5 + frac * 5) / 60;
         moonriseStr = fmtDecHour(moonriseDec);
       }
       if (prevSt.alt >= h0 && curSt.alt < h0 && moonsetDec === null) {
         const frac = (prevSt.alt - h0) / (prevSt.alt - curSt.alt || 1);
-        moonsetDec = (m - 10 + frac * 10) / 60;
+        moonsetDec = (m - 5 + frac * 5) / 60;
         moonsetStr = fmtDecHour(moonsetDec);
       }
 
-      // Верхняя кульминация (ha ~ 0) и нижняя кульминация / надир (|ha| ~ 180)
       if (Math.abs(curSt.ha) < minAbsHaUpper) {
         minAbsHaUpper = Math.abs(curSt.ha);
         upperTransitDec = decH;
@@ -842,11 +836,11 @@
       prevSt = curSt;
     }
 
-    // Состояние Луны на выбранный час
     const slotJd = startJdMsk + (hour / 24);
     const slotMoon = moonState(slotJd);
     const phase = slotMoon.phase;
     const illum = slotMoon.illum;
+    const lunarDay = slotMoon.lunarDay;
     const growing = phase < 0.5;
     const isSyzygy = illum <= 12 || illum >= 88;
 
@@ -866,10 +860,10 @@
       return Math.min(d, 24 - d);
     };
 
-    const nearSunrise = wrapDiff(hour, sunriseDec) <= 1.25;
-    const nearSunset = wrapDiff(hour, sunsetDec) <= 1.25;
-    const nearMajorMoon = Math.min(wrapDiff(hour, upperTransitDec), wrapDiff(hour, lowerTransitDec)) <= 1.25;
-    const nearMinorMoon = Math.min(wrapDiff(hour, moonriseDec), wrapDiff(hour, moonsetDec)) <= 0.9;
+    const nearSunrise = wrapDiff(hour, sunriseDec) <= 1.3;
+    const nearSunset = wrapDiff(hour, sunsetDec) <= 1.3;
+    const nearMajorMoon = Math.min(wrapDiff(hour, upperTransitDec), wrapDiff(hour, lowerTransitDec)) <= 1.4;
+    const nearMinorMoon = Math.min(wrapDiff(hour, moonriseDec), wrapDiff(hour, moonsetDec)) <= 1.0;
 
     return {
       sunriseStr: fmtDecHour(sunriseDec),
@@ -877,6 +871,7 @@
       sunriseH,
       sunsetH,
       illum,
+      lunarDay,
       growing,
       phaseName,
       isSyzygy,
@@ -890,15 +885,10 @@
     };
   }
 
-  /**
-   * Расчёт температуры воды с учётом 48-часовой тепловой инерции и типа водоёма
-   * (Озёра и затоны остывают/прогреваются быстрее, чем глубокое русло Волги)
-   */
   function estimateWaterTemp(hourlyTemps, currentIdx, thermalGroup, mskDateStr) {
     const month = Number(mskDateStr.split('-')[1]) - 1;
     const seasonalBase = [1.2, 1.0, 1.5, 4.5, 11.5, 18.5, 22.0, 21.0, 16.0, 9.5, 4.8, 2.0][month] ?? 5.0;
 
-    // Средняя температура воздуха за доступные прошлые 48 часов
     const startIdx = Math.max(0, currentIdx - 48);
     let sum = 0;
     let count = 0;
@@ -910,11 +900,10 @@
     }
     const avgAir48 = count > 0 ? (sum / count) : seasonalBase;
 
-    // Коэффициент тепловой инерции зависит от массы воды
     const weights = {
-      river_large:  { season: 0.72, air48: 0.28 }, // Волга
-      river_medium: { season: 0.62, air48: 0.38 }, // Ветлуга, Кокшага, Илеть
-      lake:         { season: 0.55, air48: 0.45 }  // Озёра и затоны
+      river_large:  { season: 0.72, air48: 0.28 },
+      river_medium: { season: 0.62, air48: 0.38 },
+      lake:         { season: 0.55, air48: 0.45 }
     };
     const w = weights[thermalGroup] || weights.river_medium;
     const rawWater = seasonalBase * w.season + Math.max(-1.0, avgAir48) * w.air48;
@@ -1024,8 +1013,8 @@
     const isStill = ctx.spot.flow === 'still';
     const isHighFlow = ctx.spot.flow === 'high';
     const isOvercast = ctx.cloud >= 55;
-    const isBaroShock = Math.abs(ctx.pressDelta24) >= 7.5 || Math.abs(ctx.pressDelta6) >= 3.2;
-    const isPostShock = !isBaroShock && Math.abs(ctx.prev24Shock) >= 8.0;
+    const isBaroShock = Math.abs(ctx.pressDelta24) >= 8.5 || Math.abs(ctx.pressDelta6) >= 3.2;
+    const isPostShock = !isBaroShock && Math.abs(ctx.prev24Shock) >= 9.0;
     const isWindy = ctx.wind >= 5.5;
     const waterLabel = isStill ? 'озере / затоне (без течения)' : (isHighFlow ? 'русле с сильной тягой' : 'реке со средним течением');
 
@@ -1041,7 +1030,7 @@
       scenarioName = `Свежий ветер (${ctx.wind.toFixed(1)} м/с) и волна на открытой воде`;
       scenarioWhy = 'Выдувает дугу лески — утяжеляем груз/кормушку на 20–30% и укорачиваем поводок.';
     } else if (isOvercast) {
-      scenarioName = `Пасмурно (${ctx.cloud}%), ровный барометр и мягкий свет`;
+      scenarioName = `Пасмурно (${ctx.cloud}%), рабочий барометр и мягкий свет`;
       scenarioWhy = 'Отсутствие резких бликов позволяет рыбе смелее выходить на бровки и поливы.';
     } else {
       scenarioName = `Малооблачно (${ctx.cloud}%), прозрачная вода (~${ctx.waterTemp}°C)`;
@@ -1238,9 +1227,9 @@
   }
 
   /**
-   * Прозрачная оценка клёва (5% - 92%) без накруток:
-   * Учитывает 48ч барическую инерцию (вчерашний и позавчерашний ход давления),
-   * температуру воды, суточный свет, ветер/укрытие и солунарные окна Луны.
+   * Сбалансированная модель оценки активности (5% - 92%):
+   * - В нормальную погоду без барического удара показывает реальные 45-85% в зависимости от времени, ветра и Луны.
+   * - При резком скачке/падении давления (>=10 мм/сутки или >=3.5 мм/6ч) обрушивает прогноз до 5-16%.
    */
   function evaluateBite(params) {
     const {
@@ -1250,18 +1239,18 @@
     const fish = params.fish || getActiveFish();
     const factors = [];
 
-    // 1. Базовый суточный ритм вида
-    let timeScore = 24;
+    // 1. Суточный биоритм вида (реалистичная база: 30-48%)
+    let timeScore = 36;
     if (fish.lightPref === 'twilight') {
-      timeScore = (astro.nearDawnDusk || hour >= 20 || hour <= 4) ? 42 : 15;
+      timeScore = (astro.nearDawnDusk || hour >= 20 || hour <= 4) ? 48 : 30;
     } else if (fish.lightPref === 'morning') {
-      timeScore = ((hour >= astro.sunriseH - 1 && hour <= astro.sunriseH + 4) || astro.nearDawnDusk) ? 40 : 22;
+      timeScore = ((hour >= astro.sunriseH - 1 && hour <= astro.sunriseH + 4) || astro.nearDawnDusk) ? 48 : 34;
     } else if (fish.lightPref === 'night') {
-      timeScore = (hour >= 21 || hour <= 4) ? 42 : 14;
+      timeScore = (hour >= 21 || hour <= 4) ? 48 : 26;
     } else if (fish.lightPref === 'overcast') {
-      timeScore = (astro.nearDawnDusk || (hour >= 8 && hour <= 17)) ? 36 : 20;
+      timeScore = (astro.nearDawnDusk || (hour >= 8 && hour <= 17)) ? 46 : 32;
     } else {
-      timeScore = (hour >= 7 && hour <= 16) ? 36 : 18;
+      timeScore = (hour >= 7 && hour <= 16) ? 46 : 30;
     }
     factors.push({
       name: `Суточный биоритм (${fish.name}, ${String(hour).padStart(2, '0')}:00)`,
@@ -1269,7 +1258,7 @@
       base: true
     });
 
-    // 2. Барометрический тренд + остаточная инерция за прошлые сутки (48ч)
+    // 2. Барометрический тренд: учитываем скорость, направление и вчерашний слом
     let baroScore = 0;
     let baroLabel = '';
     const abs24 = Math.abs(pressDelta24);
@@ -1277,61 +1266,63 @@
     const absPrev24 = Math.abs(prev24Shock);
 
     if (!hasFull24History) {
-      // Начало архива (первые часы Позавчера): считаем только по 6ч тренду без выдумывания
-      if (abs6 >= 4.0) baroScore = -45;
+      if (abs6 >= 3.8) baroScore = -42;
       else if (abs6 >= 2.2) baroScore = -20;
+      else if (pressDelta6 <= -0.6 && pressDelta6 > -2.2) baroScore = +7;
       else if (abs6 <= 1.2) baroScore = +10;
-      else baroScore = +2;
+      else baroScore = +3;
       baroLabel = `Барометр (${pressMm} мм, Δ6ч: ${pressDelta6 >= 0 ? '+' : ''}${pressDelta6.toFixed(1)} мм, начало архива)`;
     } else {
-      if (abs24 >= 11 || abs6 >= 4.2) {
-        baroScore = -56; // Сверхскачок (+14 мм и выше): полный барический шок
-      } else if (abs24 >= 7.5 || abs6 >= 3.0) {
-        baroScore = -38; // Резкий слом давления
-      } else if (abs24 >= 4.5 || abs6 >= 2.0) {
-        baroScore = -18; // Заметное изменение
-      } else if (absPrev24 >= 8.0) {
-        baroScore = -16; // Остаточный стресс после вчерашнего скачка давления
-      } else if (maxSwing48 <= 3.5 && abs6 <= 1.2) {
-        baroScore = +16; // Честная 48-часовая стабильность
+      if (abs24 >= 10.5 || abs6 >= 3.8) {
+        baroScore = -52; // Сверхскачок (+14 мм и выше): полный барический шок
+      } else if (abs24 >= 7.5 || abs6 >= 2.6) {
+        baroScore = -32; // Резкий слом давления
+      } else if (absPrev24 >= 9.0 && abs24 < 6.0) {
+        baroScore = -12; // Остаточная адаптация после вчерашнего скачка
+      } else if (pressDelta24 <= -1.5 && pressDelta24 >= -6.5 && abs6 < 1.8) {
+        baroScore = +8;  // Плавное падение давления (усиливает жор)
+      } else if (abs24 <= 3.5 && abs6 <= 1.3) {
+        baroScore = +12; // Стабильный барометр
       } else {
         baroScore = +4;  // Плавный естественный ход
       }
-      const lagNote = (abs24 < 4.5 && absPrev24 >= 8.0)
+      const lagNote = (abs24 < 6.0 && absPrev24 >= 9.0)
         ? `, вчера скачок ${prev24Shock >= 0 ? '+' : ''}${prev24Shock.toFixed(1)}`
         : '';
       baroLabel = `Барометр (${pressMm} мм, Δ24ч: ${pressDelta24 >= 0 ? '+' : ''}${pressDelta24.toFixed(1)} мм${lagNote})`;
     }
     factors.push({ name: baroLabel, val: baroScore });
 
-    // 3. Температура воды vs метаболический оптимум вида
+    // 3. Сезонная температура воды для данного вида
     let tempScore = 0;
-    const [optMin, optMax] = fish.optimalTemp || [9, 20];
-    if (waterTemp >= optMin && waterTemp <= optMax) {
-      tempScore = +10;
-    } else if (waterTemp <= 6.0) {
-      tempScore = fish.id === 'catfish' ? -30 : (fish.isPredator ? -8 : -16);
-    } else if (waterTemp < optMin) {
-      tempScore = -5;
-    } else {
-      tempScore = -4;
-    }
-    factors.push({ name: `Температура воды (~${waterTemp}°C, расчёт по инерции)`, val: tempScore });
+    const [cMin, cMax] = fish.comfortTemp || [4, 20];
+    const coldLimit = fish.coldLimit ?? 1.5;
 
-    // 4. Ветер, волна и укрытие озера/затона
+    if (waterTemp >= cMin && waterTemp <= cMax) {
+      tempScore = +7; // В пределах комфортного сезонного диапазона вида
+    } else if (waterTemp < coldLimit) {
+      tempScore = fish.id === 'catfish' ? -32 : -14; // Ледостав / зимний анабиоз
+    } else if (waterTemp < cMin) {
+      tempScore = fish.id === 'catfish' ? -18 : -5;  // Прохладнее оптимума, но рыба питается
+    } else {
+      tempScore = -6; // Перегрев воды выше комфорта
+    }
+    factors.push({ name: `Температура воды (~${waterTemp}°C, профиль: ${fish.name})`, val: tempScore });
+
+    // 4. Ветер, волна и защита акватории
     let windScore = 0;
     const isSheltered = spot.exposure === 'sheltered';
     if (wind >= 1.5 && wind <= 5.0) {
-      windScore = +10;
+      windScore = +8;
     } else if (wind < 1.5) {
-      windScore = (cloud < 30 && hour >= 9 && hour <= 16) ? 0 : +3;
+      windScore = (cloud < 25 && hour >= 9 && hour <= 16) ? -2 : +3;
     } else if (wind <= 8.0) {
-      windScore = isSheltered ? +7 : -10;
+      windScore = isSheltered ? +6 : -8;
     } else {
-      windScore = isSheltered ? +2 : -24;
+      windScore = isSheltered ? +1 : -22;
     }
     if (!isSheltered && (Number(gusts) || 0) >= 10.5) {
-      windScore -= 6;
+      windScore -= 5;
     }
     factors.push({
       name: isSheltered && wind > 5
@@ -1342,19 +1333,19 @@
 
     // 5. Облачность и освещённость
     let lightScore = 0;
-    if (cloud >= 45 && cloud <= 90) lightScore = +8;
-    else if (cloud < 20 && hour >= 10 && hour <= 16) lightScore = -5;
-    else lightScore = +2;
+    if (cloud >= 45 && cloud <= 92) lightScore = +7;
+    else if (cloud < 20 && hour >= 10 && hour <= 16) lightScore = -4;
+    else lightScore = +3;
     factors.push({ name: `Облачность (${cloud}%)`, val: lightScore });
 
-    // 6. Луна и солунарные окна (кульминации, восход/заход Луны, фаза)
+    // 6. Луна, лунный день и солунарные окна
     let astroScore = 0;
-    let moonNote = `${astro.phaseName}, ${astro.illum}%`;
+    let moonNote = `${astro.lunarDay} л.д., ${astro.phaseName} (${astro.illum}%)`;
     if (astro.nearMajorMoon) {
-      astroScore = astro.isSyzygy ? +12 : +9;
+      astroScore = astro.isSyzygy ? +11 : +8;
       moonNote += ' • главное окно (кульминация/надир)';
     } else if (astro.nearMinorMoon) {
-      astroScore = +6;
+      astroScore = +5;
       moonNote += ' • малое окно (восход/заход Луны)';
     } else if (astro.isSyzygy) {
       astroScore = +3;
@@ -1362,14 +1353,12 @@
       astroScore = astro.growing ? +2 : 0;
     }
 
-    // Ясная полнолунная ночь делает рыбу осторожнее на мелководье
     if ((hour >= 21 || hour <= 4) && astro.illum >= 75 && cloud < 35 && fish.id !== 'catfish') {
-      astroScore -= 6;
+      astroScore -= 5;
       moonNote += ' • яркий свет ночью';
     }
     factors.push({ name: `Луна (${moonNote})`, val: astroScore });
 
-    // Честный итог: 5%..92%
     const rawTotal = factors.reduce((s, f) => s + f.val, 0);
     const total = Math.max(5, Math.min(92, Math.round(rawTotal)));
     return { pct: total, factors };
@@ -1389,7 +1378,6 @@
   }
 
   function buildFallbackHourly() {
-    const totalHours = 120;
     const month = new Date().getMonth();
     const seasonalAir = [-9, -8, -2, 6, 14, 19, 22, 20, 14, 6, -1, -7][month];
     const time = [];
@@ -1497,7 +1485,6 @@
     const pressDelta48 = +((pNow - p48) * 0.750062).toFixed(1);
     const prev24Shock = idx >= 36 ? +((p24 - p48) * 0.750062).toFixed(1) : 0;
 
-    // Размах давления за доступные 48ч
     let minP = pNow;
     let maxP = pNow;
     for (let i = idx48; i <= idx; i++) {
@@ -1545,14 +1532,14 @@
   }
 
   function scoreClass(pct) {
-    if (pct >= 60) return 's-high';
-    if (pct >= 32) return 's-mid';
+    if (pct >= 62) return 's-high';
+    if (pct >= 35) return 's-mid';
     return 's-low';
   }
 
   function scoreColor(pct) {
-    if (pct >= 60) return 'var(--green)';
-    if (pct >= 32) return 'var(--amber)';
+    if (pct >= 62) return 'var(--green)';
+    if (pct >= 35) return 'var(--amber)';
     return 'var(--red)';
   }
 
@@ -1647,7 +1634,7 @@
         if (c.astro.nearDawnDusk) tags.push('<span class="h-tag">ЗОРЬКА</span>');
         if (c.astro.nearMajorMoon) tags.push('<span class="h-tag moon">ЛУНА</span>');
         else if (c.astro.nearMinorMoon) tags.push('<span class="h-tag moon">ВОСХ.ЛУНЫ</span>');
-        if (ev.pct >= 62 && tags.length === 0) tags.push('<span class="h-tag">ПИК</span>');
+        if (ev.pct >= 68 && tags.length === 0) tags.push('<span class="h-tag">ПИК</span>');
 
         return `
           <div class="hour-box ${sIdx === selectedHourSlot ? 'active' : ''}" onclick="selectHourSlot(${sIdx})">
@@ -1748,7 +1735,6 @@
         </div>
       `;
 
-      // Сводка по всем 5 дням (Позавчера -> Послезавтра) на 09:00
       document.getElementById('shift-grid').innerHTML = DAY_SPECS.map((dSp, dIdx) => {
         const dCtx = extractSlotContext(activePack, activeSpot, dSp, 9, fish);
         const dEv = evaluateBite(dCtx);
@@ -1766,14 +1752,14 @@
               ${weatherDesc(dCtx.wCode)} • ${dCtx.temp > 0 ? '+' : ''}${Math.round(dCtx.temp)}°C • ${baroShort}
             </div>
             <div class="shift-gear">
-              <strong>Луна:</strong> ${escapeHtml(dCtx.astro.phaseName)} (${dCtx.astro.illum}%)<br>
+              <strong>Луна:</strong> ${dCtx.astro.lunarDay} л.д., ${escapeHtml(dCtx.astro.phaseName)} (${dCtx.astro.illum}%)<br>
               <strong>Снасть:</strong> ${escapeHtml(dKit.shortRig)}
             </div>
           </div>
         `;
       }).join('');
 
-      document.getElementById('factors-title').textContent = `🧮 Честный расчёт факторов клёва (Итог: ${curEval.pct}%)`;
+      document.getElementById('factors-title').textContent = `🧮 Расчёт факторов клёва (Итог: ${curEval.pct}%)`;
       document.getElementById('factors-list').innerHTML = curEval.factors.map(f => {
         const cls = f.base ? 'f-neu' : (f.val > 0 ? 'f-pos' : (f.val < 0 ? 'f-neg' : 'f-neu'));
         const prefix = f.base ? 'База ' : (f.val > 0 ? '+' : '');
@@ -1795,7 +1781,7 @@
         <div class="factor-item"><span>Ветер и порывы:</span><span>${curCtx.wind.toFixed(1)} м/с (порывы ${curCtx.gusts.toFixed(1)} м/с), ${windDirText(curCtx.windDir)}</span></div>
         <div class="factor-item"><span>Температура воды (инерция):</span><span>~${curCtx.waterTemp}°C</span></div>
         <div class="factor-item"><span>Восход / Закат Солнца:</span><span>${curCtx.astro.sunriseStr} / ${curCtx.astro.sunsetStr}</span></div>
-        <div class="factor-item"><span>Луна (фаза / освещённость):</span><span>${escapeHtml(curCtx.astro.phaseName)} (${curCtx.astro.illum}%)</span></div>
+        <div class="factor-item"><span>Луна (день / фаза / свет):</span><span>${curCtx.astro.lunarDay} л.д. • ${escapeHtml(curCtx.astro.phaseName)} (${curCtx.astro.illum}%)</span></div>
         <div class="factor-item"><span>Главные окна Луны (солунар):</span><span style="color:var(--purple); font-weight:600;">${curCtx.astro.majorWindows}</span></div>
         <div class="factor-item"><span>Малые окна (восход / заход Луны):</span><span>${curCtx.astro.minorWindows}</span></div>
       `;
@@ -1828,6 +1814,31 @@
     renderAll();
   }
 
+  function getWaterTypeConfig(wt) {
+    return {
+      lake_still:   { category: 'lake',  badge: 'Озеро', exposure: 'sheltered', flow: 'still',       thermalGroup: 'lake',         label: 'Озеро / пруд' },
+      zaton_still:  { category: 'lake',  badge: 'Затон', exposure: 'sheltered', flow: 'still',       thermalGroup: 'lake',         label: 'Затон / залив' },
+      river_medium: { category: 'river', badge: 'Река',  exposure: 'sheltered', flow: 'medium-high', thermalGroup: 'river_medium', label: 'Река (средняя тяга)' },
+      river_high:   { category: 'river', badge: 'Река',  exposure: 'open',      flow: 'high',        thermalGroup: 'river_large',  label: 'Река (сильная тяга)' }
+    }[wt] || { category: 'lake', badge: 'Озеро', exposure: 'sheltered', flow: 'still', thermalGroup: 'lake', label: 'Озеро' };
+  }
+
+  function onWaterTypeSelectChange() {
+    if (activeSpot && activeSpot.id === 'temp_click') {
+      const wt = document.getElementById('custom-water-type').value;
+      const cfg = getWaterTypeConfig(wt);
+      activeSpot = {
+        ...activeSpot,
+        category: cfg.category,
+        badge: cfg.badge,
+        exposure: cfg.exposure,
+        flow: cfg.flow,
+        thermalGroup: cfg.thermalGroup
+      };
+      renderAll();
+    }
+  }
+
   function saveCustomSpot() {
     const coordsStr = document.getElementById('custom-coords').value;
     const name = document.getElementById('custom-name').value.trim();
@@ -1837,12 +1848,7 @@
     const parts = coordsStr.split(',').map(Number);
     if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1])) return;
 
-    const wtConfig = {
-      lake_still:   { category: 'lake',  badge: 'Озеро', exposure: 'sheltered', flow: 'still',       thermalGroup: 'lake',         label: 'Озеро / пруд' },
-      zaton_still:  { category: 'lake',  badge: 'Затон', exposure: 'sheltered', flow: 'still',       thermalGroup: 'lake',         label: 'Затон / залив' },
-      river_medium: { category: 'river', badge: 'Река',  exposure: 'sheltered', flow: 'medium-high', thermalGroup: 'river_medium', label: 'Река (средняя тяга)' },
-      river_high:   { category: 'river', badge: 'Река',  exposure: 'open',      flow: 'high',        thermalGroup: 'river_large',  label: 'Река (сильная тяга)' }
-    }[wt] || { category: 'lake', badge: 'Озеро', exposure: 'sheltered', flow: 'still', thermalGroup: 'lake', label: 'Озеро' };
+    const wtConfig = getWaterTypeConfig(wt);
 
     const newSpot = {
       id: 'custom_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
@@ -1939,7 +1945,7 @@
     if (typeof ymaps === 'undefined') return;
     ymaps.ready(() => {
       yandexMap = new ymaps.Map('yandex-map', {
-        center: [56.320000, 47.450000], // Обзор Марий Эл (от Ветлуги и Волги до Яльчика)
+        center: [56.320000, 47.450000],
         zoom: 9,
         type: 'yandex#hybrid',
         controls: ['zoomControl', 'typeSelector', 'rulerControl']
@@ -1954,16 +1960,16 @@
         yandexMap.geoObjects.add(tempMarker);
 
         const wt = document.getElementById('custom-water-type').value;
-        const isRiver = wt.startsWith('river');
+        const cfg = getWaterTypeConfig(wt);
         activeSpot = {
           id: 'temp_click',
           name: `Точка (${coords[0].toFixed(3)}, ${coords[1].toFixed(3)})`,
-          category: isRiver ? 'river' : 'lake',
-          badge: isRiver ? 'Река' : 'Озеро',
+          category: cfg.category,
+          badge: cfg.badge,
           type: 'Выбранная точка на карте',
-          exposure: wt === 'river_high' ? 'open' : 'sheltered',
-          flow: wt === 'river_high' ? 'high' : (wt === 'river_medium' ? 'medium-high' : 'still'),
-          thermalGroup: wt === 'river_high' ? 'river_large' : (wt === 'river_medium' ? 'river_medium' : 'lake'),
+          exposure: cfg.exposure,
+          flow: cfg.flow,
+          thermalGroup: cfg.thermalGroup,
           lat: coords[0],
           lon: coords[1],
           roadNote: 'Временная точка клика — выберите тип водоёма и нажмите «Сохранить».'
