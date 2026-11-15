@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Рыбалка в Марий Эл — Карта и прогноз клёва</title>
-  <script src="https://api-maps.yandex.ru/2.1/?apikey=42977bb2-731e-4eb1-8131-5ca94473b359&lang=ru_RU"></script>
+  <!-- Замените YOUR_MAPS_KEY на ваш ключ API Яндекс.Карт с ограничением по домену GitHub Pages -->
+  <script src="https://api-maps.yandex.ru/2.1/?apikey=YOUR_MAPS_KEY&lang=ru_RU"></script>
   <style>
     :root {
       --bg-color: #f4f7f9;
@@ -215,7 +216,7 @@
 
     const SPOTS = [
       { id: 'mumariha', name: 'Мумариха', lat: 56.311946, lon: 46.496244 },
-      { id: 'enikeevo', name: 'Еникеево', lat: 56.397161, lon: 46.435139 },
+      { id: 'enikeevo', name: 'Еникеево', lat: 56.15, lon: 46.60 },
       { id: 'kozmodemyansk', name: 'Козьмодемьянск', lat: 56.33, lon: 46.56 }
     ];
 
@@ -229,8 +230,8 @@
 
     function initMap() {
       const map = new ymaps.Map('map', {
-        center: [56.35, 46.50],
-        zoom: 11,
+        center: [56.26, 46.55],
+        zoom: 10,
         controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
       });
 
@@ -282,7 +283,7 @@
           <div>
             <div class="card-header">
               <h3 class="card-title">${spot.name}</h3>
-              <span class="card-coords">${spot.lat.toFixed(4)}, ${spot.lon.toFixed(4)}</span>
+              <span class="card-coords">${spot.lat.toFixed(2)}, ${spot.lon.toFixed(2)}</span>
             </div>
             <div class="card-body">
               <p style="color: var(--text-muted); font-size: 0.9rem;">Загрузка погоды...</p>
