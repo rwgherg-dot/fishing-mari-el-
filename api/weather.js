@@ -18,56 +18,35 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Запрос текущей погоды к Actigator API
-    const url = `https://api.actigator.com/v1/weather?lat=${lat}&lon=${lon}&lang=ru&units=metric`;
-    const response = await fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${key}`,
-        'X-API-Key': key,
-        'Accept': 'application/json'
-      }
-    });
+    // 1. Запрос к Actigator API (обратите внимание: параметр долготы называется lng)
+    const actigatorUrl = `https://api.actigator.com/v1/forecast?api_key=${encodeURIComponent(key)}&fish_id=14&lat=${lat}&lng=${lon}&lang=ru`;
+    const actRes = await fetch(actigatorUrl);
+    const actData = actRes.ok ? await actRes.json() : null;
 
-    if (!response.ok) {
-      const errText = await response.text();
-      return res.status(response.status).json({
-        error: 'Actigator API error',
-        status: response.status,
-        details: errText
-      });
-    }
+    // 2. Запрос актуальной погоды (температура, давление, ветер)
+    const meteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,surface_pressure,wind_speed_10m&wind_speed_unit=ms`;
+    const meteoRes = await fetch(meteoUrl);
+    const meteoData = meteoRes.ok ? await meteoRes.json() : null;
+    const cur = meteoData?.current;
 
-    const raw = await response.json();
+    const fIndex = actData?.forecast?.today?.f_index ?? null;
+    const fishName = actData?.fish?.name ?? 'Окунь';
 
-    // Универсальный разбор полей (учитывает варианты структуры ответа Actigator: current / data / fact / корень)
-    const cur = raw.current || raw.data?.current || raw.fact || raw.data || raw;
-
-    const temp = cur.temp ?? cur.temperature ?? cur.temp_c ?? cur.t;
-    const windSpeed = cur.wind_speed ?? cur.wind ?? cur.wind_mps ?? (cur.wind_kph != null ? +(cur.wind_kph / 3.6).toFixed(1) : undefined);
-
-    // Давление: если Actigator отдал в гПа/мбар (> 900), переводим в мм рт. ст.
-    let pressureMm = cur.pressure_mm ?? cur.pressure_mmhg;
-    if (pressureMm == null) {
-      const pRaw = cur.pressure ?? cur.pressure_hpa ?? cur.pressure_mb;
-      if (pRaw != null) {
-        pressureMm = pRaw > 900 ? Math.round(pRaw * 0.750062) : Math.round(pRaw);
-      }
-    }
-
-    const tempWater = cur.temp_water ?? cur.water_temp ?? cur.water_temperature ?? null;
-
-    // Возвращаем данные в едином формате для index.html
     return res.status(200).json({
       fact: {
-        temp,
-        pressure_mm: pressureMm,
-        wind_speed: windSpeed,
-        temp_water: tempWater
+        temp: cur?.temperature_2m ?? null,
+        pressure_mm: cur?.surface_pressure != null ? Math.round(cur.surface_pressure * 0.750062) : null,
+        wind_speed: cur?.wind_speed_10m ?? null,
+        temp_water: null
       },
       info: {
         def_pressure_mm: 752
       },
-      _raw: raw
+      actigator: {
+        f_index: fIndex,
+        fish: fishName,
+        today: actData?.forecast?.today ?? null
+      }
     });
   } catch (e) {
     return res.status(500).json({ error: 'Server error', message: e.message });
