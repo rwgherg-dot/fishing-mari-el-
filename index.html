@@ -41,6 +41,10 @@
       border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.35rem 0.75rem;
       border-radius: 999px; font-weight: 600;
     }
+    .status-pill.warn {
+      color: var(--amber); background: var(--amber-bg);
+      border-color: rgba(245, 158, 11, 0.35);
+    }
     .btn {
       background: var(--accent); color: #04131d; border: none;
       padding: 0.5rem 0.95rem; border-radius: 9px; font-weight: 700;
@@ -154,9 +158,7 @@
       font-size: 0.79rem; color: var(--muted); line-height: 1.4;
       padding-top: 0.5rem; border-top: 1px dashed var(--border);
     }
-    .buy-links {
-      display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem;
-    }
+    .buy-links { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
     .buy-chip {
       font-size: 0.74rem; font-weight: 700; color: var(--green);
       background: var(--green-bg); border: 1px solid rgba(16, 185, 129, 0.35);
@@ -242,7 +244,7 @@
       <p>Готовый подбор приманки, оснастки, прикормки, брызгалки, крючков и лески под погоду дня и часа</p>
     </div>
     <div class="header-right">
-      <span class="status-pill" id="radar-status">● Радар туч: загрузка...</span>
+      <span class="status-pill" id="radar-status">● Загрузка погоды...</span>
       <button class="btn" onclick="forceRefresh()">Обновить погоду ↻</button>
     </div>
   </header>
@@ -287,7 +289,7 @@
 
   <!-- Сравнение перестройки снасти и брызгалки на 3 дня -->
   <div class="sec-head">
-    <h2>🔄 Как менять приманку, оснастку и брызгалку по дням (Сегодня → Завтра → Послезавтра)</h2>
+    <h2>🔄 Как меняются приманка, оснастка и брызгалка по дням (Сегодня → Завтра → Послезавтра)</h2>
     <span>Сравнение на выбранной точке в рабочее утреннее/дневное окно</span>
   </div>
   <div class="shift-grid" id="shift-grid"></div>
@@ -416,13 +418,14 @@
 
   const HOUR_SLOTS = [0, 3, 6, 9, 12, 15, 18, 21];
 
-  let customSpots = JSON.parse(localStorage.getItem('mari_el_waypoints_v5') || '[]');
+  let customSpots = JSON.parse(localStorage.getItem('mari_el_waypoints_v6') || '[]');
   let selectedFishIdx = 0;
   let selectedDayIdx = 0;
   let selectedHourSlot = 3; // 09:00 по умолчанию
   let activeSpot = { ...BASE_SPOTS[0] };
   let weatherCache = {};
-  let ecmwfCache = {};
+  let dataSourceLabel = '● Загрузка погоды...';
+  let dataSourceWarn = false;
   let yandexMap = null;
   let tempMarker = null;
 
@@ -499,7 +502,6 @@
     return +(base * 0.78 + airTemp * 0.22).toFixed(1);
   }
 
-  // Подбор точной брызгалки (спрея), дозировки и ссылок по погоде и температуре воды
   function getSprayRecommendation(fishId, waterTemp, isBaroShock, isHighFlow) {
     const doseNote = isBaroShock
       ? 'Дозировка при сломе давления: строго 1 пшик в воздух и провести снасть через облачко (не перебить насадку!).'
@@ -588,7 +590,6 @@
     };
   }
 
-  // Ядро расчёта готовности на рыбалку («Когда как»)
   function buildReadyKit(fish, ctx) {
     const isCold = ctx.waterTemp < 8.5;
     const isWarm = ctx.waterTemp >= 14.5;
@@ -866,64 +867,134 @@
     return { pct: total, factors };
   }
 
-  async function loadWeatherForPoint(lat, lon) {
-    const key = `${lat.toFixed(4)}_${lon.toFixed(4)}`;
-    if (!weatherCache[key]) {
-      const urlIcon = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,surface_pressure,wind_speed_10m,wind_gusts_10m,wind_direction_10m,cloud_cover,precipitation,weather_code&past_days=2&forecast_days=3&wind_speed_unit=ms&timezone=Europe%2FMoscow`;
-      const res = await fetch(urlIcon);
-      weatherCache[key] = await res.json();
+  async function fetchWithTimeout(url, ms = 6000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ms);
+    try {
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timer);
+      return res;
+    } catch (e) {
+      clearTimeout(timer);
+      throw e;
     }
-    if (!ecmwfCache[key]) {
-      try {
-        const urlEcmwf = `https://api.open-meteo.com/v1/ecmwf?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,surface_pressure,wind_speed_10m,cloud_cover,precipitation&forecast_days=3&wind_speed_unit=ms&timezone=Europe%2FMoscow`;
-        const res2 = await fetch(urlEcmwf);
-        if (res2.ok) ecmwfCache[key] = await res2.json();
-      } catch (e) { /* резерв на ICON */ }
-    }
-    return { icon: weatherCache[key], ecmwf: ecmwfCache[key] || null };
   }
 
-  function extractSlotContext(dataPack, spot, dayIdx, hour) {
-    const h = dataPack.icon.hourly;
-    const idx = (2 + dayIdx) * 24 + hour;
+  // Резервный генератор почасовой сетки, если метеосервер недоступен
+  function buildFallbackHourly() {
+    const month = new Date().getMonth();
+    const baseT = [-9, -8, -2, 6, 14, 19, 22, 20, 14, 6, 1, -6][month];
+    const totalHours = 120;
+    const temperature_2m = [];
+    const surface_pressure = [];
+    const wind_speed_10m = [];
+    const wind_gusts_10m = [];
+    const wind_direction_10m = [];
+    const cloud_cover = [];
+    const precipitation = [];
+    const weather_code = [];
+
+    for (let i = 0; i < totalHours; i++) {
+      const h = i % 24;
+      const diurnal = Math.sin(((h - 6) / 24) * Math.PI * 2) * 2.5;
+      temperature_2m.push(+(baseT + diurnal).toFixed(1));
+      surface_pressure.push(1014 + Math.sin(i / 18) * 3);
+      wind_speed_10m.push(3.5);
+      wind_gusts_10m.push(5.5);
+      wind_direction_10m.push(270);
+      cloud_cover.push(65);
+      precipitation.push(0);
+      weather_code.push(2);
+    }
+    return {
+      isFallback: true,
+      hourly: {
+        temperature_2m, surface_pressure, wind_speed_10m,
+        wind_gusts_10m, wind_direction_10m, cloud_cover, precipitation, weather_code
+      }
+    };
+  }
+
+  // Единый пакетный запрос погоды для всех точек сразу (1 HTTP-запрос вместо 8)
+  async function syncAllWeather(spots) {
+    const uncached = spots.filter(sp => !weatherCache[`${sp.lat.toFixed(4)}_${sp.lon.toFixed(4)}`]);
+    if (uncached.length === 0) return;
+
+    const lats = uncached.map(s => s.lat.toFixed(4)).join(',');
+    const lons = uncached.map(s => s.lon.toFixed(4)).join(',');
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&hourly=temperature_2m,surface_pressure,wind_speed_10m,wind_gusts_10m,wind_direction_10m,cloud_cover,precipitation,weather_code&past_days=2&forecast_days=3&wind_speed_unit=ms&timezone=Europe%2FMoscow`;
+
+    try {
+      const res = await fetchWithTimeout(url, 6500);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const raw = await res.json();
+      const arr = Array.isArray(raw) ? raw : [raw];
+
+      uncached.forEach((sp, idx) => {
+        const key = `${sp.lat.toFixed(4)}_${sp.lon.toFixed(4)}`;
+        const item = arr[idx] || arr[0];
+        if (item && item.hourly && Array.isArray(item.hourly.temperature_2m)) {
+          weatherCache[key] = item;
+        }
+      });
+
+      localStorage.setItem('mari_el_weather_backup_v1', JSON.stringify({
+        ts: Date.now(),
+        cache: weatherCache
+      }));
+      const timeStr = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+      dataSourceLabel = `● Погода ICON/ECMWF загружена (${timeStr})`;
+      dataSourceWarn = false;
+    } catch (err) {
+      const saved = JSON.parse(localStorage.getItem('mari_el_weather_backup_v1') || 'null');
+      if (saved && saved.cache) {
+        Object.assign(weatherCache, saved.cache);
+        dataSourceLabel = '● Кэш погоды (сервер не ответил вовремя)';
+        dataSourceWarn = true;
+      } else {
+        dataSourceLabel = '● Автономный сезонный расчёт (нет связи с API)';
+        dataSourceWarn = true;
+      }
+      uncached.forEach(sp => {
+        const key = `${sp.lat.toFixed(4)}_${sp.lon.toFixed(4)}`;
+        if (!weatherCache[key]) weatherCache[key] = buildFallbackHourly();
+      });
+    }
+  }
+
+  function getPointWeather(sp) {
+    const key = `${sp.lat.toFixed(4)}_${sp.lon.toFixed(4)}`;
+    return weatherCache[key] || buildFallbackHourly();
+  }
+
+  function extractSlotContext(dataObj, spot, dayIdx, hour) {
+    const h = dataObj.hourly;
+    const maxLen = h.temperature_2m.length - 1;
+    const idx = Math.min(maxLen, (2 + dayIdx) * 24 + hour);
     const idx6 = Math.max(0, idx - 6);
     const idx24 = Math.max(0, idx - 24);
 
-    const temp = h.temperature_2m[idx];
-    const pNow = h.surface_pressure[idx];
-    const p6 = h.surface_pressure[idx6];
-    const p24 = h.surface_pressure[idx24];
+    const temp = h.temperature_2m[idx] ?? 2;
+    const pNow = h.surface_pressure[idx] ?? 1013;
+    const p6 = h.surface_pressure[idx6] ?? pNow;
+    const p24 = h.surface_pressure[idx24] ?? pNow;
 
     const pressMm = Math.round(pNow * 0.750062);
     const pressDelta6 = +((pNow - p6) * 0.750062).toFixed(1);
     const pressDelta24 = +((pNow - p24) * 0.750062).toFixed(1);
-    const wind = h.wind_speed_10m[idx];
-    const gusts = h.wind_gusts_10m[idx];
-    const windDir = h.wind_direction_10m[idx];
-    const cloud = h.cloud_cover[idx];
-    const precip = h.precipitation[idx];
-    const wCode = h.weather_code[idx];
+    const wind = h.wind_speed_10m[idx] ?? 3.5;
+    const gusts = h.wind_gusts_10m ? (h.wind_gusts_10m[idx] ?? wind + 2) : wind + 2;
+    const windDir = h.wind_direction_10m ? (h.wind_direction_10m[idx] ?? 270) : 270;
+    const cloud = h.cloud_cover[idx] ?? 60;
+    const precip = h.precipitation[idx] ?? 0;
+    const wCode = h.weather_code ? (h.weather_code[idx] ?? 2) : 2;
     const waterTemp = estimateWaterTemp(temp);
     const astro = getAstronomy(spot.lat, spot.lon, dayIdx, hour);
 
-    let ecmwfSummary = null;
-    if (dataPack.ecmwf && dataPack.ecmwf.hourly) {
-      const eh = dataPack.ecmwf.hourly;
-      const eIdx = dayIdx * 24 + hour;
-      if (eh.temperature_2m[eIdx] !== undefined) {
-        ecmwfSummary = {
-          temp: eh.temperature_2m[eIdx],
-          pressMm: Math.round(eh.surface_pressure[eIdx] * 0.750062),
-          wind: eh.wind_speed_10m[eIdx],
-          cloud: eh.cloud_cover[eIdx],
-          precip: eh.precipitation[eIdx]
-        };
-      }
-    }
-
     return {
       spot, dayIdx, hour, temp, pressMm, pressDelta6, pressDelta24,
-      wind, gusts, windDir, cloud, precip, wCode, waterTemp, astro, ecmwfSummary
+      wind, gusts, windDir, cloud, precip, wCode, waterTemp, astro,
+      isFallback: !!dataObj.isFallback
     };
   }
 
@@ -955,172 +1026,177 @@
   async function renderAll() {
     renderPills();
     const statusEl = document.getElementById('radar-status');
-    statusEl.textContent = '● Синхронизация метеомоделей...';
+    statusEl.textContent = '● Загрузка погоды...';
+    statusEl.classList.remove('warn');
 
-    const spots = getAllSpots();
-    const fish = FISH_MODELS[selectedFishIdx];
-    const hour = HOUR_SLOTS[selectedHourSlot];
+    try {
+      const spots = getAllSpots();
+      await syncAllWeather(spots);
 
-    const spotResults = await Promise.all(spots.map(async (sp) => {
-      const pack = await loadWeatherForPoint(sp.lat, sp.lon);
-      const ctx = extractSlotContext(pack, sp, selectedDayIdx, hour);
-      const res = evaluateBite(ctx);
-      return { spot: sp, pack, ctx, res };
-    }));
+      statusEl.textContent = dataSourceLabel;
+      if (dataSourceWarn) statusEl.classList.add('warn');
 
-    statusEl.textContent = `● Модели ICON + ECMWF активны (${new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })})`;
+      const fish = FISH_MODELS[selectedFishIdx];
+      const hour = HOUR_SLOTS[selectedHourSlot];
 
-    let bestPct = -1;
-    spotResults.forEach(r => { if (r.res.pct > bestPct) bestPct = r.res.pct; });
+      const spotResults = spots.map(sp => {
+        const pack = getPointWeather(sp);
+        const ctx = extractSlotContext(pack, sp, selectedDayIdx, hour);
+        const res = evaluateBite(ctx);
+        return { spot: sp, pack, ctx, res };
+      });
 
-    const spotsGrid = document.getElementById('spots-grid');
-    spotsGrid.innerHTML = spotResults.map(r => {
-      const isSelected = r.spot.id === activeSpot.id;
-      const isBest = r.res.pct === bestPct;
-      return `
-        <div class="spot-card ${isSelected ? 'selected' : ''}" onclick="selectSpotById('${r.spot.id}')">
-          ${isBest ? '<div class="best-badge">Лучшая точка</div>' : ''}
-          <div class="spot-top">
-            <div>
-              <div class="spot-title">${r.spot.name}</div>
-              <div class="spot-type">${r.spot.type}</div>
+      let bestPct = -1;
+      spotResults.forEach(r => { if (r.res.pct > bestPct) bestPct = r.res.pct; });
+
+      document.getElementById('spots-grid').innerHTML = spotResults.map(r => {
+        const isSelected = r.spot.id === activeSpot.id;
+        const isBest = r.res.pct === bestPct;
+        return `
+          <div class="spot-card ${isSelected ? 'selected' : ''}" onclick="selectSpotById('${r.spot.id}')">
+            ${isBest ? '<div class="best-badge">Лучшая точка</div>' : ''}
+            <div class="spot-top">
+              <div>
+                <div class="spot-title">${r.spot.name}</div>
+                <div class="spot-type">${r.spot.type}</div>
+              </div>
+              <div class="score-badge ${scoreClass(r.res.pct)}">${r.res.pct}%</div>
             </div>
-            <div class="score-badge ${scoreClass(r.res.pct)}">${r.res.pct}%</div>
+            <div class="spot-note">${r.spot.roadNote || 'Пользовательская точка с карты'}</div>
+            <div class="spot-metrics">
+              <span>💨 ${r.ctx.wind.toFixed(1)} м/с (${windDirText(r.ctx.windDir)})</span>
+              <span>🌡 Вода ~${r.ctx.waterTemp}°C</span>
+              <span>⏲ ${r.ctx.pressDelta24 >= 0 ? '+' : ''}${r.ctx.pressDelta24} мм</span>
+            </div>
           </div>
-          <div class="spot-note">${r.spot.roadNote || 'Пользовательская точка с карты'}</div>
-          <div class="spot-metrics">
-            <span>💨 ${r.ctx.wind.toFixed(1)} м/с (${windDirText(r.ctx.windDir)})</span>
-            <span>🌡 Вода ~${r.ctx.waterTemp}°C</span>
-            <span>⏲ ${r.ctx.pressDelta24 >= 0 ? '+' : ''}${r.ctx.pressDelta24} мм</span>
+        `;
+      }).join('');
+
+      const activePack = getPointWeather(activeSpot);
+      const dayLabels = getDayLabels();
+      document.getElementById('hourly-heading').textContent =
+        `2. Почасовая активность: ${activeSpot.name} • ${fish.name} • ${dayLabels[selectedDayIdx]}`;
+
+      document.getElementById('hourly-grid').innerHTML = HOUR_SLOTS.map((hVal, sIdx) => {
+        const c = extractSlotContext(activePack, activeSpot, selectedDayIdx, hVal);
+        const ev = evaluateBite(c);
+        const tag = c.astro.nearDawnDusk ? 'ЗОРЬКА' : (c.astro.nearMoon ? 'ЛУНА' : (ev.pct >= 65 ? 'ПИК' : ''));
+        return `
+          <div class="hour-box ${sIdx === selectedHourSlot ? 'active' : ''}" onclick="selectHourSlot(${sIdx})">
+            <div class="h-time">${String(hVal).padStart(2, '0')}:00</div>
+            <div class="h-val" style="color:${scoreColor(ev.pct)}">${ev.pct}%</div>
+            <div class="h-sub">${c.temp > 0 ? '+' : ''}${Math.round(c.temp)}° • ${c.wind.toFixed(1)} м/с</div>
+            ${tag ? `<div class="h-tag">${tag}</div>` : ''}
           </div>
+        `;
+      }).join('');
+
+      const curCtx = extractSlotContext(activePack, activeSpot, selectedDayIdx, hour);
+      const curEval = evaluateBite(curCtx);
+      const kit = buildReadyKit(fish, curCtx);
+
+      document.getElementById('arsenal-heading').textContent =
+        `3. Готовый комплект: ${fish.name} • ${activeSpot.name} (${String(hour).padStart(2, '0')}:00)`;
+      document.getElementById('scenario-title').textContent = `Погодный сценарий: ${kit.scenarioName}`;
+      document.getElementById('scenario-desc').textContent = kit.scenarioWhy;
+
+      document.getElementById('arsenal-grid').innerHTML = `
+        <div class="arsenal-card">
+          <div>
+            <div class="arsenal-kicker">🎯 1. Приманка / Насадка и цвет</div>
+            <div class="arsenal-main">${kit.bait}</div>
+          </div>
+          <div class="arsenal-sub">${kit.baitWhy}</div>
+        </div>
+
+        <div class="arsenal-card">
+          <div>
+            <div class="arsenal-kicker">⚙️ 2. Оснастка и вес груза / кормушки</div>
+            <div class="arsenal-main">${kit.rig}</div>
+          </div>
+          <div class="arsenal-sub">${kit.rigWhy}</div>
+        </div>
+
+        <div class="arsenal-card">
+          <div>
+            <div class="arsenal-kicker">🪝 3. Шнур / Леска, поводок и крючки</div>
+            <div class="arsenal-main">${kit.lineHook}</div>
+          </div>
+          <div class="arsenal-sub">${kit.lineWhy}</div>
+        </div>
+
+        <div class="arsenal-card">
+          <div>
+            <div class="arsenal-kicker">🪣 4. Прикормка и физика смеси</div>
+            <div class="arsenal-main">${kit.groundbait}</div>
+          </div>
+          <div class="arsenal-sub">${kit.tactic}</div>
+        </div>
+
+        <div class="arsenal-card spray-card">
+          <div>
+            <div class="arsenal-kicker" style="color:var(--green)">💨 5. Брызгалка (Спрей-аттрактант)</div>
+            <div class="arsenal-main">${kit.spray}</div>
+          </div>
+          <div class="arsenal-sub">
+            ${kit.sprayWhy}<br><strong style="color:var(--text)">Применение:</strong> ${kit.doseNote}
+            <div class="buy-links">
+              ${kit.links.map(l => `<a class="buy-chip" href="${l.url}" target="_blank" rel="noopener">${l.label} ↗</a>`).join('')}
+            </div>
+          </div>
+        </div>
+
+        <div class="arsenal-card">
+          <div>
+            <div class="arsenal-kicker">🎒 6. Снаряжение и одежда на берег</div>
+            <div class="arsenal-main">${kit.checklist}</div>
+          </div>
+          <div class="arsenal-sub">Подъезд: ${activeSpot.roadNote || 'Проверяйте грунтовку после осадков.'}</div>
         </div>
       `;
-    }).join('');
 
-    const activePack = await loadWeatherForPoint(activeSpot.lat, activeSpot.lon);
-    const dayLabels = getDayLabels();
-    document.getElementById('hourly-heading').textContent =
-      `2. Почасовая активность: ${activeSpot.name} • ${fish.name} • ${dayLabels[selectedDayIdx]}`;
+      document.getElementById('shift-grid').innerHTML = [0, 1, 2].map(dIdx => {
+        const dCtx = extractSlotContext(activePack, activeSpot, dIdx, 9);
+        const dEv = evaluateBite(dCtx);
+        const dKit = buildReadyKit(fish, dCtx);
+        return `
+          <div class="shift-card ${dIdx === selectedDayIdx ? 'current-day' : ''}">
+            <div class="shift-head">
+              <span>${dayLabels[dIdx]} (09:00)</span>
+              <span style="color:${scoreColor(dEv.pct)}">${dEv.pct}%</span>
+            </div>
+            <div class="shift-weather">
+              ${weatherDesc(dCtx.wCode)} • ${dCtx.temp > 0 ? '+' : ''}${Math.round(dCtx.temp)}°C • Ветер ${dCtx.wind.toFixed(1)} м/с • Δ24ч: ${dCtx.pressDelta24 >= 0 ? '+' : ''}${dCtx.pressDelta24} мм
+            </div>
+            <div class="shift-gear">
+              <strong>Приманка:</strong> ${dKit.shortBait}<br>
+              <strong>Оснастка:</strong> ${dKit.shortRig}<br>
+              <strong>${dKit.shortSpray}</strong>
+            </div>
+          </div>
+        `;
+      }).join('');
 
-    const hourlyGrid = document.getElementById('hourly-grid');
-    hourlyGrid.innerHTML = HOUR_SLOTS.map((hVal, sIdx) => {
-      const c = extractSlotContext(activePack, activeSpot, selectedDayIdx, hVal);
-      const ev = evaluateBite(c);
-      const tag = c.astro.nearDawnDusk ? 'ЗОРЬКА' : (c.astro.nearMoon ? 'ЛУНА' : (ev.pct >= 65 ? 'ПИК' : ''));
-      return `
-        <div class="hour-box ${sIdx === selectedHourSlot ? 'active' : ''}" onclick="selectHourSlot(${sIdx})">
-          <div class="h-time">${String(hVal).padStart(2, '0')}:00</div>
-          <div class="h-val" style="color:${scoreColor(ev.pct)}">${ev.pct}%</div>
-          <div class="h-sub">${c.temp > 0 ? '+' : ''}${Math.round(c.temp)}° • ${c.wind.toFixed(1)} м/с</div>
-          ${tag ? `<div class="h-tag">${tag}</div>` : ''}
-        </div>
+      document.getElementById('factors-title').textContent = `🧮 Расчёт факторов клёва (Итог: ${curEval.pct}%)`;
+      document.getElementById('factors-list').innerHTML = curEval.factors.map(f => {
+        const cls = f.base ? 'f-neu' : (f.val > 0 ? 'f-pos' : (f.val < 0 ? 'f-neg' : 'f-neu'));
+        const prefix = f.base ? 'База ' : (f.val > 0 ? '+' : '');
+        return `<div class="factor-item"><span>${f.name}</span><span class="${cls}">${prefix}${f.val}%</span></div>`;
+      }).join('');
+
+      document.getElementById('meteo-details').innerHTML = `
+        <div class="factor-item"><span>Источник погоды:</span><span>${curCtx.isFallback ? 'Автономный профиль / Кэш' : 'Open-Meteo (ICON + ECMWF)'}</span></div>
+        <div class="factor-item"><span>Температура и давление:</span><span>${curCtx.temp > 0 ? '+' : ''}${curCtx.temp}°C • ${curCtx.pressMm} мм рт.ст.</span></div>
+        <div class="factor-item"><span>Осадки / Облачность:</span><span>${curCtx.precip} мм • ${curCtx.cloud}% (${weatherDesc(curCtx.wCode)})</span></div>
+        <div class="factor-item"><span>Восход / Закат (NOAA):</span><span>${curCtx.astro.sunriseStr} / ${curCtx.astro.sunsetStr}</span></div>
+        <div class="factor-item"><span>Луна и транзиты:</span><span>${curCtx.astro.illum}% (${curCtx.astro.growing ? 'растущая' : 'убывающая'}) • пики ${curCtx.astro.moonWindow}</span></div>
       `;
-    }).join('');
 
-    const curCtx = extractSlotContext(activePack, activeSpot, selectedDayIdx, hour);
-    const curEval = evaluateBite(curCtx);
-    const kit = buildReadyKit(fish, curCtx);
-
-    document.getElementById('arsenal-heading').textContent =
-      `3. Готовый комплект: ${fish.name} • ${activeSpot.name} (${String(hour).padStart(2, '0')}:00)`;
-    document.getElementById('scenario-title').textContent = `Погодный сценарий: ${kit.scenarioName}`;
-    document.getElementById('scenario-desc').textContent = kit.scenarioWhy;
-
-    document.getElementById('arsenal-grid').innerHTML = `
-      <div class="arsenal-card">
-        <div>
-          <div class="arsenal-kicker">🎯 1. Приманка / Насадка и цвет</div>
-          <div class="arsenal-main">${kit.bait}</div>
-        </div>
-        <div class="arsenal-sub">${kit.baitWhy}</div>
-      </div>
-
-      <div class="arsenal-card">
-        <div>
-          <div class="arsenal-kicker">⚙️ 2. Оснастка и вес груза / кормушки</div>
-          <div class="arsenal-main">${kit.rig}</div>
-        </div>
-        <div class="arsenal-sub">${kit.rigWhy}</div>
-      </div>
-
-      <div class="arsenal-card">
-        <div>
-          <div class="arsenal-kicker">🪝 3. Шнур / Леска, поводок и крючки</div>
-          <div class="arsenal-main">${kit.lineHook}</div>
-        </div>
-        <div class="arsenal-sub">${kit.lineWhy}</div>
-      </div>
-
-      <div class="arsenal-card">
-        <div>
-          <div class="arsenal-kicker">🪣 4. Прикормка и физика смеси</div>
-          <div class="arsenal-main">${kit.groundbait}</div>
-        </div>
-        <div class="arsenal-sub">${kit.tactic}</div>
-      </div>
-
-      <div class="arsenal-card spray-card">
-        <div>
-          <div class="arsenal-kicker" style="color:var(--green)">💨 5. Брызгалка (Спрей-аттрактант)</div>
-          <div class="arsenal-main">${kit.spray}</div>
-        </div>
-        <div class="arsenal-sub">
-          ${kit.sprayWhy}<br><strong style="color:var(--text)">Применение:</strong> ${kit.doseNote}
-          <div class="buy-links">
-            ${kit.links.map(l => `<a class="buy-chip" href="${l.url}" target="_blank" rel="noopener">${l.label} ↗</a>`).join('')}
-          </div>
-        </div>
-      </div>
-
-      <div class="arsenal-card">
-        <div>
-          <div class="arsenal-kicker">🎒 6. Снаряжение и одежда на берег</div>
-          <div class="arsenal-main">${kit.checklist}</div>
-        </div>
-        <div class="arsenal-sub">Подъезд: ${activeSpot.roadNote || 'Проверяйте грунтовку после осадков.'}</div>
-      </div>
-    `;
-
-    // Перестройка на 3 дня (Сегодня -> Завтра -> Послезавтра) на 09:00
-    document.getElementById('shift-grid').innerHTML = [0, 1, 2].map(dIdx => {
-      const dCtx = extractSlotContext(activePack, activeSpot, dIdx, 9);
-      const dEv = evaluateBite(dCtx);
-      const dKit = buildReadyKit(fish, dCtx);
-      return `
-        <div class="shift-card ${dIdx === selectedDayIdx ? 'current-day' : ''}">
-          <div class="shift-head">
-            <span>${dayLabels[dIdx]} (09:00)</span>
-            <span style="color:${scoreColor(dEv.pct)}">${dEv.pct}%</span>
-          </div>
-          <div class="shift-weather">
-            ${weatherDesc(dCtx.wCode)} • ${dCtx.temp > 0 ? '+' : ''}${Math.round(dCtx.temp)}°C • Ветер ${dCtx.wind.toFixed(1)} м/с • Δ24ч: ${dCtx.pressDelta24 >= 0 ? '+' : ''}${dCtx.pressDelta24} мм
-          </div>
-          <div class="shift-gear">
-            <strong>Приманка:</strong> ${dKit.shortBait}<br>
-            <strong>Оснастка:</strong> ${dKit.shortRig}<br>
-            <strong>${dKit.shortSpray}</strong>
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    document.getElementById('factors-title').textContent = `🧮 Расчёт факторов клёва (Итог: ${curEval.pct}%)`;
-    document.getElementById('factors-list').innerHTML = curEval.factors.map(f => {
-      const cls = f.base ? 'f-neu' : (f.val > 0 ? 'f-pos' : (f.val < 0 ? 'f-neg' : 'f-neu'));
-      const prefix = f.base ? 'База ' : (f.val > 0 ? '+' : '');
-      return `<div class="factor-item"><span>${f.name}</span><span class="${cls}">${prefix}${f.val}%</span></div>`;
-    }).join('');
-
-    const ec = curCtx.ecmwfSummary;
-    document.getElementById('meteo-details').innerHTML = `
-      <div class="factor-item"><span>Модель ICON (основная):</span><span>${curCtx.temp > 0 ? '+' : ''}${curCtx.temp}°C • ${curCtx.pressMm} мм • ${curCtx.wind.toFixed(1)} м/с</span></div>
-      <div class="factor-item"><span>Модель ECMWF (сверка):</span><span>${ec ? `${ec.temp > 0 ? '+' : ''}${ec.temp}°C • ${ec.pressMm} мм • ${ec.wind.toFixed(1)} м/с` : 'Нет данных'}</span></div>
-      <div class="factor-item"><span>Осадки / Облачность:</span><span>${curCtx.precip} мм • ${curCtx.cloud}% (${weatherDesc(curCtx.wCode)})</span></div>
-      <div class="factor-item"><span>Восход / Закат (NOAA):</span><span>${curCtx.astro.sunriseStr} / ${curCtx.astro.sunsetStr}</span></div>
-      <div class="factor-item"><span>Луна и транзиты:</span><span>${curCtx.astro.illum}% (${curCtx.astro.growing ? 'растущая' : 'убывающая'}) • пики ${curCtx.astro.moonWindow}</span></div>
-    `;
-
-    renderSavedList();
+      renderSavedList();
+    } catch (fatalErr) {
+      statusEl.textContent = '● Ошибка расчёта: ' + fatalErr.message;
+      statusEl.classList.add('warn');
+    }
   }
 
   function selectFish(idx) { selectedFishIdx = idx; renderAll(); }
@@ -1139,7 +1215,6 @@
 
   function forceRefresh() {
     weatherCache = {};
-    ecmwfCache = {};
     renderAll();
   }
 
@@ -1162,7 +1237,7 @@
       roadNote: depth ? `Глубина по эхолоту: ${depth}` : 'Пользовательская точка'
     };
     customSpots.push(newSpot);
-    localStorage.setItem('mari_el_waypoints_v5', JSON.stringify(customSpots));
+    localStorage.setItem('mari_el_waypoints_v6', JSON.stringify(customSpots));
     document.getElementById('custom-name').value = '';
     document.getElementById('custom-depth').value = '';
     activeSpot = { ...newSpot };
@@ -1173,7 +1248,7 @@
   function deleteCustomSpot(id, e) {
     e.stopPropagation();
     customSpots = customSpots.filter(s => s.id !== id);
-    localStorage.setItem('mari_el_waypoints_v5', JSON.stringify(customSpots));
+    localStorage.setItem('mari_el_waypoints_v6', JSON.stringify(customSpots));
     if (activeSpot.id === id) activeSpot = { ...BASE_SPOTS[0] };
     renderAll();
   }
