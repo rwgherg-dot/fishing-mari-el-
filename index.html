@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Гидрометео-навигатор клёва и снастей • Реки и озёра Марий Эл</title>
+  <title>Гидрометео-навигатор клёва (5-балльная шкала) • Реки и озёра Марий Эл</title>
   <script src="https://api-maps.yandex.ru/2.1/?apikey=42977bb2-731e-4eb1-8131-5ca94473b359&lang=ru_RU"></script>
   <style>
     :root {
@@ -40,7 +40,18 @@
     .sec-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
     .sec-head h2 { font-size: 1.05rem; font-weight: 700; }
     .sec-head span { font-size: 0.8rem; color: var(--muted); }
-    .spots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(265px, 1fr)); gap: 0.85rem; margin-bottom: 1.5rem; }
+
+    /* Векторная шкала из 5 рыбок */
+    .fish-rating-wrap { display: inline-flex; flex-direction: column; align-items: flex-end; gap: 0.18rem; flex-shrink: 0; }
+    .fish-rating-wrap.center { align-items: center; }
+    .fish-rating-wrap.left { align-items: flex-start; }
+    .fish-icons-row { display: inline-flex; align-items: center; gap: 2px; line-height: 0; }
+    .fish-num-pill { font-size: 0.78rem; font-weight: 800; padding: 0.12rem 0.45rem; border-radius: 6px; letter-spacing: 0.01em; }
+    .s-high { background: var(--green-bg); color: var(--green); }
+    .s-mid { background: var(--amber-bg); color: var(--amber); }
+    .s-low { background: var(--red-bg); color: var(--red); }
+
+    .spots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(275px, 1fr)); gap: 0.85rem; margin-bottom: 1.5rem; }
     .spot-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 0.95rem; cursor: pointer; position: relative; transition: transform 0.12s, border-color 0.15s; }
     .spot-card:hover { transform: translateY(-2px); border-color: #3a526d; }
     .spot-card.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); background: linear-gradient(180deg, rgba(56, 189, 248, 0.08) 0%, var(--card) 100%); }
@@ -52,24 +63,22 @@
     .spot-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.4rem; }
     .spot-title { font-size: 1rem; font-weight: 700; }
     .spot-type { font-size: 0.75rem; color: var(--muted); }
-    .score-badge { font-size: 0.95rem; font-weight: 800; padding: 0.25rem 0.58rem; border-radius: 8px; flex-shrink: 0; }
-    .s-high { background: var(--green-bg); color: var(--green); }
-    .s-mid { background: var(--amber-bg); color: var(--amber); }
-    .s-low { background: var(--red-bg); color: var(--red); }
     .spot-note { font-size: 0.76rem; color: var(--muted); margin-bottom: 0.55rem; min-height: 2.1em; }
     .spot-metrics { display: flex; justify-content: space-between; font-size: 0.77rem; color: var(--text); padding-top: 0.5rem; border-top: 1px solid var(--border); }
-    .hourly-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 0.42rem; margin-bottom: 1.5rem; }
-    @media (max-width: 1120px) { .hourly-grid { grid-template-columns: repeat(8, 1fr); } }
-    @media (max-width: 760px) { .hourly-grid { grid-template-columns: repeat(4, 1fr); } }
-    .hour-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 0.55rem 0.28rem; text-align: center; cursor: pointer; }
+
+    .hourly-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 0.52rem; margin-bottom: 1.5rem; }
+    @media (max-width: 960px) { .hourly-grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 540px) { .hourly-grid { grid-template-columns: repeat(3, 1fr); } }
+    .hour-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 0.62rem 0.35rem; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
     .hour-box:hover { border-color: #3a526d; }
     .hour-box.active { border-color: var(--accent); background: var(--accent-bg); box-shadow: 0 0 0 1px var(--accent); }
-    .h-time { font-size: 0.74rem; color: var(--muted); margin-bottom: 0.15rem; }
-    .h-val { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.12rem; }
-    .h-sub { font-size: 0.67rem; color: var(--muted); }
-    .h-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.16rem; margin-top: 0.28rem; }
-    .h-tag { font-size: 0.58rem; font-weight: 700; padding: 0.06rem 0.28rem; border-radius: 4px; background: var(--green-bg); color: var(--green); }
+    .h-time { font-size: 0.76rem; font-weight: 700; color: var(--muted); margin-bottom: 0.25rem; }
+    .h-val-num { font-size: 0.96rem; font-weight: 800; margin-top: 0.2rem; }
+    .h-sub { font-size: 0.69rem; color: var(--muted); margin-top: 0.1rem; }
+    .h-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.18rem; margin-top: 0.3rem; }
+    .h-tag { font-size: 0.59rem; font-weight: 700; padding: 0.07rem 0.32rem; border-radius: 4px; background: var(--green-bg); color: var(--green); }
     .h-tag.moon { background: var(--purple-bg); color: var(--purple); }
+
     .scenario-banner { background: linear-gradient(90deg, rgba(56, 189, 248, 0.12), rgba(16, 185, 129, 0.08)); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; padding: 0.9rem 1.1rem; margin-bottom: 1rem; }
     .scenario-title { font-size: 0.95rem; font-weight: 800; color: var(--accent); }
     .scenario-desc { font-size: 0.83rem; color: var(--text); margin-top: 0.25rem; }
@@ -83,18 +92,21 @@
     .arsenal-sub { font-size: 0.79rem; color: var(--muted); line-height: 1.4; padding-top: 0.5rem; border-top: 1px dashed var(--border); }
     .buy-links { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
     .buy-chip { font-size: 0.74rem; font-weight: 700; color: var(--green); background: var(--green-bg); border: 1px solid rgba(16, 185, 129, 0.35); padding: 0.25rem 0.55rem; border-radius: 6px; text-decoration: none; }
+
     .shift-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
-    @media (max-width: 1080px) { .shift-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 1120px) { .shift-grid { grid-template-columns: repeat(3, 1fr); } }
     @media (max-width: 680px) { .shift-grid { grid-template-columns: 1fr; } }
     .shift-card { background: var(--card-2); border: 1px solid var(--border); border-radius: 11px; padding: 0.85rem 0.9rem; cursor: pointer; }
     .shift-card.current-day { border-color: var(--green); box-shadow: 0 0 0 1px var(--green); }
-    .shift-head { display: flex; justify-content: space-between; font-size: 0.81rem; font-weight: 800; margin-bottom: 0.32rem; }
+    .shift-head { display: flex; justify-content: space-between; align-items: center; gap: 0.4rem; font-size: 0.8rem; font-weight: 800; margin-bottom: 0.35rem; }
     .shift-weather { font-size: 0.74rem; color: var(--muted); margin-bottom: 0.45rem; }
-    .shift-gear { font-size: 0.78rem; line-height: 1.4; }
-    .details-grid { display: grid; grid-template-columns: 1.18fr 1fr; gap: 0.9rem; margin-bottom: 1.5rem; }
+    .shift-gear { font-size: 0.78rem; line-height: 1.45; }
+
+    .details-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 0.9rem; margin-bottom: 1.5rem; }
     @media (max-width: 860px) { .details-grid { grid-template-columns: 1fr; } }
     .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.05rem; }
-    .panel-title { font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.75rem; }
+    .panel-header-flex { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .panel-title { font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
     .factor-item { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 0.42rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.83rem; }
     .factor-item:last-child { border-bottom: none; }
     .f-pos { color: var(--green); font-weight: 700; white-space: nowrap; }
@@ -121,10 +133,10 @@
   <header>
     <div class="title-group">
       <h1>🧭 Гидрометео-навигатор клёва • Реки и озёра Марий Эл</h1>
-      <p>Физика плавательного пузыря (ОДУ Бойля–Мариотта) • Оптика воды (Люкс / Бугер–Бер) • Солунар Миуса • Биоэнергетика</p>
+      <p>5-балльная шкала в рыбках (точность 0.1) • ОДУ плавательного пузыря • Оптика воды (Люкс) • Солунар Миуса • Биоэнергетика</p>
     </div>
     <div class="header-right">
-      <span class="status-pill" id="radar-status">● Загрузка метеоархива и прогноза...</span>
+      <span class="status-pill" id="radar-status">● Загрузка метеоархива 96ч и прогноза...</span>
       <button class="btn" onclick="forceRefresh()">Обновить ↻</button>
     </div>
   </header>
@@ -150,13 +162,13 @@
 
   <div class="sec-head">
     <h2>1. Сравнение рек и озёр Марий Эл («Куда лучше поехать»)</h2>
-    <span>Учитываются коэффициент ослабления света Kd, тепловая инерция воды, волновой разгон и барическая адаптация</span>
+    <span>Оценка по 5-балльной шкале рыбок: мутность Kd, тепловая инерция воды, волна и барическая адаптация</span>
   </div>
   <div class="spots-grid" id="spots-grid"></div>
 
   <div class="sec-head">
     <h2 id="hourly-heading">2. Почасовой ход клёва за все 24 часа (00:00 – 23:00)</h2>
-    <span>Нажмите на любой час: подводная освещённость (лк), гауссовы окна Луны и адаптация плавательного пузыря</span>
+    <span>Нажмите на любой час: дробное заполнение рыбок отражает подводную освещённость (лк), окна Луны и адаптацию пузыря</span>
   </div>
   <div class="hourly-grid" id="hourly-grid"></div>
 
@@ -174,24 +186,27 @@
 
   <div class="sec-head">
     <h2>🔄 Динамика по всем 5 дням: Позавчера → Вчера → Сегодня → Завтра → Послезавтра</h2>
-    <span>Нажмите на день (показаны выбранный час и точный пиковый час суток для выбранной рыбы)</span>
+    <span>Нажмите на день (показаны выбранный час и пиковый выход суток по 5-балльной шкале)</span>
   </div>
   <div class="shift-grid" id="shift-grid"></div>
 
   <div class="details-grid">
     <div class="panel">
-      <div class="panel-title" id="factors-title">🧮 Математическая детализация расчёта</div>
+      <div class="panel-header-flex">
+        <div class="panel-title" id="factors-title">🧮 Математическая детализация расчёта</div>
+        <div id="factors-fish-bar"></div>
+      </div>
       <div id="factors-list"></div>
       <div class="honesty-note">
-        <strong>Научный фундамент модели:</strong><br>
+        <strong>Научный фундамент 5-балльной модели:</strong><br>
         1) <em>Оптика воды (Kasten–Czeplak + Beer–Lambert):</em> освещённость на глубине обитания $E_w = E_{\text{surf}}(h_\odot, C)\cdot e^{-K_d z}$ оценивается по видовой кривой чувствительности сетчатки в $\log_{10}(E_w)$.<br>
-        2) <em>Плавательный пузырь (закон Бойля–Мариотта):</em> внутреннее давление $P_{\text{eq}}$ адаптируется по ОДУ $dP_{\text{eq}}/dt = (P_{\text{atm}} - P_{\text{eq}})/\tau_{\text{adapt}}$ ($\tau = 7.5\text{ ч}$ для открытопузырных, $16\text{ ч}$ для закрытопузырных). После выравнивания $|P_{\text{atm}} - P_{\text{eq}}| \to 0$ штраф исчезает и включается бонус стабильности.<br>
-        3) <em>Биоэнергетика (Thornton–Lessem) и Солунар (J.A. Knight / Meeus):</em> температурный коэффициент потребления пищи $f(T_w)$ и непрерывные гауссовы окна кульминаций/восходов Луны.
+        2) <em>Плавательный пузырь (закон Бойля–Мариотта):</em> внутреннее давление $P_{\text{eq}}$ адаптируется по ОДУ $dP_{\text{eq}}/dt = (P_{\text{atm}} - P_{\text{eq}})/\tau_{\text{adapt}}$ ($\tau = 7.5\text{ ч}$ для открытопузырных, $16\text{ ч}$ для закрытопузырных). При $|P_{\text{atm}} - P_{\text{eq}}| \to 0$ штраф исчезает и включается бонус стабилизации.<br>
+        3) <em>Биоэнергетика (Thornton–Lessem) и Солунар (J.A. Knight / Meeus):</em> индекс потребления пищи $f(T_w)$ и гауссовы окна кульминаций/восходов Луны.
       </div>
     </div>
 
     <div class="panel">
-      <div class="panel-title">🌦 Физические параметры среды, Солнце и Солунарная астрономия</div>
+      <div class="panel-title" style="margin-bottom: 0.75rem;">🌦 Физические параметры среды, Солнце и Солунарная астрономия</div>
       <div id="meteo-details"></div>
     </div>
   </div>
@@ -255,8 +270,6 @@
 </div>
 
 <script>
-  // kd: коэффициент диффузного ослабления света (м^-1) по закону Бугера-Ламберта-Бера
-  // tauThermal: постоянная времени тепловой инерции водоёма (часы)
   const BASE_SPOTS = [
     { id: 'mumariha', name: 'Волга • Мумариха', category: 'river', badge: 'Река', type: 'Чебоксарское вдхр. • Залив и свал', exposure: 'open', flow: 'medium-high', kd: 0.85, tauThermal: 180, lat: 56.311946, lon: 46.496244, roadNote: 'После дождей низину к берегу размывает — осторожнее на недоприводе.' },
     { id: 'zaton', name: 'Затон (Козьмодемьянск)', category: 'lake', badge: 'Затон', type: 'Закрытая акватория Волги • Стоячая вода', exposure: 'sheltered', flow: 'still', kd: 0.78, tauThermal: 95, lat: 56.323525, lon: 46.593755, roadNote: 'Защищён от волжской волны при сильном ветре; подъезд со стороны ул. Промышленная.' },
@@ -272,23 +285,16 @@
     { id: 'lisichkino', name: 'Озеро Лисичкино', category: 'lake', badge: 'Озеро', type: 'Лесное озеро • Тихая вода и кувшинки', exposure: 'sheltered', flow: 'still', kd: 0.72, tauThermal: 80, lat: 56.068000, lon: 48.462000, roadNote: 'Закрытая от ветра чаша; работают деликатные оснастки без течения.' }
   ];
 
-  /**
-   * Видовые физиологические параметры (подтверждены ихтиологической литературой):
-   * - bladderType: 'physoclist' (закрытопузырные: tauAdapt 16-18ч) | 'physostome' (открытопузырные: tauAdapt 7-9ч)
-   * - typDepthM: характерная глубина горизонта стоянки (м) для расчёта гидростатического давления и освещённости Ew
-   * - optLogLux: оптимум подводной освещённости log10(Ew в люксах), sigmaLogLux: ширина оптического диапазона
-   * - nightFloor: базовый метаболический уровень пищевой активности в полной темноте (%)
-   * - tl: параметры кривой Торнтона–Лессема (T1, T2, T3, T4 в °C, K1=0.1, K4=0.1)
-   */
+  // Видовые параметры (шкала базы в рыбках: nightFloorFish в полной темноте .. 2.55 в оптимуме освещённости)
   const FISH_MODELS = [
-    { id: 'perch', name: 'Окунь', bladderType: 'physoclist', tauAdapt: 16.0, typDepthM: 3.5, optLogLux: 2.1, sigmaLogLux: 1.55, nightFloor: 7,  tl: [1.0, 6.0, 19.0, 26.0], isPredator: true },
-    { id: 'pike', name: 'Щука', bladderType: 'physostome', tauAdapt: 8.5,  typDepthM: 3.0, optLogLux: 2.2, sigmaLogLux: 1.65, nightFloor: 10, tl: [0.8, 5.5, 18.0, 25.0], isPredator: true },
-    { id: 'roach', name: 'Плотва', bladderType: 'physostome', tauAdapt: 7.5,  typDepthM: 2.5, optLogLux: 2.4, sigmaLogLux: 1.60, nightFloor: 8,  tl: [1.2, 7.0, 20.0, 27.0], isPredator: false },
-    { id: 'zander', name: 'Судак', bladderType: 'physoclist', tauAdapt: 18.0, typDepthM: 5.5, optLogLux: 0.15, sigmaLogLux: 1.45, nightFloor: 21, tl: [1.5, 7.5, 20.0, 27.5], isPredator: true },
-    { id: 'bream', name: 'Лещ', bladderType: 'physostome', tauAdapt: 8.0,  typDepthM: 4.5, optLogLux: 1.2, sigmaLogLux: 1.75, nightFloor: 17, tl: [3.0, 10.5, 22.0, 29.0], isPredator: false },
-    { id: 'silverbream', name: 'Густера', bladderType: 'physostome', tauAdapt: 7.5,  typDepthM: 3.5, optLogLux: 1.6, sigmaLogLux: 1.70, nightFloor: 13, tl: [2.5, 9.5, 22.0, 29.0], isPredator: false },
-    { id: 'ide', name: 'Жерех', bladderType: 'physostome', tauAdapt: 8.0,  typDepthM: 1.2, optLogLux: 2.6, sigmaLogLux: 1.50, nightFloor: 7,  tl: [4.0, 11.5, 22.5, 28.5], isPredator: true },
-    { id: 'catfish', name: 'Сом', bladderType: 'physostome', tauAdapt: 9.0,  typDepthM: 6.0, optLogLux: -1.4, sigmaLogLux: 1.40, nightFloor: 34, tl: [10.0, 17.5, 26.0, 32.0], isPredator: true }
+    { id: 'perch', name: 'Окунь', bladderType: 'physoclist', tauAdapt: 16.0, typDepthM: 3.5, optLogLux: 2.1, sigmaLogLux: 1.55, nightFloorFish: 0.40, tl: [1.0, 6.0, 19.0, 26.0], isPredator: true },
+    { id: 'pike', name: 'Щука', bladderType: 'physostome', tauAdapt: 8.5,  typDepthM: 3.0, optLogLux: 2.2, sigmaLogLux: 1.65, nightFloorFish: 0.55, tl: [0.8, 5.5, 18.0, 25.0], isPredator: true },
+    { id: 'roach', name: 'Плотва', bladderType: 'physostome', tauAdapt: 7.5,  typDepthM: 2.5, optLogLux: 2.4, sigmaLogLux: 1.60, nightFloorFish: 0.45, tl: [1.2, 7.0, 20.0, 27.0], isPredator: false },
+    { id: 'zander', name: 'Судак', bladderType: 'physoclist', tauAdapt: 18.0, typDepthM: 5.5, optLogLux: 0.15, sigmaLogLux: 1.45, nightFloorFish: 1.15, tl: [1.5, 7.5, 20.0, 27.5], isPredator: true },
+    { id: 'bream', name: 'Лещ', bladderType: 'physostome', tauAdapt: 8.0,  typDepthM: 4.5, optLogLux: 1.2, sigmaLogLux: 1.75, nightFloorFish: 0.90, tl: [3.0, 10.5, 22.0, 29.0], isPredator: false },
+    { id: 'silverbream', name: 'Густера', bladderType: 'physostome', tauAdapt: 7.5,  typDepthM: 3.5, optLogLux: 1.6, sigmaLogLux: 1.70, nightFloorFish: 0.70, tl: [2.5, 9.5, 22.0, 29.0], isPredator: false },
+    { id: 'ide', name: 'Жерех', bladderType: 'physostome', tauAdapt: 8.0,  typDepthM: 1.2, optLogLux: 2.6, sigmaLogLux: 1.50, nightFloorFish: 0.40, tl: [4.0, 11.5, 22.5, 28.5], isPredator: true },
+    { id: 'catfish', name: 'Сом', bladderType: 'physostome', tauAdapt: 9.0,  typDepthM: 6.0, optLogLux: -1.4, sigmaLogLux: 1.40, nightFloorFish: 1.85, tl: [10.0, 17.5, 26.0, 32.0], isPredator: true }
   ];
 
   const DAY_SPECS = [
@@ -333,9 +339,55 @@
   let tempMarker = null;
   let spotMarkers = {};
   let currentMapMode = 'yandex';
+  let svgUidCounter = 0;
 
   function escapeHtml(str) {
     return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  }
+
+  function scoreClass(fishVal) { return fishVal >= 3.5 ? 's-high' : (fishVal >= 2.0 ? 's-mid' : 's-low'); }
+  function scoreColor(fishVal) { return fishVal >= 3.5 ? '#10b981' : (fishVal >= 2.0 ? '#f59e0b' : '#ef4444'); }
+
+  /**
+   * Векторная отрисовка 5 рыбок с дробным градиентным заполнением до 0.1 рыбки
+   */
+  function renderFishScaleSVG(fishVal, options = {}) {
+    const val = Math.max(0, Math.min(5, Number(fishVal) || 0));
+    const width = options.width || 22;
+    const height = Math.round(width * 0.58);
+    const showLabel = options.showLabel !== false;
+    const align = options.align || 'right'; // 'right' | 'center' | 'left'
+    const fillHex = scoreColor(val);
+    const emptyHex = '#1f2d3d';
+    const strokeHex = '#384c63';
+
+    let svgs = '';
+    for (let i = 1; i <= 5; i++) {
+      const frac = Math.max(0, Math.min(1, val - (i - 1)));
+      const pct = Math.round(frac * 100);
+      const gid = `fgrad_${++svgUidCounter}`;
+      // Хвост слева (x=2), голова справа (x=30)
+      svgs += `<svg width="${width}" height="${height}" viewBox="0 0 32 18" aria-hidden="true">
+        <defs>
+          <linearGradient id="${gid}" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="${pct}%" stop-color="${fillHex}"/>
+            <stop offset="${pct}%" stop-color="${emptyHex}"/>
+          </linearGradient>
+        </defs>
+        <path d="M2,9 L7,4 L7,7 C11,3.5 18,3 24,6.5 C27.5,8.2 30,9 30,9 C30,9 27.5,9.8 24,11.5 C18,15 11,14.5 7,11 L7,14 Z"
+              fill="url(#${gid})" stroke="${pct > 0 ? fillHex : strokeHex}" stroke-width="1.2" stroke-linejoin="round"/>
+        <circle cx="25.2" cy="8.2" r="1.15" fill="#080d13"/>
+      </svg>`;
+    }
+
+    const labelHtml = showLabel
+      ? `<span class="fish-num-pill ${scoreClass(val)}">${val.toFixed(1)} / 5</span>`
+      : '';
+
+    return `<div class="fish-rating-wrap ${align}" title="Оценка клёва: ${val.toFixed(1)} из 5 рыбок">
+      <div class="fish-icons-row">${svgs}</div>
+      ${labelHtml}
+    </div>`;
   }
 
   function getActiveFish() { return FISH_MODELS[selectedFishIdx] || FISH_MODELS[0]; }
@@ -378,16 +430,15 @@
   }
 
   /**
-   * 1. Точные астрономические эфемериды Солнца и Луны (NOAA / Jean Meeus Astronomical Algorithms)
+   * 1. Астрономические эфемериды Солнца и Луны (NOAA / Jean Meeus)
    */
   function getAstronomy(lat, lon, dayOffset, hour) {
     const mskDateStr = getMskDateStr(dayOffset);
     const [Y, M, D] = mskDateStr.split('-').map(Number);
     const rad = Math.PI / 180;
     const deg = 180 / Math.PI;
-    const tz = 3; // МСК UTC+3
+    const tz = 3;
 
-    // Юлианская дата на 00:00 МСК (21:00 UTC предыдущих суток)
     const jd0Msk = Date.UTC(Y, M - 1, D, 0, 0, 0) / 86400000 + 2440587.5 - (tz / 24);
 
     function sunPosition(jd) {
@@ -419,7 +470,6 @@
       return { alt, dec, eqTimeMin };
     }
 
-    // Точный восход/закат с учётом рефракции (-0.833°)
     const noonSun = sunPosition(jd0Msk + 0.5);
     const cosOmega0 = (Math.sin(rad * (-0.833)) - Math.sin(rad * lat) * Math.sin(rad * noonSun.dec)) /
                       (Math.cos(rad * lat) * Math.cos(rad * noonSun.dec));
@@ -445,7 +495,6 @@
       const lonMoon = Lp + 6.289 * Math.sin(rad * Mm) + 1.274 * Math.sin(rad * (2 * Dm - Mm)) +
                       0.658 * Math.sin(rad * (2 * Dm)) + 0.214 * Math.sin(rad * (2 * Mm)) - 0.186 * Math.sin(rad * Ms);
       const latMoon = 5.128 * Math.sin(rad * F) + 0.280 * Math.sin(rad * (Mm + F)) + 0.277 * Math.sin(rad * (Mm - F));
-      // Расстояние до Луны (км) и горизонтальный параллакс для точного времени восхода/захода Луны
       const distKm = 385000.56 - 20905.355 * Math.cos(rad * Mm) - 3699.111 * Math.cos(rad * (2 * Dm - Mm)) - 2955.968 * Math.cos(rad * (2 * Dm));
       const parallaxDeg = Math.asin(6378.14 / distKm) * deg;
 
@@ -462,7 +511,6 @@
       const phase = dNorm / 360;
       const illum = (1 - Math.cos(rad * dNorm)) / 2;
       const lunarDay = Math.min(30, Math.floor(phase * 29.530588) + 1);
-      // Относительный приливный гравитационный фактор (куб отношения среднего расстояния к текущему)
       const tidalForceFactor = Math.pow(385000 / distKm, 3);
       return { alt, ha, phase, illum, illumPct: Math.round(illum * 100), lunarDay, parallaxDeg, tidalForceFactor };
     }
@@ -474,7 +522,6 @@
     for (let m = 4; m <= 1440; m += 4) {
       const curSt = moonState(jd0Msk + m / 1440);
       const decH = m / 60;
-      // Видимый горизонт Луны: -0.5667° (рефракция + полудиаметр) + горизонтальный параллакс (~+0.95°)
       const hHorizon = -0.5667 + curSt.parallaxDeg;
       if (prevSt.alt < hHorizon && curSt.alt >= hHorizon && moonriseDec === null) {
         moonriseDec = (m - 4 + ((hHorizon - prevSt.alt) / (curSt.alt - prevSt.alt || 1)) * 4) / 60;
@@ -488,7 +535,6 @@
       prevSt = curSt;
     }
 
-    // Оцениваем середину часа (hour + 0.5), т.к. часовой слот 07:00 покрывает 07:00–08:00
     const midHour = hour + 0.5;
     const sunAtSlot = sunPosition(jd0Msk + midHour / 24);
     const moonAtSlot = moonState(jd0Msk + midHour / 24);
@@ -497,13 +543,11 @@
     const distMajor = Math.min(wrapDiff(midHour, upperTransitDec), wrapDiff(midHour, lowerTransitDec));
     const distMinor = Math.min(wrapDiff(midHour, moonriseDec), wrapDiff(midHour, moonsetDec));
 
-    // Гауссовы весовые функции Джона Олдена Найта: Major (FWHM ~2ч, sigma=0.85), Minor (FWHM ~1ч, sigma=0.45)
     const majorGauss = Math.exp(-(distMajor ** 2) / (2 * 0.85 ** 2));
     const minorGauss = Math.exp(-(distMinor ** 2) / (2 * 0.45 ** 2));
 
     const { phase, illum, illumPct, lunarDay, alt: moonAltDeg, tidalForceFactor } = moonAtSlot;
     const growing = phase < 0.5;
-    // Сизигийный индекс (1.0 в новолуние и полнолуние, 0.0 в квадратурах)
     const syzygyFactor = Math.cos(Math.PI * (phase * 2)) ** 2;
 
     let phaseName = 'Растущая луна';
@@ -539,59 +583,43 @@
   }
 
   /**
-   * 2. Физика подводной освещённости (Люкс, Kasten-Czeplak + Beer-Lambert) и оптический отклик сетчатки вида
+   * 2. Подводная освещённость в люксах (Kasten–Czeplak + Beer–Lambert) -> база в рыбках (0.4 .. 2.55)
    */
   function computeUnderwaterOptics(fish, spot, astro, cloudPct) {
     const h = astro.sunAltDeg;
     const C = Math.max(0, Math.min(1, (Number(cloudPct) || 0) / 100));
 
-    // Поверхностная солнечная освещённость на открытом небе (Люкс) по кривой сумерек и высоты Солнца
-    let clearSunLux = 0.0008; // ночное небо без Луны
-    if (h >= 0) {
-      clearSunLux = 400 + 115000 * Math.pow(Math.sin((h * Math.PI) / 180), 1.35);
-    } else if (h >= -6) {
-      // Гражданские сумерки: от 400 лк на горизонте до 3.4 лк при -6°
-      clearSunLux = 3.4 * Math.pow(400 / 3.4, (h + 6) / 6);
-    } else if (h >= -12) {
-      // Навигационные сумерки: от 3.4 лк до 0.012 лк
-      clearSunLux = 0.012 * Math.pow(3.4 / 0.012, (h + 12) / 6);
-    } else if (h >= -18) {
-      // Астрономические сумерки: от 0.012 лк до 0.0008 лк
-      clearSunLux = 0.0008 * Math.pow(0.012 / 0.0008, (h + 18) / 6);
-    }
+    let clearSunLux = 0.0008;
+    if (h >= 0) clearSunLux = 400 + 115000 * Math.pow(Math.sin((h * Math.PI) / 180), 1.35);
+    else if (h >= -6) clearSunLux = 3.4 * Math.pow(400 / 3.4, (h + 6) / 6);
+    else if (h >= -12) clearSunLux = 0.012 * Math.pow(3.4 / 0.012, (h + 12) / 6);
+    else if (h >= -18) clearSunLux = 0.0008 * Math.pow(0.012 / 0.0008, (h + 18) / 6);
 
-    // Ослабление облачностью по Kasten & Czeplak (1980): L_cloud / L_clear = 1 - 0.75 * C^3.4
     const cloudTransmittance = 1 - 0.75 * Math.pow(C, 3.4);
     const sunSurfLux = clearSunLux * cloudTransmittance;
-
-    // Лунная освещённость поверхности (до 0.25 лк в зените полнолуния)
     const moonSin = Math.max(0, Math.sin((astro.moonAltDeg * Math.PI) / 180));
     const moonSurfLux = 0.25 * Math.pow(astro.illum, 1.3) * moonSin * (1 - 0.8 * C);
 
     const totalSurfLux = Math.max(0.0008, sunSurfLux + moonSurfLux);
-    // Закон Бугера–Ламберта–Бера на глубине стоянки вида: Ew = Esurf * exp(-Kd * z)
     const waterLux = totalSurfLux * Math.exp(-(spot.kd || 0.75) * fish.typDepthM);
     const logWaterLux = Math.log10(Math.max(1e-5, waterLux));
 
-    // Гауссов отклик зрительного аппарата вида на логарифм подводной освещённости
     const zOpt = (logWaterLux - fish.optLogLux) / fish.sigmaLogLux;
-    const opticalAffinity = Math.exp(-0.5 * zOpt * zOpt); // 0..1
+    const opticalAffinity = Math.exp(-0.5 * zOpt * zOpt);
 
-    // Базовая активность из оптического режима и суточного метаболического ритма
-    const peakBase = 48;
-    const rawBase = fish.nightFloor + (peakBase - fish.nightFloor) * opticalAffinity;
+    const peakBaseFish = 2.55;
+    const baseFish = +(fish.nightFloorFish + (peakBaseFish - fish.nightFloorFish) * opticalAffinity).toFixed(2);
 
     return {
       waterLux: waterLux >= 10 ? Math.round(waterLux) : +waterLux.toFixed(3),
       logWaterLux: +logWaterLux.toFixed(2),
       opticalAffinity,
-      baseScore: Math.round(rawBase)
+      baseFish
     };
   }
 
   /**
-   * 3. Модель Торнтона–Лессема (Thornton & Lessem, 1978 — Wisconsin Bioenergetics)
-   * Относительная скорость потребления пищи f(T) в [0, 1] по 4 физиологическим точкам T1, T2, T3, T4
+   * 3. Модель Торнтона–Лессема (Wisconsin Bioenergetics 3.0)
    */
   function thorntonLessemConsumption(T, [T1, T2, T3, T4]) {
     const K1 = 0.1, K4 = 0.1;
@@ -607,8 +635,7 @@
   }
 
   /**
-   * 4. Интегрирование ОДУ тепловой инерции воды по часовому ряду воздуха:
-   * dTw/dt = (Tair(t) - Tw(t)) / tauThermal
+   * 4. ОДУ тепловой инерции воды
    */
   function buildWaterTempSeries(hourlyTemps, hourlyTimes, tauThermal) {
     const monthDefaults = [1.2, 1.0, 1.5, 4.5, 11.5, 18.5, 22.0, 21.0, 16.0, 9.5, 4.8, 2.0];
@@ -621,7 +648,6 @@
       const m = hourlyTimes[i] ? (Number(hourlyTimes[i].split('-')[1]) - 1) : firstMonth;
       const clim = monthDefaults[m] ?? 5.0;
       const tAir = typeof hourlyTemps[i] === 'number' ? hourlyTemps[i] : clim;
-      // Радиационно-конвективный баланс: смесь сезонности и фактического теплообмена с воздухом
       const eqTarget = 0.55 * clim + 0.45 * Math.max(-0.5, tAir);
       tw = tw + alpha * (eqTarget - tw);
       result[i] = +Math.max(0.2, tw).toFixed(1);
@@ -630,8 +656,7 @@
   }
 
   /**
-   * 5. Интегрирование ОДУ барической адаптации плавательного пузыря (закон Бойля–Мариотта)
-   * dPeq/dt = (Patm(t) - Peq(t)) / tauAdapt
+   * 5. ОДУ барической адаптации плавательного пузыря (закон Бойля–Мариотта)
    */
   function computeSwimBladderState(pArrMm, idx, fish) {
     const startIdx = Math.max(0, idx - 96);
@@ -647,18 +672,12 @@
     const p6 = pArrMm[Math.max(0, idx - 6)] ?? pNow;
     const p24 = pArrMm[Math.max(0, idx - 24)] ?? pNow;
 
-    // Нескомпенсированный перепад давления на плавательном пузыре (мм рт.ст.)
     const uncompensatedMm = +(pNow - pEq).toFixed(2);
-    // Полное гидростатическое давление на глубине стоянки вида (73.56 мм рт.ст. на 1 м воды)
     const totalHydroMm = pNow + 73.56 * fish.typDepthM;
-    // Относительная деформация объёма пузыря по закону Бойля–Мариотта (ΔV / V)
     const volumeStrainPct = +((Math.abs(uncompensatedMm) / totalHydroMm) * 100).toFixed(2);
-
-    // Скорость изменения давления за последние 6 часов (мм/ч)
     const dpDt6 = +((pNow - p6) / 6).toFixed(2);
     const pressDelta24 = +(pNow - p24).toFixed(1);
 
-    // Время непрерывной барической стабильности (коридор ±1.5 мм)
     let stableHours = 0;
     for (let k = 1; k <= 72; k++) {
       if (idx - k < 0) break;
@@ -666,15 +685,7 @@
       else break;
     }
 
-    return {
-      pressMm: Math.round(pNow),
-      pEqMm: +pEq.toFixed(1),
-      uncompensatedMm,
-      volumeStrainPct,
-      dpDt6,
-      pressDelta24,
-      stableHours
-    };
+    return { pressMm: Math.round(pNow), pEqMm: +pEq.toFixed(1), uncompensatedMm, volumeStrainPct, dpDt6, pressDelta24, stableHours };
   }
 
   function getSprayRecommendation(fishId, waterTemp, isBaroStress, isHighFlow) {
@@ -783,94 +794,89 @@
   }
 
   /**
-   * 6. Интегральная математическая оценка вероятности клёва (%)
+   * 6. Интегральная оценка по 5-балльной шкале рыбок (точность 0.1)
    */
   function evaluateBite(params) {
     const { hour, bladder, optics, wind, gusts, waterTemp, astro, spot } = params;
     const fish = params.fish || getActiveFish();
     const factors = [];
 
-    // 1. Базовая активность из подводной оптики (Люкс на глубине z при Kd водоёма)
+    // 1. Базовая активность из подводной оптики (Люкс на глубине z при Kd водоёма) -> 0.40 .. 2.55 рыбки
     factors.push({
       name: `Оптика воды (${fish.name}, ${String(hour).padStart(2, '0')}:00 • ${optics.waterLux} лк на ${fish.typDepthM} м, ${astro.solarPhaseLabel})`,
-      val: optics.baseScore,
+      val: optics.baseFish,
       base: true
     });
 
-    // 2. Физика плавательного пузыря (ОДУ Бойля–Мариотта): непрерывная функция нескомпенсированного перепада ΔP
+    // 2. Физика плавательного пузыря (ОДУ Бойля–Мариотта) -> -2.40 .. +0.85 рыбки
     const absUncomp = Math.abs(bladder.uncompensatedMm);
-    let baroScore = 0;
+    let baroFish = 0;
     let baroLabel = '';
 
     if (absUncomp >= 1.8) {
-      // Гладкая степенная функция стресса от нескомпенсированного перепада давления пузыря
-      baroScore = -Math.min(48, Math.round(5.8 * Math.pow(absUncomp - 1.2, 1.35)));
+      baroFish = -Math.min(2.40, +(0.30 * Math.pow(absUncomp - 1.2, 1.35)).toFixed(2));
       baroLabel = `Плавательный пузырь (ΔP: ${bladder.uncompensatedMm >= 0 ? '+' : ''}${bladder.uncompensatedMm} мм, деформ. ${bladder.volumeStrainPct}%, τ=${fish.tauAdapt}ч)`;
     } else if (bladder.dpDt6 <= -0.22 && bladder.dpDt6 >= -0.95) {
-      // Предфронтальный мягкий спад давления (до наступления барического шока)
-      baroScore = +10;
+      baroFish = +0.50;
       baroLabel = `Барометр (${bladder.pressMm} мм — мягкий предфронтальный спад ${bladder.dpDt6} мм/ч)`;
     } else {
-      // Гладкое экспоненциальное насыщение бонуса адаптации при ровном давлении (1 - exp(-t / 16))
       const adaptProgress = 1 - Math.exp(-bladder.stableHours / 16);
-      baroScore = Math.round(4 + 12 * adaptProgress);
+      baroFish = +(0.20 + 0.65 * adaptProgress).toFixed(2);
       baroLabel = `Барометр (${bladder.pressMm} мм — пузырь адаптирован, ровно ${bladder.stableHours}ч)`;
     }
-    factors.push({ name: baroLabel, val: baroScore });
+    factors.push({ name: baroLabel, val: baroFish });
 
-    // Синергия стабилизации на зорьках (когда давление ровно >= 14ч и рыба выходит по расписанию)
+    // Синергия стабилизации на зорьках (+0.30 рыбки)
     if (absUncomp < 1.8 && bladder.stableHours >= 14 && astro.nearDawnDusk) {
-      const synergy = Math.round(5 * Math.min(1, bladder.stableHours / 24));
-      if (synergy > 0) {
+      const synergy = +(0.30 * Math.min(1, bladder.stableHours / 24)).toFixed(2);
+      if (synergy >= 0.05) {
         factors.push({ name: 'Стабильный барометр × зорька (предсказуемый выход)', val: synergy });
       }
     }
 
-    // 3. Биоэнергетический температурный индекс Торнтона–Лессема f(Tw) in [0, 1]
+    // 3. Биоэнергетический температурный индекс Торнтона–Лессема f(Tw) -> -1.70 .. +0.45 рыбки
     const fT = thorntonLessemConsumption(waterTemp, fish.tl);
-    // Отображаем f(T) в диапазон [-26% .. +8%] (для сома при холодной воде штраф глубже до -34%)
-    const tempScore = fT >= 0.5
-      ? Math.round((fT - 0.5) * 16)
-      : Math.round((fT - 0.5) * (fish.id === 'catfish' ? 68 : 42));
+    const tempFish = fT >= 0.5
+      ? +((fT - 0.5) * 0.90).toFixed(2)
+      : +((fT - 0.5) * (fish.id === 'catfish' ? 3.50 : 2.15)).toFixed(2);
     factors.push({
       name: `Биоэнергетика воды (~${waterTemp}°C, индекс потребления f(T)=${fT.toFixed(2)})`,
-      val: tempScore
+      val: tempFish
     });
 
-    // 4. Ветро-волновая аэрация и ветровой разгон (Fetch)
-    let windScore = 0;
+    // 4. Ветро-волновая аэрация и ветровой разгон -> -1.25 .. +0.40 рыбки
+    let windFish = 0;
     const isSheltered = spot.exposure === 'sheltered';
     if (wind >= 1.5 && wind <= 4.8) {
-      windScore = +7; // лёгкая рябь: аэрация и рассеивание поверхностных бликов
+      windFish = +0.40;
     } else if (wind < 1.5) {
-      windScore = (astro.sunAltDeg > 10 && optics.waterLux > 2000) ? -3 : +2;
+      windFish = (astro.sunAltDeg > 10 && optics.waterLux > 2000) ? -0.15 : +0.10;
     } else if (wind <= 8.0) {
-      windScore = isSheltered ? +5 : -Math.round((wind - 4.8) * 3.0);
+      windFish = isSheltered ? +0.25 : -+((wind - 4.8) * 0.16).toFixed(2);
     } else {
-      windScore = isSheltered ? 0 : -Math.min(24, Math.round(10 + (wind - 8.0) * 3.5));
+      windFish = isSheltered ? 0 : -Math.min(1.25, +(0.52 + (wind - 8.0) * 0.18).toFixed(2));
     }
-    if (!isSheltered && (Number(gusts) || 0) >= 11.0) windScore -= 4;
+    if (!isSheltered && (Number(gusts) || 0) >= 11.0) windFish = +(windFish - 0.20).toFixed(2);
     factors.push({
       name: isSheltered && wind > 5 ? `Укрытие от ветрового разгона (${wind.toFixed(1)} м/с)` : `Ветер и порывы (${wind.toFixed(1)} / ${(Number(gusts) || wind).toFixed(1)} м/с)`,
-      val: windScore
+      val: windFish
     });
 
-    // 5. Солунарный индекс Джона Олдена Найта (гауссовы Major/Minor окна × приливный фактор × сизигия)
+    // 5. Солунарный индекс Джона Олдена Найта -> 0.00 .. +0.75 рыбки
     const solunarRaw = (1.0 * astro.majorGauss + 0.55 * astro.minorGauss) *
                        (0.75 + 0.35 * astro.syzygyFactor) *
                        astro.tidalForceFactor;
-    // Резонанс при совпадении солунарного окна с солнечной зорькой
     const dawnMoonOverlap = (astro.nearDawnDusk && (astro.majorGauss > 0.35 || astro.minorGauss > 0.35)) ? 1.25 : 1.0;
-    const solunarScore = Math.min(14, Math.round(solunarRaw * dawnMoonOverlap * 9.5));
+    const solunarFish = Math.min(0.75, +(solunarRaw * dawnMoonOverlap * 0.52).toFixed(2));
     const solunarTag = astro.nearMajorMoon ? 'Major-окно (кульминация)' : (astro.nearMinorMoon ? 'Minor-окно (восход/заход)' : 'межпиковый интервал');
     factors.push({
       name: `Солунар Луны (${astro.lunarDay} л.д., ${astro.phaseName} ${astro.illumPct}% • ${solunarTag})`,
-      val: solunarScore
+      val: solunarFish
     });
 
-    const rawTotal = factors.reduce((s, f) => s + f.val, 0);
-    const total = Math.max(4, Math.min(94, Math.round(rawTotal)));
-    return { pct: total, factors, fT };
+    const rawSum = factors.reduce((s, f) => s + f.val, 0);
+    const scoreFish = +Math.max(0.2, Math.min(5.0, rawSum)).toFixed(1);
+    return { scoreFish, factors, fT };
   }
 
   async function fetchWithTimeout(url, ms = 7000) {
@@ -911,7 +917,6 @@
         const key = `${sp.lat.toFixed(4)}_${sp.lon.toFixed(4)}`;
         const item = arr[idx] || arr[0];
         if (item && item.hourly && Array.isArray(item.hourly.temperature_2m)) {
-          // Предвычисляем давление в мм рт.ст. для всего 168-часового ряда
           const pRaw = item.hourly.pressure_msl || item.hourly.surface_pressure || [];
           item.hourly._pressMm = pRaw.map(v => typeof v === 'number' ? v * 0.750062 : 755);
           weatherCache[key] = item;
@@ -953,7 +958,6 @@
     let idx = Array.isArray(h.time) ? h.time.indexOf(targetIso) : -1;
     if (idx === -1) idx = Math.min(Math.max(0, h.temperature_2m.length - 1), Math.max(0, (4 + daySpec.offset) * 24 + hour));
 
-    // Кэшируем ряд температуры воды для данного водоёма по ОДУ тепловой инерции
     const twKey = `_tw_${spot.tauThermal}`;
     if (!h[twKey]) {
       h[twKey] = buildWaterTempSeries(h.temperature_2m, h.time || [], spot.tauThermal);
@@ -974,9 +978,6 @@
 
     return { spot, fish, daySpec, mskDateStr, hour, temp, waterTemp, bladder, astro, optics, wind, gusts, windDir, cloud, precip, wCode };
   }
-
-  function scoreClass(pct) { return pct >= 60 ? 's-high' : (pct >= 30 ? 's-mid' : 's-low'); }
-  function scoreColor(pct) { return pct >= 60 ? 'var(--green)' : (pct >= 30 ? 'var(--amber)' : 'var(--red)'); }
 
   function renderPills() {
     document.getElementById('fish-pills').innerHTML = FISH_MODELS.map((f, i) =>
@@ -1011,7 +1012,7 @@
         const ctx = extractSlotContext(getPointWeather(sp), sp, daySpec, hour, fish);
         return { spot: sp, ctx, res: evaluateBite(ctx) };
       });
-      const bestPct = Math.max(...spotResults.map(r => r.res.pct));
+      const bestScore = Math.max(...spotResults.map(r => r.res.scoreFish));
 
       document.getElementById('spots-grid').innerHTML = spotResults.map(r => {
         const wbCls = r.spot.category === 'river' ? 'wb-river' : (r.spot.badge === 'Затон' ? 'wb-zaton' : 'wb-lake');
@@ -1020,14 +1021,14 @@
           : `ΔP пуз: ${r.ctx.bladder.uncompensatedMm >= 0 ? '+' : ''}${r.ctx.bladder.uncompensatedMm} мм`;
         return `
           <div class="spot-card ${r.spot.id === activeSpot.id ? 'selected' : ''}" onclick="selectSpotById('${escapeHtml(r.spot.id)}')">
-            ${r.res.pct === bestPct ? '<div class="best-badge">Лучший вариант</div>' : ''}
+            ${r.res.scoreFish === bestScore ? '<div class="best-badge">Лучший вариант</div>' : ''}
             <div class="spot-top">
               <div>
                 <span class="wb-tag ${wbCls}">${escapeHtml(r.spot.badge || 'Водоём')}</span>
                 <div class="spot-title">${escapeHtml(r.spot.name)}</div>
                 <div class="spot-type">${escapeHtml(r.spot.type)}</div>
               </div>
-              <div class="score-badge ${scoreClass(r.res.pct)}">${r.res.pct}%</div>
+              ${renderFishScaleSVG(r.res.scoreFish, { width: 20, showLabel: true, align: 'right' })}
             </div>
             <div class="spot-note">${escapeHtml(r.spot.roadNote || 'Пользовательская точка')}</div>
             <div class="spot-metrics">
@@ -1052,7 +1053,8 @@
         return `
           <div class="hour-box ${hVal === selectedHour ? 'active' : ''}" onclick="selectHour(${hVal})">
             <div class="h-time">${String(hVal).padStart(2, '0')}:00</div>
-            <div class="h-val" style="color:${scoreColor(ev.pct)}">${ev.pct}%</div>
+            ${renderFishScaleSVG(ev.scoreFish, { width: 17, showLabel: false, align: 'center' })}
+            <div class="h-val-num" style="color:${scoreColor(ev.scoreFish)}">${ev.scoreFish.toFixed(1)} <span style="font-size:0.72rem; color:var(--muted); font-weight:600;">/ 5</span></div>
             <div class="h-sub">${c.optics.waterLux >= 1 ? Math.round(c.optics.waterLux) : c.optics.waterLux} лк</div>
             ${tags.length ? `<div class="h-tags">${tags.join('')}</div>` : ''}
           </div>`;
@@ -1076,31 +1078,36 @@
         <div class="arsenal-card"><div><div class="arsenal-kicker">🎒 6. Снаряжение и берег</div><div class="arsenal-main">${escapeHtml(kit.checklist)}</div></div><div class="arsenal-sub">${escapeHtml(activeSpot.roadNote || 'Подъезд стандартный.')}${renderBuy(kit.gearLinks)}</div></div>
       `;
 
-      // Сводка по всем 5 дням: выбранный час + точный пиковый час из 24 часов
       document.getElementById('shift-grid').innerHTML = DAY_SPECS.map((dSp, dIdx) => {
         const dCtx = extractSlotContext(activePack, activeSpot, dSp, hour, fish);
         const dEv = evaluateBite(dCtx);
-        let bestH = 0, bestDayPct = -1;
+        let bestH = 0, bestDayFish = -1;
         HOURS_24.forEach(hv => {
           const hEv = evaluateBite(extractSlotContext(activePack, activeSpot, dSp, hv, fish));
-          if (hEv.pct > bestDayPct) { bestDayPct = hEv.pct; bestH = hv; }
+          if (hEv.scoreFish > bestDayFish) { bestDayFish = hEv.scoreFish; bestH = hv; }
         });
         const baroShort = Math.abs(dCtx.bladder.uncompensatedMm) < 1.8
           ? `Ровно ${dCtx.bladder.stableHours}ч (${dCtx.bladder.pressMm} мм)`
           : `ΔP пузыря: ${dCtx.bladder.uncompensatedMm >= 0 ? '+' : ''}${dCtx.bladder.uncompensatedMm} мм`;
         return `
           <div class="shift-card ${dIdx === selectedDayIdx ? 'current-day' : ''}" onclick="selectDay(${dIdx})">
-            <div class="shift-head"><span>${escapeHtml(dayLabels[dIdx])}</span><span style="color:${scoreColor(dEv.pct)}">${dEv.pct}%</span></div>
+            <div class="shift-head">
+              <span>${escapeHtml(dayLabels[dIdx])}</span>
+              <span class="fish-num-pill ${scoreClass(dEv.scoreFish)}">${dEv.scoreFish.toFixed(1)} / 5</span>
+            </div>
+            <div style="margin-bottom:0.4rem;">${renderFishScaleSVG(dEv.scoreFish, { width: 19, showLabel: false, align: 'left' })}</div>
             <div class="shift-weather">${weatherDesc(dCtx.wCode)} • ${dCtx.temp > 0 ? '+' : ''}${Math.round(dCtx.temp)}°C • ${baroShort}</div>
-            <div class="shift-gear"><strong>Пик суток (${String(bestH).padStart(2, '0')}:00):</strong> <span style="color:${scoreColor(bestDayPct)}; font-weight:700;">${bestDayPct}%</span><br><strong>Луна:</strong> ${dCtx.astro.lunarDay} л.д., ${escapeHtml(dCtx.astro.phaseName)} (${dCtx.astro.illumPct}%)</div>
+            <div class="shift-gear"><strong>Пик суток (${String(bestH).padStart(2, '0')}:00):</strong> <span style="color:${scoreColor(bestDayFish)}; font-weight:700;">${bestDayFish.toFixed(1)} / 5 🐟</span><br><strong>Луна:</strong> ${dCtx.astro.lunarDay} л.д., ${escapeHtml(dCtx.astro.phaseName)} (${dCtx.astro.illumPct}%)</div>
           </div>`;
       }).join('');
 
-      document.getElementById('factors-title').textContent = `🧮 Математическая детализация расчёта (Итог: ${curEval.pct}%)`;
+      document.getElementById('factors-title').textContent = `🧮 Математическая детализация (Итог: ${curEval.scoreFish.toFixed(1)} / 5.0)`;
+      document.getElementById('factors-fish-bar').innerHTML = renderFishScaleSVG(curEval.scoreFish, { width: 22, showLabel: false, align: 'right' });
+
       document.getElementById('factors-list').innerHTML = curEval.factors.map(f => {
         const cls = f.base ? 'f-neu' : (f.val > 0 ? 'f-pos' : (f.val < 0 ? 'f-neg' : 'f-neu'));
-        const prefix = f.base ? 'База ' : (f.val > 0 ? '+' : '');
-        return `<div class="factor-item"><span>${escapeHtml(f.name)}</span><span class="${cls}">${prefix}${f.val}%</span></div>`;
+        const sign = f.base ? 'База ' : (f.val > 0 ? '+' : '');
+        return `<div class="factor-item"><span>${escapeHtml(f.name)}</span><span class="${cls}">${sign}${f.val.toFixed(2)} 🐟</span></div>`;
       }).join('');
 
       const bladderTypeRus = fish.bladderType === 'physoclist'
