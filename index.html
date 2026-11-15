@@ -7,111 +7,45 @@
   <script src="https://api-maps.yandex.ru/2.1/?apikey=42977bb2-731e-4eb1-8131-5ca94473b359&lang=ru_RU"></script>
   <style>
     :root {
-      --bg: #080d13;
-      --card: #101822;
-      --card-2: #16212e;
-      --border: #213042;
-      --text: #eef3f8;
-      --muted: #8698ad;
-      --accent: #38bdf8;
-      --accent-bg: rgba(56, 189, 248, 0.14);
-      --green: #10b981;
-      --green-bg: rgba(16, 185, 129, 0.14);
-      --amber: #f59e0b;
-      --amber-bg: rgba(245, 158, 11, 0.14);
-      --red: #ef4444;
-      --red-bg: rgba(239, 68, 68, 0.14);
-      --purple: #a78bfa;
-      --purple-bg: rgba(167, 139, 250, 0.14);
+      --bg: #080d13; --card: #101822; --card-2: #16212e; --border: #213042;
+      --text: #eef3f8; --muted: #8698ad; --accent: #38bdf8; --accent-bg: rgba(56, 189, 248, 0.14);
+      --green: #10b981; --green-bg: rgba(16, 185, 129, 0.14);
+      --amber: #f59e0b; --amber-bg: rgba(245, 158, 11, 0.14);
+      --red: #ef4444; --red-bg: rgba(239, 68, 68, 0.14);
+      --purple: #a78bfa; --purple-bg: rgba(167, 139, 250, 0.14);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
-      background: var(--bg); color: var(--text); line-height: 1.45; padding-bottom: 3rem;
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif; background: var(--bg); color: var(--text); line-height: 1.45; padding-bottom: 3rem; }
     .container { max-width: 1260px; margin: 0 auto; padding: 1rem 1.25rem; }
-    header {
-      display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 1rem; padding: 0.9rem 0 1.2rem;
-      border-bottom: 1px solid var(--border); margin-bottom: 1.25rem;
-    }
-    .title-group h1 { font-size: 1.32rem; font-weight: 800; letter-spacing: -0.02em; }
+    header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 0.9rem 0 1.2rem; border-bottom: 1px solid var(--border); margin-bottom: 1.25rem; }
+    .title-group h1 { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.02em; }
     .title-group p { font-size: 0.82rem; color: var(--muted); margin-top: 0.2rem; }
     .header-right { display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap; }
-    .status-pill {
-      font-size: 0.76rem; color: var(--green); background: var(--green-bg);
-      border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.35rem 0.75rem;
-      border-radius: 999px; font-weight: 600;
-    }
-    .status-pill.warn {
-      color: var(--amber); background: var(--amber-bg);
-      border-color: rgba(245, 158, 11, 0.35);
-    }
-    .btn {
-      background: var(--accent); color: #04131d; border: none;
-      padding: 0.5rem 0.95rem; border-radius: 9px; font-weight: 700;
-      font-size: 0.83rem; cursor: pointer;
-    }
+    .status-pill { font-size: 0.76rem; color: var(--green); background: var(--green-bg); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.35rem 0.75rem; border-radius: 999px; font-weight: 600; }
+    .status-pill.warn { color: var(--amber); background: var(--amber-bg); border-color: rgba(245, 158, 11, 0.35); }
+    .btn { background: var(--accent); color: #04131d; border: none; padding: 0.5rem 0.95rem; border-radius: 9px; font-weight: 700; font-size: 0.83rem; cursor: pointer; }
     .btn:hover { opacity: 0.9; }
-    .btn-outline {
-      background: var(--card-2); color: var(--text); border: 1px solid var(--border);
-      padding: 0.46rem 0.85rem; border-radius: 9px; font-size: 0.82rem;
-      font-weight: 600; cursor: pointer; text-decoration: none;
-      display: inline-flex; align-items: center; gap: 0.35rem;
-    }
+    .btn-outline { background: var(--card-2); color: var(--text); border: 1px solid var(--border); padding: 0.46rem 0.85rem; border-radius: 9px; font-size: 0.82rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; }
     .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-    .controls-panel {
-      background: var(--card); border: 1px solid var(--border); border-radius: 13px;
-      padding: 0.95rem 1rem; margin-bottom: 1.25rem; display: flex;
-      flex-direction: column; gap: 0.75rem;
-    }
-    .control-row {
-      display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 0.75rem;
-    }
+    .controls-panel { background: var(--card); border: 1px solid var(--border); border-radius: 13px; padding: 0.95rem 1rem; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; }
+    .control-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; }
     .pill-group { display: flex; flex-wrap: wrap; gap: 0.38rem; align-items: center; }
-    .group-label {
-      font-size: 0.73rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.05em; color: var(--muted); margin-right: 0.3rem; min-width: 68px;
-    }
-    .pill {
-      background: var(--card-2); border: 1px solid var(--border); color: var(--text);
-      padding: 0.38rem 0.78rem; border-radius: 8px; font-size: 0.82rem;
-      font-weight: 600; cursor: pointer; transition: all 0.15s;
-    }
+    .group-label { font-size: 0.73rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-right: 0.3rem; min-width: 68px; }
+    .pill { background: var(--card-2); border: 1px solid var(--border); color: var(--text); padding: 0.38rem 0.78rem; border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
     .pill:hover { border-color: #3a526d; }
     .pill.active { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
     .day-pill.past { border-style: dashed; opacity: 0.92; }
     .day-pill.active { background: var(--green-bg); border-color: var(--green); color: var(--green); border-style: solid; }
     .water-pill.active { background: var(--purple-bg); border-color: var(--purple); color: var(--purple); }
-    .sec-head {
-      display: flex; justify-content: space-between; align-items: baseline;
-      flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem;
-    }
+    .sec-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
     .sec-head h2 { font-size: 1.05rem; font-weight: 700; }
     .sec-head span { font-size: 0.8rem; color: var(--muted); }
-    .spots-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
-      gap: 0.85rem; margin-bottom: 1.5rem;
-    }
-    .spot-card {
-      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-      padding: 0.95rem; cursor: pointer; position: relative; transition: transform 0.12s, border-color 0.15s;
-    }
+    .spots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(265px, 1fr)); gap: 0.85rem; margin-bottom: 1.5rem; }
+    .spot-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 0.95rem; cursor: pointer; position: relative; transition: transform 0.12s, border-color 0.15s; }
     .spot-card:hover { transform: translateY(-2px); border-color: #3a526d; }
-    .spot-card.selected {
-      border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent);
-      background: linear-gradient(180deg, rgba(56, 189, 248, 0.08) 0%, var(--card) 100%);
-    }
-    .best-badge {
-      position: absolute; top: -9px; right: 12px; background: var(--green);
-      color: #03261d; font-size: 0.66rem; font-weight: 800; padding: 0.12rem 0.5rem;
-      border-radius: 6px; text-transform: uppercase;
-    }
-    .wb-tag {
-      display: inline-block; font-size: 0.68rem; font-weight: 700;
-      padding: 0.1rem 0.42rem; border-radius: 5px; margin-bottom: 0.3rem;
-    }
+    .spot-card.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); background: linear-gradient(180deg, rgba(56, 189, 248, 0.08) 0%, var(--card) 100%); }
+    .best-badge { position: absolute; top: -9px; right: 12px; background: var(--green); color: #03261d; font-size: 0.66rem; font-weight: 800; padding: 0.12rem 0.5rem; border-radius: 6px; text-transform: uppercase; }
+    .wb-tag { display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 0.1rem 0.42rem; border-radius: 5px; margin-bottom: 0.3rem; }
     .wb-river { background: rgba(56, 189, 248, 0.14); color: var(--accent); }
     .wb-lake { background: rgba(167, 139, 250, 0.14); color: var(--purple); }
     .wb-zaton { background: rgba(16, 185, 129, 0.14); color: var(--green); }
@@ -123,140 +57,61 @@
     .s-mid { background: var(--amber-bg); color: var(--amber); }
     .s-low { background: var(--red-bg); color: var(--red); }
     .spot-note { font-size: 0.76rem; color: var(--muted); margin-bottom: 0.55rem; min-height: 2.1em; }
-    .spot-metrics {
-      display: flex; justify-content: space-between; font-size: 0.77rem;
-      color: var(--text); padding-top: 0.5rem; border-top: 1px solid var(--border);
-    }
-    .hourly-grid {
-      display: grid; grid-template-columns: repeat(8, 1fr); gap: 0.55rem; margin-bottom: 1.5rem;
-    }
-    @media (max-width: 860px) { .hourly-grid { grid-template-columns: repeat(4, 1fr); } }
-    .hour-box {
-      background: var(--card); border: 1px solid var(--border); border-radius: 11px;
-      padding: 0.68rem 0.4rem; text-align: center; cursor: pointer; transition: all 0.15s;
-    }
+    .spot-metrics { display: flex; justify-content: space-between; font-size: 0.77rem; color: var(--text); padding-top: 0.5rem; border-top: 1px solid var(--border); }
+    .hourly-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 0.42rem; margin-bottom: 1.5rem; }
+    @media (max-width: 1120px) { .hourly-grid { grid-template-columns: repeat(8, 1fr); } }
+    @media (max-width: 760px) { .hourly-grid { grid-template-columns: repeat(4, 1fr); } }
+    .hour-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 0.55rem 0.28rem; text-align: center; cursor: pointer; }
     .hour-box:hover { border-color: #3a526d; }
     .hour-box.active { border-color: var(--accent); background: var(--accent-bg); box-shadow: 0 0 0 1px var(--accent); }
-    .h-time { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.25rem; }
-    .h-val { font-size: 1.18rem; font-weight: 800; margin-bottom: 0.18rem; }
-    .h-sub { font-size: 0.72rem; color: var(--muted); }
-    .h-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.2rem; margin-top: 0.35rem; }
-    .h-tag {
-      font-size: 0.62rem; font-weight: 700; padding: 0.08rem 0.35rem;
-      border-radius: 4px; background: var(--green-bg); color: var(--green);
-    }
+    .h-time { font-size: 0.74rem; color: var(--muted); margin-bottom: 0.15rem; }
+    .h-val { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.12rem; }
+    .h-sub { font-size: 0.67rem; color: var(--muted); }
+    .h-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.16rem; margin-top: 0.28rem; }
+    .h-tag { font-size: 0.58rem; font-weight: 700; padding: 0.06rem 0.28rem; border-radius: 4px; background: var(--green-bg); color: var(--green); }
     .h-tag.moon { background: var(--purple-bg); color: var(--purple); }
-    .scenario-banner {
-      background: linear-gradient(90deg, rgba(56, 189, 248, 0.12), rgba(16, 185, 129, 0.08));
-      border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px;
-      padding: 0.9rem 1.1rem; margin-bottom: 1rem;
-    }
+    .scenario-banner { background: linear-gradient(90deg, rgba(56, 189, 248, 0.12), rgba(16, 185, 129, 0.08)); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; padding: 0.9rem 1.1rem; margin-bottom: 1rem; }
     .scenario-title { font-size: 0.95rem; font-weight: 800; color: var(--accent); }
     .scenario-desc { font-size: 0.83rem; color: var(--text); margin-top: 0.25rem; }
-    .arsenal-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; margin-bottom: 1.35rem;
-    }
+    .arsenal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; margin-bottom: 1.35rem; }
     @media (max-width: 980px) { .arsenal-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 620px) { .arsenal-grid { grid-template-columns: 1fr; } }
-    .arsenal-card {
-      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-      padding: 1rem; display: flex; flex-direction: column; justify-content: space-between;
-    }
-    .arsenal-card.spray-card {
-      border-color: rgba(16, 185, 129, 0.45);
-      background: linear-gradient(180deg, rgba(16, 185, 129, 0.06) 0%, var(--card) 100%);
-    }
-    .arsenal-kicker {
-      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.05em; color: var(--accent); margin-bottom: 0.45rem;
-    }
+    .arsenal-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; justify-content: space-between; }
+    .arsenal-card.spray-card { border-color: rgba(16, 185, 129, 0.45); background: linear-gradient(180deg, rgba(16, 185, 129, 0.06) 0%, var(--card) 100%); }
+    .arsenal-kicker { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin-bottom: 0.45rem; }
     .arsenal-main { font-size: 0.93rem; font-weight: 700; color: var(--text); margin-bottom: 0.55rem; line-height: 1.38; }
-    .arsenal-sub {
-      font-size: 0.79rem; color: var(--muted); line-height: 1.4;
-      padding-top: 0.5rem; border-top: 1px dashed var(--border);
-    }
+    .arsenal-sub { font-size: 0.79rem; color: var(--muted); line-height: 1.4; padding-top: 0.5rem; border-top: 1px dashed var(--border); }
     .buy-links { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
-    .buy-chip {
-      font-size: 0.74rem; font-weight: 700; color: var(--green);
-      background: var(--green-bg); border: 1px solid rgba(16, 185, 129, 0.35);
-      padding: 0.25rem 0.55rem; border-radius: 6px; text-decoration: none;
-    }
-    .buy-chip:hover { background: rgba(16, 185, 129, 0.25); }
-    .shift-grid {
-      display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; margin-bottom: 1.5rem;
-    }
+    .buy-chip { font-size: 0.74rem; font-weight: 700; color: var(--green); background: var(--green-bg); border: 1px solid rgba(16, 185, 129, 0.35); padding: 0.25rem 0.55rem; border-radius: 6px; text-decoration: none; }
+    .shift-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
     @media (max-width: 1080px) { .shift-grid { grid-template-columns: repeat(3, 1fr); } }
     @media (max-width: 680px) { .shift-grid { grid-template-columns: 1fr; } }
-    .shift-card {
-      background: var(--card-2); border: 1px solid var(--border); border-radius: 11px; padding: 0.85rem 0.9rem;
-      cursor: pointer; transition: border-color 0.15s;
-    }
-    .shift-card:hover { border-color: #3a526d; }
+    .shift-card { background: var(--card-2); border: 1px solid var(--border); border-radius: 11px; padding: 0.85rem 0.9rem; cursor: pointer; }
     .shift-card.current-day { border-color: var(--green); box-shadow: 0 0 0 1px var(--green); }
-    .shift-head {
-      display: flex; justify-content: space-between; font-size: 0.81rem;
-      font-weight: 800; margin-bottom: 0.32rem; color: var(--text);
-    }
+    .shift-head { display: flex; justify-content: space-between; font-size: 0.81rem; font-weight: 800; margin-bottom: 0.32rem; }
     .shift-weather { font-size: 0.74rem; color: var(--muted); margin-bottom: 0.45rem; }
-    .shift-gear { font-size: 0.78rem; color: var(--text); line-height: 1.4; }
-    .details-grid {
-      display: grid; grid-template-columns: 1.15fr 1fr; gap: 0.9rem; margin-bottom: 1.5rem;
-    }
+    .shift-gear { font-size: 0.78rem; line-height: 1.4; }
+    .details-grid { display: grid; grid-template-columns: 1.18fr 1fr; gap: 0.9rem; margin-bottom: 1.5rem; }
     @media (max-width: 860px) { .details-grid { grid-template-columns: 1fr; } }
-    .panel {
-      background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.05rem;
-    }
-    .panel-title {
-      font-size: 0.76rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.75rem;
-    }
-    .factor-item {
-      display: flex; justify-content: space-between; align-items: center; gap: 0.75rem;
-      padding: 0.42rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.83rem;
-    }
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.05rem; }
+    .panel-title { font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.75rem; }
+    .factor-item { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 0.42rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.83rem; }
     .factor-item:last-child { border-bottom: none; }
     .f-pos { color: var(--green); font-weight: 700; white-space: nowrap; }
     .f-neg { color: var(--red); font-weight: 700; white-space: nowrap; }
     .f-neu { color: var(--muted); font-weight: 700; white-space: nowrap; }
-    .honesty-note {
-      margin-top: 0.75rem; padding: 0.6rem 0.75rem; border-radius: 8px;
-      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-      font-size: 0.75rem; color: var(--muted); line-height: 1.42;
-    }
-    .map-toolbar {
-      display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 0.6rem; margin-bottom: 0.75rem;
-    }
+    .honesty-note { margin-top: 0.75rem; padding: 0.6rem 0.75rem; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); font-size: 0.75rem; color: var(--muted); line-height: 1.44; }
+    .map-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 0.75rem; }
     .map-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-    .map-layout {
-      display: grid; grid-template-columns: 1.6fr 1fr; gap: 1rem; margin-bottom: 1.5rem;
-    }
+    .map-layout { display: grid; grid-template-columns: 1.6fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
     @media (max-width: 900px) { .map-layout { grid-template-columns: 1fr; } }
-    .map-box {
-      border-radius: 10px; overflow: hidden; border: 1px solid var(--border);
-      height: 440px; position: relative; background: #0b1118;
-    }
+    .map-box { border-radius: 10px; overflow: hidden; border: 1px solid var(--border); height: 440px; position: relative; background: #0b1118; }
     .radar-frame { width: 100%; height: 100%; border: none; display: none; }
-    .input, .select {
-      background: var(--card-2); border: 1px solid var(--border); color: var(--text);
-      padding: 0.55rem 0.75rem; border-radius: 8px; font-size: 0.84rem;
-      width: 100%; margin-bottom: 0.55rem;
-    }
+    .input, .select { background: var(--card-2); border: 1px solid var(--border); color: var(--text); padding: 0.55rem 0.75rem; border-radius: 8px; font-size: 0.84rem; width: 100%; margin-bottom: 0.55rem; }
     .input:focus, .select:focus { outline: none; border-color: var(--accent); }
-    .saved-list {
-      margin-top: 0.8rem; display: flex; flex-direction: column; gap: 0.45rem;
-      max-height: 175px; overflow-y: auto;
-    }
-    .saved-row {
-      display: flex; justify-content: space-between; align-items: center;
-      background: var(--card-2); border: 1px solid var(--border);
-      padding: 0.5rem 0.7rem; border-radius: 8px; font-size: 0.82rem;
-    }
-    .external-strip {
-      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-      padding: 0.95rem 1rem; display: flex; justify-content: space-between;
-      align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.25rem;
-    }
+    .saved-list { margin-top: 0.8rem; display: flex; flex-direction: column; gap: 0.45rem; max-height: 175px; overflow-y: auto; }
+    .saved-row { display: flex; justify-content: space-between; align-items: center; background: var(--card-2); border: 1px solid var(--border); padding: 0.5rem 0.7rem; border-radius: 8px; font-size: 0.82rem; }
+    .external-strip { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 0.95rem 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.25rem; }
     footer { text-align: center; font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
   </style>
 </head>
@@ -266,7 +121,7 @@
   <header>
     <div class="title-group">
       <h1>🧭 Гидрометео-навигатор клёва • Реки и озёра Марий Эл</h1>
-      <p>Метеоархив за позавчера и вчера + прогноз, реальный ход давления, солунарные окна Луны и подбор снастей</p>
+      <p>Физика плавательного пузыря (ОДУ Бойля–Мариотта) • Оптика воды (Люкс / Бугер–Бер) • Солунар Миуса • Биоэнергетика</p>
     </div>
     <div class="header-right">
       <span class="status-pill" id="radar-status">● Загрузка метеоархива и прогноза...</span>
@@ -293,57 +148,54 @@
     </div>
   </div>
 
-  <!-- 1. Сравнение локаций -->
   <div class="sec-head">
     <h2>1. Сравнение рек и озёр Марий Эл («Куда лучше поехать»)</h2>
-    <span>Учитываются течение, тепловая инерция воды, защита от ветровой волны и ход давления за 48ч</span>
+    <span>Учитываются коэффициент ослабления света Kd, тепловая инерция воды, волновой разгон и барическая адаптация</span>
   </div>
   <div class="spots-grid" id="spots-grid"></div>
 
-  <!-- 2. Почасовой прогноз -->
   <div class="sec-head">
-    <h2 id="hourly-heading">2. Почасовая активность</h2>
-    <span>Нажмите на час: учитываются зорьки и солунарные окна Луны (кульминация / надир / восход)</span>
+    <h2 id="hourly-heading">2. Почасовой ход клёва за все 24 часа (00:00 – 23:00)</h2>
+    <span>Нажмите на любой час: подводная освещённость (лк), гауссовы окна Луны и адаптация плавательного пузыря</span>
   </div>
   <div class="hourly-grid" id="hourly-grid"></div>
 
-  <!-- 3. Готовый комплект на рыбалку -->
   <div class="sec-head">
-    <h2 id="arsenal-heading">3. Рабочий комплект под выбранный водоём и погоду</h2>
-    <span>Адаптируется под реку с течением или озеро/затон со стоячей водой</span>
+    <h2 id="arsenal-heading">3. Рабочий комплект под выбранный водоём и физику среды</h2>
+    <span>Адаптируется под течение, мутность (Kd) и состояние плавательного пузыря рыбы</span>
   </div>
 
   <div class="scenario-banner">
-    <div class="scenario-title" id="scenario-title">Анализ погодного и барометрического сценария...</div>
-    <div class="scenario-desc" id="scenario-desc">Расчёт с учётом вчерашнего и позавчерашнего хода барометра.</div>
+    <div class="scenario-title" id="scenario-title">Расчёт гидрометеорологического режима...</div>
+    <div class="scenario-desc" id="scenario-desc">Интегрирование барической и тепловой истории за 96 часов.</div>
   </div>
 
   <div class="arsenal-grid" id="arsenal-grid"></div>
 
-  <!-- Сравнение на все 5 дней (Позавчера -> Послезавтра) -->
   <div class="sec-head">
     <h2>🔄 Динамика по всем 5 дням: Позавчера → Вчера → Сегодня → Завтра → Послезавтра</h2>
-    <span>Нажмите на любой день для детального разбора по часам</span>
+    <span>Нажмите на день (показаны выбранный час и точный пиковый час суток для выбранной рыбы)</span>
   </div>
   <div class="shift-grid" id="shift-grid"></div>
 
-  <!-- 4. Факторы и метеомодели -->
   <div class="details-grid">
     <div class="panel">
-      <div class="panel-title" id="factors-title">🧮 Расчёт факторов клёва</div>
+      <div class="panel-title" id="factors-title">🧮 Математическая детализация расчёта</div>
       <div id="factors-list"></div>
       <div class="honesty-note">
-        <strong>Как считается индекс (5%–92%):</strong> базовый биоритм вида + направление и скорость изменения давления (плавное падение усиливает клёв, скачок ≥10 мм/сутки или резкий перепад за 6ч обрушивает до 5–15%) + сезонная температура воды для конкретного вида + ветер с учётом укрытия водоёма + солунарные окна Луны.
+        <strong>Научный фундамент модели:</strong><br>
+        1) <em>Оптика воды (Kasten–Czeplak + Beer–Lambert):</em> освещённость на глубине обитания $E_w = E_{\text{surf}}(h_\odot, C)\cdot e^{-K_d z}$ оценивается по видовой кривой чувствительности сетчатки в $\log_{10}(E_w)$.<br>
+        2) <em>Плавательный пузырь (закон Бойля–Мариотта):</em> внутреннее давление $P_{\text{eq}}$ адаптируется по ОДУ $dP_{\text{eq}}/dt = (P_{\text{atm}} - P_{\text{eq}})/\tau_{\text{adapt}}$ ($\tau = 7.5\text{ ч}$ для открытопузырных, $16\text{ ч}$ для закрытопузырных). После выравнивания $|P_{\text{atm}} - P_{\text{eq}}| \to 0$ штраф исчезает и включается бонус стабильности.<br>
+        3) <em>Биоэнергетика (Thornton–Lessem) и Солунар (J.A. Knight / Meeus):</em> температурный коэффициент потребления пищи $f(T_w)$ и непрерывные гауссовы окна кульминаций/восходов Луны.
       </div>
     </div>
 
     <div class="panel">
-      <div class="panel-title">🌦 Метеоархив 48ч, давление и Астрономия Луны / Солнца</div>
+      <div class="panel-title">🌦 Физические параметры среды, Солнце и Солунарная астрономия</div>
       <div id="meteo-details"></div>
     </div>
   </div>
 
-  <!-- 5. Карта и радар туч -->
   <div class="sec-head">
     <h2>5. Карта рек и озёр, радар осадков и свои точки</h2>
     <span>Кликните по любому озеру или реке на карте — расчёт перестроится под эту координату</span>
@@ -371,7 +223,7 @@
     <div class="panel">
       <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.35rem;">📍 Добавить своё озеро, реку или точку</div>
       <p style="font-size: 0.8rem; color: var(--muted); margin-bottom: 0.65rem;">
-        Кликните по месту на карте, выберите тип водоёма (озеро, затон или река) и сохраните точку со своей глубиной.
+        Кликните по месту на карте, выберите тип водоёма и сохраните точку со своей глубиной.
       </p>
 
       <input type="text" id="custom-coords" class="input" readonly value="56.32353, 46.59376">
@@ -389,7 +241,6 @@
     </div>
   </div>
 
-  <!-- 6. Быстрая сверка -->
   <div class="external-strip">
     <div>
       <div style="font-weight: 700; font-size: 0.92rem;">🌐 Прямая сверка прогноза по Марий Эл</div>
@@ -404,176 +255,40 @@
 </div>
 
 <script>
+  // kd: коэффициент диффузного ослабления света (м^-1) по закону Бугера-Ламберта-Бера
+  // tauThermal: постоянная времени тепловой инерции водоёма (часы)
   const BASE_SPOTS = [
-    {
-      id: 'mumariha',
-      name: 'Волга • Мумариха',
-      category: 'river',
-      badge: 'Река',
-      type: 'Чебоксарское вдхр. • Залив и свал',
-      exposure: 'open',
-      flow: 'medium-high',
-      thermalGroup: 'river_large',
-      lat: 56.311946,
-      lon: 46.496244,
-      roadNote: 'После дождей низину к берегу размывает — осторожнее на недоприводе.'
-    },
-    {
-      id: 'zaton',
-      name: 'Затон (Козьмодемьянск)',
-      category: 'lake',
-      badge: 'Затон',
-      type: 'Закрытая акватория Волги • Стоячая вода',
-      exposure: 'sheltered',
-      flow: 'still',
-      thermalGroup: 'lake',
-      lat: 56.323525,
-      lon: 46.593755,
-      roadNote: 'Защищён от волжской волны при сильном ветре; подъезд со стороны ул. Промышленная.'
-    },
-    {
-      id: 'enikeevo',
-      name: 'Волга • Еникеево',
-      category: 'river',
-      badge: 'Река',
-      type: 'Открытая Волга • Русловая бровка',
-      exposure: 'open',
-      flow: 'high',
-      thermalGroup: 'river_large',
-      lat: 56.397161,
-      lon: 46.435139,
-      roadNote: 'Открытый плёс — при ветре выше 5.5 м/с поднимается крутая волжская волна.'
-    },
-    {
-      id: 'kozmodemyansk',
-      name: 'Волга • Козьмодемьянск',
-      category: 'river',
-      badge: 'Река',
-      type: 'Пристань • Судовой ход и обратки',
-      exposure: 'semi',
-      flow: 'high',
-      thermalGroup: 'river_large',
-      lat: 56.330000,
-      lon: 46.560000,
-      roadNote: 'Твёрдый подъезд к набережной; сильное течение и обратки за причалами.'
-    },
-    {
-      id: 'vetluga',
-      name: 'Р. Ветлуга (Юрино / устье)',
-      category: 'river',
-      badge: 'Река',
-      type: 'Река • Русловые ямы, коряжник и бровки',
-      exposure: 'semi',
-      flow: 'medium-high',
-      thermalGroup: 'river_medium',
-      lat: 56.284500,
-      lon: 46.298000,
-      roadNote: 'Богатый коряжник и свалы; при подъёме ветра всегда можно уйти в затишки за мысами.'
-    },
-    {
-      id: 'bkokshaga',
-      name: 'Р. Большая Кокшага (Кокшайск)',
-      category: 'river',
-      badge: 'Река',
-      type: 'Река • Протоки, ямы и заливы',
-      exposure: 'sheltered',
-      flow: 'medium-high',
-      thermalGroup: 'river_medium',
-      lat: 56.143000,
-      lon: 47.826000,
-      roadNote: 'Лесные берега прикрывают от ветра; много обраток и тиховодных стариц.'
-    },
-    {
-      id: 'mkokshaga',
-      name: 'Р. Малая Кокшага (Чодраял)',
-      category: 'river',
-      badge: 'Река',
-      type: 'Река • Среднее течение и омуты',
-      exposure: 'sheltered',
-      flow: 'medium-high',
-      thermalGroup: 'river_medium',
-      lat: 56.605000,
-      lon: 47.912000,
-      roadNote: 'Умеренная тяга, хорошо работает лёгкий джиг, поплавок и пикер.'
-    },
-    {
-      id: 'ilet',
-      name: 'Р. Илеть (Красногорский)',
-      category: 'river',
-      badge: 'Река',
-      type: 'Река • Прозрачная вода, перекаты и ямы',
-      exposure: 'sheltered',
-      flow: 'medium-high',
-      thermalGroup: 'river_medium',
-      lat: 56.148000,
-      lon: 48.335000,
-      roadNote: 'Очень прозрачная вода — критична тонкость поводка и маскировка.'
-    },
-    {
-      id: 'yalchik',
-      name: 'Озеро Яльчик',
-      category: 'lake',
-      badge: 'Озеро',
-      type: 'Карстовое озеро • Глубины до 30 м, свалы',
-      exposure: 'semi',
-      flow: 'still',
-      thermalGroup: 'lake',
-      lat: 56.017500,
-      lon: 48.445000,
-      roadNote: 'Чистая карстовая вода, стоячая акватория; рыба держится ступенчатых свалов.'
-    },
-    {
-      id: 'tair',
-      name: 'Озеро Таир',
-      category: 'lake',
-      badge: 'Озеро',
-      type: 'Лесное озеро • Остров и торфяные бровки',
-      exposure: 'sheltered',
-      flow: 'still',
-      thermalGroup: 'lake',
-      lat: 56.365000,
-      lon: 47.868000,
-      roadNote: 'Окружено сосновым лесом — защищено от сильного ветра, без течения.'
-    },
-    {
-      id: 'kichier',
-      name: 'Озеро Кичиер',
-      category: 'lake',
-      badge: 'Озеро',
-      type: 'Проточное озеро • Вдоль травы и ям',
-      exposure: 'sheltered',
-      flow: 'still',
-      thermalGroup: 'lake',
-      lat: 56.085000,
-      lon: 48.332000,
-      roadNote: 'Тихое лесное озеро в Марий Чодра; хорошо прогревается и остывает быстрее Волги.'
-    },
-    {
-      id: 'lisichkino',
-      name: 'Озеро Лисичкино',
-      category: 'lake',
-      badge: 'Озеро',
-      type: 'Лесное озеро • Тихая вода и кувшинки',
-      exposure: 'sheltered',
-      flow: 'still',
-      thermalGroup: 'lake',
-      lat: 56.068000,
-      lon: 48.462000,
-      roadNote: 'Закрытая от ветра чаша; работают деликатные оснастки без течения.'
-    }
+    { id: 'mumariha', name: 'Волга • Мумариха', category: 'river', badge: 'Река', type: 'Чебоксарское вдхр. • Залив и свал', exposure: 'open', flow: 'medium-high', kd: 0.85, tauThermal: 180, lat: 56.311946, lon: 46.496244, roadNote: 'После дождей низину к берегу размывает — осторожнее на недоприводе.' },
+    { id: 'zaton', name: 'Затон (Козьмодемьянск)', category: 'lake', badge: 'Затон', type: 'Закрытая акватория Волги • Стоячая вода', exposure: 'sheltered', flow: 'still', kd: 0.78, tauThermal: 95, lat: 56.323525, lon: 46.593755, roadNote: 'Защищён от волжской волны при сильном ветре; подъезд со стороны ул. Промышленная.' },
+    { id: 'enikeevo', name: 'Волга • Еникеево', category: 'river', badge: 'Река', type: 'Открытая Волга • Русловая бровка', exposure: 'open', flow: 'high', kd: 0.85, tauThermal: 190, lat: 56.397161, lon: 46.435139, roadNote: 'Открытый плёс — при ветре выше 5.5 м/с поднимается крутая волжская волна.' },
+    { id: 'kozmodemyansk', name: 'Волга • Козьмодемьянск', category: 'river', badge: 'Река', type: 'Пристань • Судовой ход и обратки', exposure: 'semi', flow: 'high', kd: 0.85, tauThermal: 185, lat: 56.330000, lon: 46.560000, roadNote: 'Твёрдый подъезд к набережной; сильное течение и обратки за причалами.' },
+    { id: 'vetluga', name: 'Р. Ветлуга (Юрино / устье)', category: 'river', badge: 'Река', type: 'Река • Русловые ямы, коряжник и бровки', exposure: 'semi', flow: 'medium-high', kd: 0.95, tauThermal: 120, lat: 56.284500, lon: 46.298000, roadNote: 'Богатый коряжник и свалы; при подъёме ветра всегда можно уйти в затишки за мысами.' },
+    { id: 'bkokshaga', name: 'Р. Большая Кокшага (Кокшайск)', category: 'river', badge: 'Река', type: 'Река • Протоки, ямы и заливы', exposure: 'sheltered', flow: 'medium-high', kd: 0.82, tauThermal: 110, lat: 56.143000, lon: 47.826000, roadNote: 'Лесные берега прикрывают от ветра; много обраток и тиховодных стариц.' },
+    { id: 'mkokshaga', name: 'Р. Малая Кокшага (Чодраял)', category: 'river', badge: 'Река', type: 'Река • Среднее течение и омуты', exposure: 'sheltered', flow: 'medium-high', kd: 0.82, tauThermal: 105, lat: 56.605000, lon: 47.912000, roadNote: 'Умеренная тяга, хорошо работает лёгкий джиг, поплавок и пикер.' },
+    { id: 'ilet', name: 'Р. Илеть (Красногорский)', category: 'river', badge: 'Река', type: 'Река • Прозрачная вода, перекаты и ямы', exposure: 'sheltered', flow: 'medium-high', kd: 0.52, tauThermal: 105, lat: 56.148000, lon: 48.335000, roadNote: 'Очень прозрачная родниковая вода (Kd 0.52) — критична тонкость поводка.' },
+    { id: 'yalchik', name: 'Озеро Яльчик', category: 'lake', badge: 'Озеро', type: 'Карстовое озеро • Глубины до 30 м, свалы', exposure: 'semi', flow: 'still', kd: 0.42, tauThermal: 135, lat: 56.017500, lon: 48.445000, roadNote: 'Прозрачная карстовая вода (Kd 0.42), стоячая акватория; рыба держится свалов.' },
+    { id: 'tair', name: 'Озеро Таир', category: 'lake', badge: 'Озеро', type: 'Лесное озеро • Остров и торфяные бровки', exposure: 'sheltered', flow: 'still', kd: 0.90, tauThermal: 85, lat: 56.365000, lon: 47.868000, roadNote: 'Окружено сосновым лесом — защищено от ветра; торфяной оттенок воды.' },
+    { id: 'kichier', name: 'Озеро Кичиер', category: 'lake', badge: 'Озеро', type: 'Проточное озеро • Вдоль травы и ям', exposure: 'sheltered', flow: 'still', kd: 0.65, tauThermal: 90, lat: 56.085000, lon: 48.332000, roadNote: 'Тихое лесное озеро в Марий Чодра; прогревается и остывает быстрее Волги.' },
+    { id: 'lisichkino', name: 'Озеро Лисичкино', category: 'lake', badge: 'Озеро', type: 'Лесное озеро • Тихая вода и кувшинки', exposure: 'sheltered', flow: 'still', kd: 0.72, tauThermal: 80, lat: 56.068000, lon: 48.462000, roadNote: 'Закрытая от ветра чаша; работают деликатные оснастки без течения.' }
   ];
 
-  // Физиологические профили видов:
-  // comfortTemp: [мин_активного_клёва, макс_активного_клёва], coldLimit: порог зимнего оцепенения
+  /**
+   * Видовые физиологические параметры (подтверждены ихтиологической литературой):
+   * - bladderType: 'physoclist' (закрытопузырные: tauAdapt 16-18ч) | 'physostome' (открытопузырные: tauAdapt 7-9ч)
+   * - typDepthM: характерная глубина горизонта стоянки (м) для расчёта гидростатического давления и освещённости Ew
+   * - optLogLux: оптимум подводной освещённости log10(Ew в люксах), sigmaLogLux: ширина оптического диапазона
+   * - nightFloor: базовый метаболический уровень пищевой активности в полной темноте (%)
+   * - tl: параметры кривой Торнтона–Лессема (T1, T2, T3, T4 в °C, K1=0.1, K4=0.1)
+   */
   const FISH_MODELS = [
-    { id: 'perch', name: 'Окунь', lightPref: 'day', comfortTemp: [3.0, 21.0], coldLimit: 1.0, isPredator: true },
-    { id: 'pike', name: 'Щука', lightPref: 'overcast', comfortTemp: [2.5, 19.0], coldLimit: 0.8, isPredator: true },
-    { id: 'roach', name: 'Плотва', lightPref: 'day', comfortTemp: [3.5, 21.0], coldLimit: 1.2, isPredator: false },
-    { id: 'zander', name: 'Судак', lightPref: 'twilight', comfortTemp: [3.5, 20.0], coldLimit: 1.0, isPredator: true },
-    { id: 'bream', name: 'Лещ', lightPref: 'morning', comfortTemp: [7.5, 22.5], coldLimit: 2.5, isPredator: false },
-    { id: 'silverbream', name: 'Густера', lightPref: 'day', comfortTemp: [6.0, 22.5], coldLimit: 2.0, isPredator: false },
-    { id: 'ide', name: 'Жерех', lightPref: 'day', comfortTemp: [9.5, 23.0], coldLimit: 4.0, isPredator: true },
-    { id: 'catfish', name: 'Сом', lightPref: 'night', comfortTemp: [15.5, 26.5], coldLimit: 10.0, isPredator: true }
+    { id: 'perch', name: 'Окунь', bladderType: 'physoclist', tauAdapt: 16.0, typDepthM: 3.5, optLogLux: 2.1, sigmaLogLux: 1.55, nightFloor: 7,  tl: [1.0, 6.0, 19.0, 26.0], isPredator: true },
+    { id: 'pike', name: 'Щука', bladderType: 'physostome', tauAdapt: 8.5,  typDepthM: 3.0, optLogLux: 2.2, sigmaLogLux: 1.65, nightFloor: 10, tl: [0.8, 5.5, 18.0, 25.0], isPredator: true },
+    { id: 'roach', name: 'Плотва', bladderType: 'physostome', tauAdapt: 7.5,  typDepthM: 2.5, optLogLux: 2.4, sigmaLogLux: 1.60, nightFloor: 8,  tl: [1.2, 7.0, 20.0, 27.0], isPredator: false },
+    { id: 'zander', name: 'Судак', bladderType: 'physoclist', tauAdapt: 18.0, typDepthM: 5.5, optLogLux: 0.15, sigmaLogLux: 1.45, nightFloor: 21, tl: [1.5, 7.5, 20.0, 27.5], isPredator: true },
+    { id: 'bream', name: 'Лещ', bladderType: 'physostome', tauAdapt: 8.0,  typDepthM: 4.5, optLogLux: 1.2, sigmaLogLux: 1.75, nightFloor: 17, tl: [3.0, 10.5, 22.0, 29.0], isPredator: false },
+    { id: 'silverbream', name: 'Густера', bladderType: 'physostome', tauAdapt: 7.5,  typDepthM: 3.5, optLogLux: 1.6, sigmaLogLux: 1.70, nightFloor: 13, tl: [2.5, 9.5, 22.0, 29.0], isPredator: false },
+    { id: 'ide', name: 'Жерех', bladderType: 'physostome', tauAdapt: 8.0,  typDepthM: 1.2, optLogLux: 2.6, sigmaLogLux: 1.50, nightFloor: 7,  tl: [4.0, 11.5, 22.5, 28.5], isPredator: true },
+    { id: 'catfish', name: 'Сом', bladderType: 'physostome', tauAdapt: 9.0,  typDepthM: 6.0, optLogLux: -1.4, sigmaLogLux: 1.40, nightFloor: 34, tl: [10.0, 17.5, 26.0, 32.0], isPredator: true }
   ];
 
   const DAY_SPECS = [
@@ -591,46 +306,28 @@
     { id: 'custom', label: 'Мои точки' }
   ];
 
-  const HOUR_SLOTS = [0, 3, 6, 9, 12, 15, 18, 21];
+  const HOURS_24 = Array.from({ length: 24 }, (_, i) => i);
 
   let customSpots = [];
   try {
     const v7 = JSON.parse(localStorage.getItem('mari_el_waypoints_v7') || 'null');
-    if (Array.isArray(v7)) {
-      customSpots = v7;
-    } else {
-      const v6 = JSON.parse(localStorage.getItem('mari_el_waypoints_v6') || '[]');
-      if (Array.isArray(v6)) {
-        customSpots = v6.map(s => ({
-          ...s,
-          category: s.flow === 'still' ? 'lake' : 'river',
-          badge: s.flow === 'still' ? 'Озеро/Затон' : 'Река',
-          thermalGroup: s.flow === 'still' ? 'lake' : 'river_medium'
-        }));
-      }
-    }
+    if (Array.isArray(v7)) customSpots = v7;
   } catch (e) { customSpots = []; }
 
-  function getInitialMskHourSlot() {
+  function getInitialMskHour() {
     try {
-      const mskHour = Number(new Intl.DateTimeFormat('en-GB', {
-        timeZone: 'Europe/Moscow',
-        hour: '2-digit',
-        hour12: false
-      }).format(new Date()));
-      return Math.min(7, Math.max(0, Math.floor(mskHour / 3)));
-    } catch (e) {
-      return 3;
-    }
+      const h = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Moscow', hour: '2-digit', hour12: false }).format(new Date()));
+      return Math.min(23, Math.max(0, h));
+    } catch (e) { return 8; }
   }
 
   let selectedFishIdx = 0;
-  let selectedDayIdx = 2; // Сегодня
-  let selectedHourSlot = getInitialMskHourSlot();
+  let selectedDayIdx = 2;
+  let selectedHour = getInitialMskHour();
   let selectedWaterFilter = 'all';
   let activeSpot = { ...BASE_SPOTS[0] };
   let weatherCache = {};
-  let dataSourceLabel = '● Загрузка метеоархива и прогноза...';
+  let dataSourceLabel = '● Загрузка метеоархива 96ч и прогноза...';
   let dataSourceWarn = false;
   let yandexMap = null;
   let tempMarker = null;
@@ -638,32 +335,13 @@
   let currentMapMode = 'yandex';
 
   function escapeHtml(str) {
-    return String(str ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
+    return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
   }
 
-  function getActiveFish() {
-    if (selectedFishIdx < 0 || selectedFishIdx >= FISH_MODELS.length) selectedFishIdx = 0;
-    return FISH_MODELS[selectedFishIdx] || FISH_MODELS[0];
-  }
-
-  function getActiveDaySpec() {
-    if (selectedDayIdx < 0 || selectedDayIdx >= DAY_SPECS.length) selectedDayIdx = 2;
-    return DAY_SPECS[selectedDayIdx];
-  }
-
-  function getActiveHour() {
-    if (selectedHourSlot < 0 || selectedHourSlot >= HOUR_SLOTS.length) selectedHourSlot = 3;
-    return HOUR_SLOTS[selectedHourSlot] ?? 9;
-  }
-
-  function getAllSpots() {
-    return [...BASE_SPOTS, ...customSpots];
-  }
+  function getActiveFish() { return FISH_MODELS[selectedFishIdx] || FISH_MODELS[0]; }
+  function getActiveDaySpec() { return DAY_SPECS[selectedDayIdx] || DAY_SPECS[2]; }
+  function getActiveHour() { return selectedHour; }
+  function getAllSpots() { return [...BASE_SPOTS, ...customSpots]; }
 
   function getFilteredSpots() {
     const all = getAllSpots();
@@ -675,28 +353,13 @@
 
   function getMskDateStr(dayOffset) {
     const d = new Date(Date.now() + dayOffset * 86400000);
-    const parts = new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'Europe/Moscow',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).formatToParts(d);
-    const y = parts.find(p => p.type === 'year').value;
-    const m = parts.find(p => p.type === 'month').value;
-    const day = parts.find(p => p.type === 'day').value;
-    return `${y}-${m}-${day}`;
+    const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Moscow', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d);
+    return `${parts.find(p => p.type === 'year').value}-${parts.find(p => p.type === 'month').value}-${parts.find(p => p.type === 'day').value}`;
   }
 
   function getDayLabels() {
-    const fmt = new Intl.DateTimeFormat('ru-RU', {
-      timeZone: 'Europe/Moscow',
-      day: '2-digit',
-      month: '2-digit'
-    });
-    return DAY_SPECS.map(spec => {
-      const d = new Date(Date.now() + spec.offset * 86400000);
-      return `${spec.label} (${fmt.format(d)})`;
-    });
+    const fmt = new Intl.DateTimeFormat('ru-RU', { timeZone: 'Europe/Moscow', day: '2-digit', month: '2-digit' });
+    return DAY_SPECS.map(spec => `${spec.label} (${fmt.format(new Date(Date.now() + spec.offset * 86400000))})`);
   }
 
   function windDirText(deg) {
@@ -715,37 +378,61 @@
   }
 
   /**
-   * Астрономия Солнца и Луны (алгоритмы Жана Миуса) для координат (lat, lon)
+   * 1. Точные астрономические эфемериды Солнца и Луны (NOAA / Jean Meeus Astronomical Algorithms)
    */
   function getAstronomy(lat, lon, dayOffset, hour) {
     const mskDateStr = getMskDateStr(dayOffset);
     const [Y, M, D] = mskDateStr.split('-').map(Number);
-
-    const jd0 = Date.UTC(Y, M - 1, D, 0, 0, 0) / 86400000 + 2440587.5;
     const rad = Math.PI / 180;
     const deg = 180 / Math.PI;
+    const tz = 3; // МСК UTC+3
 
-    const startYear = Date.UTC(Y, 0, 0);
-    const dayOfYear = Math.floor((Date.UTC(Y, M - 1, D) - startYear) / 86400000);
-    const declSun = 23.44 * Math.sin(rad * (360 / 365) * (dayOfYear - 81));
-    const cosH = (Math.cos(rad * 90.833) - Math.sin(rad * lat) * Math.sin(rad * declSun)) /
-                 (Math.cos(rad * lat) * Math.cos(rad * declSun));
-    const H = Math.acos(Math.max(-1, Math.min(1, cosH))) * deg / 15;
-    const eqTime = 9.87 * Math.sin(2 * rad * (360 / 365) * (dayOfYear - 81)) -
-                   7.53 * Math.cos(rad * (360 / 365) * (dayOfYear - 81)) -
-                   1.5 * Math.sin(rad * (360 / 365) * (dayOfYear - 81));
-    const solarNoonUTC = 12 - (lon / 15) - (eqTime / 60);
-    const tz = 3;
-    const sunriseDec = solarNoonUTC - H + tz;
-    const sunsetDec = solarNoonUTC + H + tz;
+    // Юлианская дата на 00:00 МСК (21:00 UTC предыдущих суток)
+    const jd0Msk = Date.UTC(Y, M - 1, D, 0, 0, 0) / 86400000 + 2440587.5 - (tz / 24);
+
+    function sunPosition(jd) {
+      const T = (jd - 2451545.0) / 36525.0;
+      const L0 = (280.46646 + T * (36000.76983 + T * 0.0003032)) % 360;
+      const M_anom = 357.52911 + T * (35999.05029 - 0.0001537 * T);
+      const e = 0.016708634 - T * (0.000042037 + 0.0000001267 * T);
+      const C = Math.sin(rad * M_anom) * (1.914602 - T * (0.004817 + 0.000014 * T)) +
+                Math.sin(rad * 2 * M_anom) * (0.019993 - 0.000101 * T) +
+                Math.sin(rad * 3 * M_anom) * 0.000289;
+      const trueLong = L0 + C;
+      const omega = 125.04 - 1934.136 * T;
+      const lambda = trueLong - 0.00569 - 0.00478 * Math.sin(rad * omega);
+      const eps0 = 23 + (26 + ((21.448 - T * (46.815 + T * (0.00059 - T * 0.001813))) / 60)) / 60;
+      const eps = eps0 + 0.00256 * Math.cos(rad * omega);
+
+      const sinDec = Math.sin(rad * eps) * Math.sin(rad * lambda);
+      const dec = Math.asin(sinDec) * deg;
+      const y = Math.tan(rad * (eps / 2)) ** 2;
+      const eqTimeMin = 4 * deg * (y * Math.sin(2 * rad * L0) - 2 * e * Math.sin(rad * M_anom) +
+                        4 * e * y * Math.sin(rad * M_anom) * Math.cos(2 * rad * L0) -
+                        0.5 * y * y * Math.sin(4 * rad * L0) - 1.25 * e * e * Math.sin(2 * rad * M_anom));
+
+      const mskHours = ((jd - jd0Msk) * 24 + 24) % 24;
+      const trueSolarTimeMin = (mskHours * 60 + eqTimeMin + 4 * lon - 60 * tz + 1440) % 1440;
+      const ha = (trueSolarTimeMin / 4 < 0) ? (trueSolarTimeMin / 4 + 180) : (trueSolarTimeMin / 4 - 180);
+      const sinAlt = Math.sin(rad * lat) * Math.sin(rad * dec) + Math.cos(rad * lat) * Math.cos(rad * dec) * Math.cos(rad * ha);
+      const alt = Math.asin(Math.max(-1, Math.min(1, sinAlt))) * deg;
+      return { alt, dec, eqTimeMin };
+    }
+
+    // Точный восход/закат с учётом рефракции (-0.833°)
+    const noonSun = sunPosition(jd0Msk + 0.5);
+    const cosOmega0 = (Math.sin(rad * (-0.833)) - Math.sin(rad * lat) * Math.sin(rad * noonSun.dec)) /
+                      (Math.cos(rad * lat) * Math.cos(rad * noonSun.dec));
+    const omega0Deg = Math.acos(Math.max(-1, Math.min(1, cosOmega0))) * deg;
+    const solarNoonMin = 720 - 4 * lon - noonSun.eqTimeMin + 60 * tz;
+    const sunriseDec = (solarNoonMin - omega0Deg * 4) / 60;
+    const sunsetDec = (solarNoonMin + omega0Deg * 4) / 60;
 
     const fmtDecHour = (dec) => {
+      if (dec === null || isNaN(dec)) return '—';
       const totalMins = Math.round(((dec % 24) + 24) % 24 * 60) % 1440;
       return `${String(Math.floor(totalMins / 60)).padStart(2, '0')}:${String(totalMins % 60).padStart(2, '0')}`;
     };
-
-    const sunriseH = Math.floor(((sunriseDec % 24) + 24) % 24);
-    const sunsetH = Math.floor(((sunsetDec % 24) + 24) % 24);
 
     function moonState(jd) {
       const T = (jd - 2451545.0) / 36525.0;
@@ -755,256 +442,273 @@
       const Mm = (134.9633964 + 477198.8675055 * T) % 360;
       const F  = (93.2720950  + 483202.0175233 * T) % 360;
 
-      const lonMoon = Lp
-        + 6.289 * Math.sin(rad * Mm)
-        + 1.274 * Math.sin(rad * (2 * Dm - Mm))
-        + 0.658 * Math.sin(rad * (2 * Dm))
-        + 0.214 * Math.sin(rad * (2 * Mm))
-        - 0.186 * Math.sin(rad * Ms);
-
-      const latMoon = 5.128 * Math.sin(rad * F)
-        + 0.280 * Math.sin(rad * (Mm + F))
-        + 0.277 * Math.sin(rad * (Mm - F));
+      const lonMoon = Lp + 6.289 * Math.sin(rad * Mm) + 1.274 * Math.sin(rad * (2 * Dm - Mm)) +
+                      0.658 * Math.sin(rad * (2 * Dm)) + 0.214 * Math.sin(rad * (2 * Mm)) - 0.186 * Math.sin(rad * Ms);
+      const latMoon = 5.128 * Math.sin(rad * F) + 0.280 * Math.sin(rad * (Mm + F)) + 0.277 * Math.sin(rad * (Mm - F));
+      // Расстояние до Луны (км) и горизонтальный параллакс для точного времени восхода/захода Луны
+      const distKm = 385000.56 - 20905.355 * Math.cos(rad * Mm) - 3699.111 * Math.cos(rad * (2 * Dm - Mm)) - 2955.968 * Math.cos(rad * (2 * Dm));
+      const parallaxDeg = Math.asin(6378.14 / distKm) * deg;
 
       const eps = 23.4393 - 0.0130 * T;
-      const lRad = rad * lonMoon;
-      const bRad = rad * latMoon;
-      const eRad = rad * eps;
-
-      const ra = Math.atan2(
-        Math.sin(lRad) * Math.cos(eRad) - Math.tan(bRad) * Math.sin(eRad),
-        Math.cos(lRad)
-      ) * deg;
-      const dec = Math.asin(
-        Math.sin(bRad) * Math.cos(eRad) + Math.cos(bRad) * Math.sin(eRad) * Math.sin(lRad)
-      ) * deg;
-
+      const lRad = rad * lonMoon, bRad = rad * latMoon, eRad = rad * eps;
+      const ra = Math.atan2(Math.sin(lRad) * Math.cos(eRad) - Math.tan(bRad) * Math.sin(eRad), Math.cos(lRad)) * deg;
+      const dec = Math.asin(Math.sin(bRad) * Math.cos(eRad) + Math.cos(bRad) * Math.sin(eRad) * Math.sin(lRad)) * deg;
       const gmst = (280.46061837 + 360.98564736629 * (jd - 2451545.0)) % 360;
       const lst = (gmst + lon + 720) % 360;
       const ha = ((lst - ra) % 360 + 540) % 360 - 180;
-
-      const alt = Math.asin(
-        Math.sin(rad * lat) * Math.sin(rad * dec) +
-        Math.cos(rad * lat) * Math.cos(rad * dec) * Math.cos(rad * ha)
-      ) * deg;
+      const alt = Math.asin(Math.sin(rad * lat) * Math.sin(rad * dec) + Math.cos(rad * lat) * Math.cos(rad * dec) * Math.cos(rad * ha)) * deg;
 
       const dNorm = ((Dm % 360) + 360) % 360;
       const phase = dNorm / 360;
-      const illum = Math.round(((1 - Math.cos(rad * dNorm)) / 2) * 100);
+      const illum = (1 - Math.cos(rad * dNorm)) / 2;
       const lunarDay = Math.min(30, Math.floor(phase * 29.530588) + 1);
-      return { alt, ha, phase, illum, lunarDay };
+      // Относительный приливный гравитационный фактор (куб отношения среднего расстояния к текущему)
+      const tidalForceFactor = Math.pow(385000 / distKm, 3);
+      return { alt, ha, phase, illum, illumPct: Math.round(illum * 100), lunarDay, parallaxDeg, tidalForceFactor };
     }
 
-    const startJdMsk = jd0 - (tz / 24);
-    let moonriseStr = '—';
-    let moonsetStr = '—';
-    let moonriseDec = null;
-    let moonsetDec = null;
-    let upperTransitDec = null;
-    let lowerTransitDec = null;
-    let minAbsHaUpper = 999;
-    let minAbsHaLower = 999;
+    let moonriseDec = null, moonsetDec = null;
+    let upperTransitDec = null, lowerTransitDec = null, minAbsHaUpper = 999, minAbsHaLower = 999;
+    let prevSt = moonState(jd0Msk);
 
-    let prevSt = moonState(startJdMsk);
-    const h0 = 0.125;
-
-    for (let m = 5; m <= 1440; m += 5) {
-      const curJd = startJdMsk + m / 1440;
-      const curSt = moonState(curJd);
+    for (let m = 4; m <= 1440; m += 4) {
+      const curSt = moonState(jd0Msk + m / 1440);
       const decH = m / 60;
-
-      if (prevSt.alt < h0 && curSt.alt >= h0 && moonriseDec === null) {
-        const frac = (h0 - prevSt.alt) / (curSt.alt - prevSt.alt || 1);
-        moonriseDec = (m - 5 + frac * 5) / 60;
-        moonriseStr = fmtDecHour(moonriseDec);
+      // Видимый горизонт Луны: -0.5667° (рефракция + полудиаметр) + горизонтальный параллакс (~+0.95°)
+      const hHorizon = -0.5667 + curSt.parallaxDeg;
+      if (prevSt.alt < hHorizon && curSt.alt >= hHorizon && moonriseDec === null) {
+        moonriseDec = (m - 4 + ((hHorizon - prevSt.alt) / (curSt.alt - prevSt.alt || 1)) * 4) / 60;
       }
-      if (prevSt.alt >= h0 && curSt.alt < h0 && moonsetDec === null) {
-        const frac = (prevSt.alt - h0) / (prevSt.alt - curSt.alt || 1);
-        moonsetDec = (m - 5 + frac * 5) / 60;
-        moonsetStr = fmtDecHour(moonsetDec);
+      if (prevSt.alt >= hHorizon && curSt.alt < hHorizon && moonsetDec === null) {
+        moonsetDec = (m - 4 + ((prevSt.alt - hHorizon) / (prevSt.alt - curSt.alt || 1)) * 4) / 60;
       }
-
-      if (Math.abs(curSt.ha) < minAbsHaUpper) {
-        minAbsHaUpper = Math.abs(curSt.ha);
-        upperTransitDec = decH;
-      }
+      if (Math.abs(curSt.ha) < minAbsHaUpper) { minAbsHaUpper = Math.abs(curSt.ha); upperTransitDec = decH; }
       const distNadir = Math.abs(180 - Math.abs(curSt.ha));
-      if (distNadir < minAbsHaLower) {
-        minAbsHaLower = distNadir;
-        lowerTransitDec = decH;
-      }
+      if (distNadir < minAbsHaLower) { minAbsHaLower = distNadir; lowerTransitDec = decH; }
       prevSt = curSt;
     }
 
-    const slotJd = startJdMsk + (hour / 24);
-    const slotMoon = moonState(slotJd);
-    const phase = slotMoon.phase;
-    const illum = slotMoon.illum;
-    const lunarDay = slotMoon.lunarDay;
+    // Оцениваем середину часа (hour + 0.5), т.к. часовой слот 07:00 покрывает 07:00–08:00
+    const midHour = hour + 0.5;
+    const sunAtSlot = sunPosition(jd0Msk + midHour / 24);
+    const moonAtSlot = moonState(jd0Msk + midHour / 24);
+
+    const wrapDiff = (a, b) => (a === null || b === null) ? 99 : Math.min(Math.abs(a - b) % 24, 24 - (Math.abs(a - b) % 24));
+    const distMajor = Math.min(wrapDiff(midHour, upperTransitDec), wrapDiff(midHour, lowerTransitDec));
+    const distMinor = Math.min(wrapDiff(midHour, moonriseDec), wrapDiff(midHour, moonsetDec));
+
+    // Гауссовы весовые функции Джона Олдена Найта: Major (FWHM ~2ч, sigma=0.85), Minor (FWHM ~1ч, sigma=0.45)
+    const majorGauss = Math.exp(-(distMajor ** 2) / (2 * 0.85 ** 2));
+    const minorGauss = Math.exp(-(distMinor ** 2) / (2 * 0.45 ** 2));
+
+    const { phase, illum, illumPct, lunarDay, alt: moonAltDeg, tidalForceFactor } = moonAtSlot;
     const growing = phase < 0.5;
-    const isSyzygy = illum <= 12 || illum >= 88;
+    // Сизигийный индекс (1.0 в новолуние и полнолуние, 0.0 в квадратурах)
+    const syzygyFactor = Math.cos(Math.PI * (phase * 2)) ** 2;
 
     let phaseName = 'Растущая луна';
-    if (illum <= 5) phaseName = 'Новолуние';
+    if (illumPct <= 5) phaseName = 'Новолуние';
     else if (phase < 0.22) phaseName = 'Растущий серп';
     else if (phase < 0.28) phaseName = 'Первая четверть';
     else if (phase < 0.47) phaseName = 'Растущая луна';
-    else if (illum >= 95) phaseName = 'Полнолуние';
+    else if (illumPct >= 95) phaseName = 'Полнолуние';
     else if (phase < 0.72) phaseName = 'Убывающая луна';
     else if (phase < 0.78) phaseName = 'Последняя четверть';
     else phaseName = 'Старая луна';
 
-    const wrapDiff = (a, b) => {
-      if (a === null || b === null) return 99;
-      const d = Math.abs(a - b) % 24;
-      return Math.min(d, 24 - d);
-    };
+    const sunAltDeg = +sunAtSlot.alt.toFixed(1);
+    const isMorning = midHour <= (solarNoonMin / 60);
+    const nearDawnDusk = sunAltDeg >= -6.5 && sunAltDeg <= 5.0;
 
-    const nearSunrise = wrapDiff(hour, sunriseDec) <= 1.3;
-    const nearSunset = wrapDiff(hour, sunsetDec) <= 1.3;
-    const nearMajorMoon = Math.min(wrapDiff(hour, upperTransitDec), wrapDiff(hour, lowerTransitDec)) <= 1.4;
-    const nearMinorMoon = Math.min(wrapDiff(hour, moonriseDec), wrapDiff(hour, moonsetDec)) <= 1.0;
+    let solarPhaseLabel = 'день';
+    if (sunAltDeg < -18) solarPhaseLabel = 'астрономическая ночь';
+    else if (sunAltDeg < -6) solarPhaseLabel = isMorning ? 'предрассветные сумерки' : 'вечерние сумерки';
+    else if (sunAltDeg <= 4.5) solarPhaseLabel = isMorning ? 'утренняя зорька' : 'вечерняя зорька';
+    else if (sunAltDeg <= 15) solarPhaseLabel = isMorning ? 'утро' : 'предвечерний спад';
 
     return {
-      sunriseStr: fmtDecHour(sunriseDec),
-      sunsetStr: fmtDecHour(sunsetDec),
-      sunriseH,
-      sunsetH,
-      illum,
-      lunarDay,
-      growing,
-      phaseName,
-      isSyzygy,
-      moonriseStr,
-      moonsetStr,
+      sunriseStr: fmtDecHour(sunriseDec), sunsetStr: fmtDecHour(sunsetDec),
+      sunAltDeg, moonAltDeg: +moonAltDeg.toFixed(1), isMorning, solarPhaseLabel, nearDawnDusk,
+      illum, illumPct, lunarDay, growing, phaseName, syzygyFactor, tidalForceFactor,
       majorWindows: `${fmtDecHour(upperTransitDec)} (зенит) и ${fmtDecHour(lowerTransitDec)} (надир)`,
-      minorWindows: `${moonriseStr} (восход) / ${moonsetStr} (заход)`,
-      nearDawnDusk: nearSunrise || nearSunset,
-      nearMajorMoon,
-      nearMinorMoon
+      minorWindows: `${fmtDecHour(moonriseDec)} (восход) / ${fmtDecHour(moonsetDec)} (заход)`,
+      majorGauss, minorGauss,
+      nearMajorMoon: majorGauss >= 0.45,
+      nearMinorMoon: minorGauss >= 0.45
     };
   }
 
-  function estimateWaterTemp(hourlyTemps, currentIdx, thermalGroup, mskDateStr) {
-    const month = Number(mskDateStr.split('-')[1]) - 1;
-    const seasonalBase = [1.2, 1.0, 1.5, 4.5, 11.5, 18.5, 22.0, 21.0, 16.0, 9.5, 4.8, 2.0][month] ?? 5.0;
+  /**
+   * 2. Физика подводной освещённости (Люкс, Kasten-Czeplak + Beer-Lambert) и оптический отклик сетчатки вида
+   */
+  function computeUnderwaterOptics(fish, spot, astro, cloudPct) {
+    const h = astro.sunAltDeg;
+    const C = Math.max(0, Math.min(1, (Number(cloudPct) || 0) / 100));
 
-    const startIdx = Math.max(0, currentIdx - 48);
-    let sum = 0;
-    let count = 0;
-    for (let i = startIdx; i <= currentIdx; i++) {
-      if (typeof hourlyTemps[i] === 'number') {
-        sum += hourlyTemps[i];
-        count++;
-      }
+    // Поверхностная солнечная освещённость на открытом небе (Люкс) по кривой сумерек и высоты Солнца
+    let clearSunLux = 0.0008; // ночное небо без Луны
+    if (h >= 0) {
+      clearSunLux = 400 + 115000 * Math.pow(Math.sin((h * Math.PI) / 180), 1.35);
+    } else if (h >= -6) {
+      // Гражданские сумерки: от 400 лк на горизонте до 3.4 лк при -6°
+      clearSunLux = 3.4 * Math.pow(400 / 3.4, (h + 6) / 6);
+    } else if (h >= -12) {
+      // Навигационные сумерки: от 3.4 лк до 0.012 лк
+      clearSunLux = 0.012 * Math.pow(3.4 / 0.012, (h + 12) / 6);
+    } else if (h >= -18) {
+      // Астрономические сумерки: от 0.012 лк до 0.0008 лк
+      clearSunLux = 0.0008 * Math.pow(0.012 / 0.0008, (h + 18) / 6);
     }
-    const avgAir48 = count > 0 ? (sum / count) : seasonalBase;
 
-    const weights = {
-      river_large:  { season: 0.72, air48: 0.28 },
-      river_medium: { season: 0.62, air48: 0.38 },
-      lake:         { season: 0.55, air48: 0.45 }
+    // Ослабление облачностью по Kasten & Czeplak (1980): L_cloud / L_clear = 1 - 0.75 * C^3.4
+    const cloudTransmittance = 1 - 0.75 * Math.pow(C, 3.4);
+    const sunSurfLux = clearSunLux * cloudTransmittance;
+
+    // Лунная освещённость поверхности (до 0.25 лк в зените полнолуния)
+    const moonSin = Math.max(0, Math.sin((astro.moonAltDeg * Math.PI) / 180));
+    const moonSurfLux = 0.25 * Math.pow(astro.illum, 1.3) * moonSin * (1 - 0.8 * C);
+
+    const totalSurfLux = Math.max(0.0008, sunSurfLux + moonSurfLux);
+    // Закон Бугера–Ламберта–Бера на глубине стоянки вида: Ew = Esurf * exp(-Kd * z)
+    const waterLux = totalSurfLux * Math.exp(-(spot.kd || 0.75) * fish.typDepthM);
+    const logWaterLux = Math.log10(Math.max(1e-5, waterLux));
+
+    // Гауссов отклик зрительного аппарата вида на логарифм подводной освещённости
+    const zOpt = (logWaterLux - fish.optLogLux) / fish.sigmaLogLux;
+    const opticalAffinity = Math.exp(-0.5 * zOpt * zOpt); // 0..1
+
+    // Базовая активность из оптического режима и суточного метаболического ритма
+    const peakBase = 48;
+    const rawBase = fish.nightFloor + (peakBase - fish.nightFloor) * opticalAffinity;
+
+    return {
+      waterLux: waterLux >= 10 ? Math.round(waterLux) : +waterLux.toFixed(3),
+      logWaterLux: +logWaterLux.toFixed(2),
+      opticalAffinity,
+      baseScore: Math.round(rawBase)
     };
-    const w = weights[thermalGroup] || weights.river_medium;
-    const rawWater = seasonalBase * w.season + Math.max(-1.0, avgAir48) * w.air48;
-    return +Math.max(0.2, rawWater).toFixed(1);
   }
 
-  function getSprayRecommendation(fishId, waterTemp, isBaroShock, isHighFlow) {
-    const doseNote = isBaroShock
-      ? 'При сломе барометра рыба в ступоре: минимум ароматики — не более 1 точечного пшика на насадку.'
-      : (isHighFlow
-          ? 'На речной тяге обновлять 1–2 пшика каждые 7–8 забросов.'
-          : 'В стоячей воде озера/затона 1 точечный пшик раз в 10–12 забросов, чтобы не перебить точку.');
+  /**
+   * 3. Модель Торнтона–Лессема (Thornton & Lessem, 1978 — Wisconsin Bioenergetics)
+   * Относительная скорость потребления пищи f(T) в [0, 1] по 4 физиологическим точкам T1, T2, T3, T4
+   */
+  function thorntonLessemConsumption(T, [T1, T2, T3, T4]) {
+    const K1 = 0.1, K4 = 0.1;
+    const G1 = (1 / Math.max(0.5, T2 - T1)) * Math.log((0.98 * (1 - K1)) / (K1 * 0.02));
+    const L1 = Math.exp(G1 * (T - T1));
+    const KA = (K1 * L1) / (1 + K1 * (L1 - 1));
+
+    const G2 = (1 / Math.max(0.5, T4 - T3)) * Math.log((0.98 * (1 - K4)) / (K4 * 0.02));
+    const L2 = Math.exp(G2 * (T4 - T));
+    const KB = (K4 * L2) / (1 + K4 * (L2 - 1));
+
+    return Math.max(0.02, Math.min(1.0, KA * KB));
+  }
+
+  /**
+   * 4. Интегрирование ОДУ тепловой инерции воды по часовому ряду воздуха:
+   * dTw/dt = (Tair(t) - Tw(t)) / tauThermal
+   */
+  function buildWaterTempSeries(hourlyTemps, hourlyTimes, tauThermal) {
+    const monthDefaults = [1.2, 1.0, 1.5, 4.5, 11.5, 18.5, 22.0, 21.0, 16.0, 9.5, 4.8, 2.0];
+    const firstMonth = hourlyTimes[0] ? (Number(hourlyTimes[0].split('-')[1]) - 1) : new Date().getMonth();
+    let tw = monthDefaults[firstMonth] ?? 5.0;
+    const result = new Array(hourlyTemps.length);
+    const alpha = 1 / Math.max(24, tauThermal || 120);
+
+    for (let i = 0; i < hourlyTemps.length; i++) {
+      const m = hourlyTimes[i] ? (Number(hourlyTimes[i].split('-')[1]) - 1) : firstMonth;
+      const clim = monthDefaults[m] ?? 5.0;
+      const tAir = typeof hourlyTemps[i] === 'number' ? hourlyTemps[i] : clim;
+      // Радиационно-конвективный баланс: смесь сезонности и фактического теплообмена с воздухом
+      const eqTarget = 0.55 * clim + 0.45 * Math.max(-0.5, tAir);
+      tw = tw + alpha * (eqTarget - tw);
+      result[i] = +Math.max(0.2, tw).toFixed(1);
+    }
+    return result;
+  }
+
+  /**
+   * 5. Интегрирование ОДУ барической адаптации плавательного пузыря (закон Бойля–Мариотта)
+   * dPeq/dt = (Patm(t) - Peq(t)) / tauAdapt
+   */
+  function computeSwimBladderState(pArrMm, idx, fish) {
+    const startIdx = Math.max(0, idx - 96);
+    let pEq = pArrMm[startIdx] ?? 755;
+    const alpha = 1 / fish.tauAdapt;
+
+    for (let i = startIdx + 1; i <= idx; i++) {
+      const pCur = pArrMm[i] ?? pEq;
+      pEq = pEq + alpha * (pCur - pEq);
+    }
+
+    const pNow = pArrMm[idx] ?? 755;
+    const p6 = pArrMm[Math.max(0, idx - 6)] ?? pNow;
+    const p24 = pArrMm[Math.max(0, idx - 24)] ?? pNow;
+
+    // Нескомпенсированный перепад давления на плавательном пузыре (мм рт.ст.)
+    const uncompensatedMm = +(pNow - pEq).toFixed(2);
+    // Полное гидростатическое давление на глубине стоянки вида (73.56 мм рт.ст. на 1 м воды)
+    const totalHydroMm = pNow + 73.56 * fish.typDepthM;
+    // Относительная деформация объёма пузыря по закону Бойля–Мариотта (ΔV / V)
+    const volumeStrainPct = +((Math.abs(uncompensatedMm) / totalHydroMm) * 100).toFixed(2);
+
+    // Скорость изменения давления за последние 6 часов (мм/ч)
+    const dpDt6 = +((pNow - p6) / 6).toFixed(2);
+    const pressDelta24 = +(pNow - p24).toFixed(1);
+
+    // Время непрерывной барической стабильности (коридор ±1.5 мм)
+    let stableHours = 0;
+    for (let k = 1; k <= 72; k++) {
+      if (idx - k < 0) break;
+      if (Math.abs(pNow - (pArrMm[idx - k] ?? pNow)) <= 1.5) stableHours++;
+      else break;
+    }
+
+    return {
+      pressMm: Math.round(pNow),
+      pEqMm: +pEq.toFixed(1),
+      uncompensatedMm,
+      volumeStrainPct,
+      dpDt6,
+      pressDelta24,
+      stableHours
+    };
+  }
+
+  function getSprayRecommendation(fishId, waterTemp, isBaroStress, isHighFlow) {
+    const doseNote = isBaroStress
+      ? 'При барическом стрессе рыба осторожна: не более 1 точечного пшика на насадку.'
+      : (isHighFlow ? 'На речной тяге обновлять 1–2 пшика каждые 7–8 забросов.' : 'В стоячей воде озера/затона 1 точечный пшик раз в 10–12 забросов.');
 
     if (fishId === 'roach' || fishId === 'silverbream') {
-      if (waterTemp < 9) {
-        return {
-          spray: 'DUNAEV DIP «Кориандр» или «Эксперт Мотыль» (водно-спиртовая основа)',
-          shortSpray: 'Кориандр / Мотыль',
-          sprayWhy: `Вода ~${waterTemp}°C: масляные и приторные дипы в холодной воде отпугивают бель — работают только пряные водно-спиртовые спреи.`,
-          doseNote,
-          links: [
-            { label: 'DUNAEV Кориандр (Ozon)', url: 'https://www.ozon.ru/search/?text=dunaev+dip+кориандр' },
-            { label: 'Эксперт Мотыль (Ozon)', url: 'https://www.ozon.ru/search/?text=aromatizator+motyl+dlya+rybalki' }
-          ]
-        };
-      }
-      return {
-        spray: 'DUNAEV «Белая рыба» или Pelican MIX Плотва (ваниль-бисквит / конопля)',
-        shortSpray: 'Белая рыба / Ваниль',
-        sprayWhy: `Вода ~${waterTemp}°C: в тёплой воде сладкие и кондитерские шлейфы активно собирают плотву и густеру.`,
-        doseNote,
-        links: [
-          { label: 'DUNAEV Белая рыба (Ozon)', url: 'https://www.ozon.ru/search/?text=dunaev+belaya+ryba+sprey' },
-          { label: 'Pelican Плотва (Ozon)', url: 'https://www.ozon.ru/search/?text=pelican+aromatizator+plotva' }
-        ]
-      };
+      return waterTemp < 9
+        ? { spray: 'DUNAEV DIP «Кориандр» или «Эксперт Мотыль» (водно-спиртовой)', sprayWhy: `Вода ~${waterTemp}°C: в холодной воде диффундируют только водно-спиртовые пряные дипы.`, doseNote, links: [{ label: 'DUNAEV Кориандр (Ozon)', url: 'https://www.ozon.ru/search/?text=dunaev+dip+кориандр' }] }
+        : { spray: 'DUNAEV «Белая рыба» или Pelican MIX Плотва (ваниль-бисквит)', sprayWhy: `Вода ~${waterTemp}°C: сладкие шлейфы активно собирают бель.`, doseNote, links: [{ label: 'DUNAEV Белая рыба (Ozon)', url: 'https://www.ozon.ru/search/?text=dunaev+belaya+ryba+sprey' }] };
     }
-
     if (fishId === 'bream') {
-      if (waterTemp < 11) {
-        return {
-          spray: 'DUNAEV DIP «Чеснок» или «Перец / Специи» (водно-спиртовой)',
-          shortSpray: 'Чеснок / Специи',
-          sprayWhy: `Вода ~${waterTemp}°C: холодноводный лещ игнорирует сладости и реагирует только на острый чеснок или специи.`,
-          doseNote,
-          links: [
-            { label: 'DUNAEV Чеснок (Ozon)', url: 'https://www.ozon.ru/search/?text=dunaev+dip+chesnok' },
-            { label: 'Эксперт Мотыль (Ozon)', url: 'https://www.ozon.ru/search/?text=aromatizator+motyl+dlya+rybalki' }
-          ]
-        };
-      }
-      return {
-        spray: 'DUNAEV «Brasem» (пряная карамель) или «Слива» спрей 50 мл',
-        shortSpray: 'Brasem / Слива',
-        sprayWhy: `Вода ~${waterTemp}°C: классический лещовый Brasem удерживает стаю на кормовом столе.`,
-        doseNote,
-        links: [
-          { label: 'DUNAEV Brasem (Ozon)', url: 'https://www.ozon.ru/search/?text=dunaev+brasem' },
-          { label: 'Pelican Лещ (Ozon)', url: 'https://www.ozon.ru/search/?text=pelican+aromatizator+lesch' }
-        ]
-      };
+      return waterTemp < 11
+        ? { spray: 'DUNAEV DIP «Чеснок» или «Перец / Специи» (водно-спиртовой)', sprayWhy: `Вода ~${waterTemp}°C: холодноводный лещ реагирует на острые аминокислотные и чесночные дипы.`, doseNote, links: [{ label: 'DUNAEV Чеснок (Ozon)', url: 'https://www.ozon.ru/search/?text=dunaev+dip+chesnok' }] }
+        : { spray: 'DUNAEV «Brasem» (пряная карамель) или «Слива» спрей 50 мл', sprayWhy: `Вода ~${waterTemp}°C: Brasem удерживает стаю на кормовом пятне.`, doseNote, links: [{ label: 'DUNAEV Brasem (Ozon)', url: 'https://www.ozon.ru/search/?text=dunaev+brasem' }] };
     }
-
     if (fishId === 'perch' || fishId === 'zander' || fishId === 'pike') {
       return {
-        spray: waterTemp < 10
-          ? 'Stinky Stuff «Рак / Краб» или гель Mega Strike (втирать в силикон)'
-          : 'SFT Спрей-аттрактант «Рыбий жир / Креветка» 150 мл',
-        shortSpray: waterTemp < 10 ? 'Рак / Mega Strike' : 'SFT Рыбий жир',
-        sprayWhy: waterTemp < 10
-          ? `Вода ~${waterTemp}°C: хищник пассивен, запах рака заставляет дожевывать приманку на долгой паузе.`
-          : 'Создаёт жирный пищевой след в толще воды.',
+        spray: waterTemp < 10 ? 'Stinky Stuff «Рак / Краб» или гель Mega Strike (втирать в силикон)' : 'SFT Спрей-аттрактант «Рыбий жир / Креветка» 150 мл',
+        sprayWhy: waterTemp < 10 ? `Вода ~${waterTemp}°C: при низкой температуре хищник дольше удерживает приманку со вкусом ракообразных.` : 'Создаёт жирный пищевой след.',
         doseNote: 'Обновлять каждые 8–10 проводок.',
-        links: [
-          { label: 'Stinky Stuff Рак (Ozon)', url: 'https://www.ozon.ru/search/?text=stinky+stuff+rak' },
-          { label: 'Гель Mega Strike (Ozon)', url: 'https://www.ozon.ru/search/?text=mega+strike+attraktant' }
-        ]
+        links: [{ label: 'Stinky Stuff Рак (Ozon)', url: 'https://www.ozon.ru/search/?text=stinky+stuff+rak' }]
       };
     }
-
     if (fishId === 'catfish') {
       return {
-        spray: waterTemp >= 14
-          ? 'Pelican «Сом / Печень» или дип «Выползок / Ракушка»'
-          : 'Без брызгалки (сом в зимовальном оцепенении)',
-        shortSpray: waterTemp >= 14 ? 'Печень / Выползок' : 'Без брызгалки',
-        sprayWhy: waterTemp >= 14
-          ? 'Сом ищет пищу по запаховому шлейфу в придонном слое.'
-          : `Вода ~${waterTemp}°C: при температуре ниже 14°C сом практически не питается.`,
+        spray: waterTemp >= 14 ? 'Pelican «Сом / Печень» или дип «Выползок / Ракушка»' : 'Без брызгалки (сом в зимовальном оцепенении)',
+        sprayWhy: waterTemp >= 14 ? 'Сом охотится преимущественно по хеморецепции у дна.' : `Вода ~${waterTemp}°C: ниже биоэнергетического порога активности сома (14°C).`,
         doseNote: 'Пропитать пучок выползков перед забросом.',
         links: [{ label: 'Аттрактант на сома (Ozon)', url: 'https://www.ozon.ru/search/?text=attraktant+na+soma' }]
       };
     }
-
-    return {
-      spray: 'Без брызгалки (визуальная атака в толще)',
-      shortSpray: 'Без брызгалки',
-      sprayWhy: 'Жерех охотится исключительно по зрению на скорости проводки.',
-      doseNote: 'Не требуется.',
-      links: [{ label: 'Блёсны на жереха (Ozon)', url: 'https://www.ozon.ru/search/?text=blesna+kastmaster+na+zherekha' }]
-    };
+    return { spray: 'Без брызгалки (визуальная атака в толще)', sprayWhy: 'Жерех атакует исключительно по зрению в верхнем горизонте.', doseNote: 'Не требуется.', links: [{ label: 'Блёсны на жереха (Ozon)', url: 'https://www.ozon.ru/search/?text=blesna+kastmaster+na+zherekha' }] };
   }
 
   function buildReadyKit(fishObj, ctx) {
@@ -1012,552 +716,277 @@
     const isCold = ctx.waterTemp < 8.5;
     const isStill = ctx.spot.flow === 'still';
     const isHighFlow = ctx.spot.flow === 'high';
-    const isOvercast = ctx.cloud >= 55;
-    const isBaroShock = Math.abs(ctx.pressDelta24) >= 8.5 || Math.abs(ctx.pressDelta6) >= 3.2;
-    const isPostShock = !isBaroShock && Math.abs(ctx.prev24Shock) >= 9.0;
+    const isBaroStress = Math.abs(ctx.bladder.uncompensatedMm) >= 2.8;
     const isWindy = ctx.wind >= 5.5;
-    const waterLabel = isStill ? 'озере / затоне (без течения)' : (isHighFlow ? 'русле с сильной тягой' : 'реке со средним течением');
+    const windAdd = (isWindy && ctx.spot.exposure !== 'sheltered') ? 3 : 0;
 
-    let scenarioName = '';
-    let scenarioWhy = '';
-    if (isBaroShock) {
-      scenarioName = `🚨 Острый барический слом (Δ24ч: ${ctx.pressDelta24 >= 0 ? '+' : ''}${ctx.pressDelta24.toFixed(1)} мм)!`;
-      scenarioWhy = `Резкий перепад давления вызывает у рыбы спазм плавательного пузыря. На ${waterLabel} нужна сверхпассивная, деликатная подача строго в приямки и укрытия.`;
-    } else if (isPostShock) {
-      scenarioName = `⏳ Остаточный стресс после вчерашнего скачка (${ctx.prev24Shock >= 0 ? '+' : ''}${ctx.prev24Shock.toFixed(1)} мм)`;
-      scenarioWhy = 'Сегодня барометр выравнивается, но рыба ещё адаптируется после вчерашнего перепада. Ставка на деликатные оснастки и выходы в солунарные окна.';
+    let scenarioName = '', scenarioWhy = '';
+    if (Math.abs(ctx.bladder.uncompensatedMm) >= 4.2) {
+      scenarioName = `🚨 Острый барический сдвиг (ΔP пузыря: ${ctx.bladder.uncompensatedMm >= 0 ? '+' : ''}${ctx.bladder.uncompensatedMm} мм, деформация ${ctx.bladder.volumeStrainPct}%)`;
+      scenarioWhy = `Газовая железа (${fish.bladderType === 'physoclist' ? 'закрытый пузырь, τ=' + fish.tauAdapt + 'ч' : 'открытый пузырь, τ=' + fish.tauAdapt + 'ч'}) не успевает компенсировать перепад давления. Нужна пассивная подача у дна.`;
+    } else if (isBaroStress) {
+      scenarioName = `⏳ Фаза барической адаптации (остаточный сдвиг ΔP: ${ctx.bladder.uncompensatedMm >= 0 ? '+' : ''}${ctx.bladder.uncompensatedMm} мм)`;
+      scenarioWhy = 'Давление выравнивается, рыба заканчивает компенсацию плавучести. Деликатные оснастки и выходы в солунарные окна.';
+    } else if (ctx.bladder.stableHours >= 18) {
+      scenarioName = `✅ Полная барическая адаптация (давление ровно ${ctx.bladder.stableHours}ч, ΔP пузыря ≈ 0)`;
+      scenarioWhy = 'Плавательный пузырь полностью сбалансирован. Рыба держится рабочих бровок и предсказуемо выходит кормиться на зорьках и в солунарные окна.';
+    } else if (ctx.bladder.dpDt6 <= -0.25 && ctx.bladder.dpDt6 >= -0.95) {
+      scenarioName = `📉 Предфронтальный плавный спад давления (${ctx.bladder.dpDt6} мм/ч)`;
+      scenarioWhy = 'Мягкое снижение давления перед фронтом стимулирует активный жор перед сменой погоды.';
     } else if (isWindy && ctx.spot.exposure !== 'sheltered') {
-      scenarioName = `Свежий ветер (${ctx.wind.toFixed(1)} м/с) и волна на открытой воде`;
-      scenarioWhy = 'Выдувает дугу лески — утяжеляем груз/кормушку на 20–30% и укорачиваем поводок.';
-    } else if (isOvercast) {
-      scenarioName = `Пасмурно (${ctx.cloud}%), рабочий барометр и мягкий свет`;
-      scenarioWhy = 'Отсутствие резких бликов позволяет рыбе смелее выходить на бровки и поливы.';
+      scenarioName = `💨 Свежий ветер (${ctx.wind.toFixed(1)} м/с) и волна на открытой воде`;
+      scenarioWhy = 'Выдувает дугу шнура — утяжеляем груз/кормушку на 20–30% и укорачиваем поводок.';
     } else {
-      scenarioName = `Малооблачно (${ctx.cloud}%), прозрачная вода (~${ctx.waterTemp}°C)`;
-      scenarioWhy = 'В прозрачной воде при высоком солнце рыба осторожничает: тонкий флюр и натуральные цвета.';
+      scenarioName = `🌤 Умеренный барический фон (${ctx.bladder.pressMm} мм), свет у дна ${ctx.optics.waterLux} лк`;
+      scenarioWhy = `Прозрачность водоёма Kd = ${ctx.spot.kd} м⁻¹; снасть адаптирована под освещённость ${ctx.optics.waterLux} лк на горизонте ${fish.typDepthM} м.`;
     }
 
-    const windAdd = (isWindy && ctx.spot.exposure !== 'sheltered') ? 3 : 0;
-    const sprayObj = getSprayRecommendation(fish.id, ctx.waterTemp, isBaroShock || isPostShock, isHighFlow);
+    const sprayObj = getSprayRecommendation(fish.id, ctx.waterTemp, isBaroStress, isHighFlow);
+    const gearChecklist = [
+      ctx.temp <= 2 ? 'Зимний/демисезонный костюм, термобельё, тёплые сапоги.' : (ctx.temp <= 11 ? 'Ветрозащитная мембрана, флис и термос.' : 'Лёгкая дышащая одежда, поляризационные очки.'),
+      ctx.precip > 0.2 ? 'Обязательно плащ-дождевик.' : ''
+    ].filter(Boolean).join(' ');
 
-    const gearChecklist = [];
-    if (ctx.temp <= 2) gearChecklist.push('Зимний/демисезонный костюм, термобельё, тёплые сапоги.');
-    else if (ctx.temp <= 11) gearChecklist.push('Ветрозащитная мембрана, флис и термос.');
-    else gearChecklist.push('Лёгкая дышащая одежда, поляризационные очки.');
-    if (ctx.precip > 0.2) gearChecklist.push('Обязательно плащ-дождевик.');
-
-    const basePack = {
-      scenarioName,
-      scenarioWhy,
-      ...sprayObj,
-      checklist: gearChecklist.join(' '),
-      gearLinks: [{ label: 'Экипировка (Ozon)', url: 'https://www.ozon.ru/search/?text=костюм+рыболовный' }]
-    };
+    const basePack = { scenarioName, scenarioWhy, ...sprayObj, checklist: gearChecklist, gearLinks: [{ label: 'Экипировка (Ozon)', url: 'https://www.ozon.ru/search/?text=костюм+рыболовный' }] };
 
     if (fish.id === 'perch') {
       const w = (isStill ? 3 : (isHighFlow ? 12 : 7)) + windAdd;
-      const bait = (isBaroShock || isPostShock)
-        ? 'Пассивный микро-слаг / танта 1.5" (машинное масло, лох)'
-        : (isCold ? 'Танта / полярис 2" в натуральных тонах' : 'Твистер 2.2" / виброхвост 2.5"');
-      const rig = (isBaroShock || isPostShock)
-        ? `Отводной поводок 1.4 м (груз ${isStill ? 6 : 12} г, пауза 7–10 сек)`
-        : (isStill ? `Микроджиг / джиг-риг ${w} г (стоячая вода озера)` : `Шарнирный джиг ${w} г (под речную струю)`);
-      return {
-        ...basePack,
-        bait, shortBait: bait,
-        baitWhy: (isBaroShock || isPostShock) ? 'При барическом стрессе окунь подбирает только медленно ползущую приманку.' : 'Подобрано под прозрачность и температуру воды.',
-        baitLinks: [{ label: 'Микросиликон (Ozon)', url: 'https://www.ozon.ru/search/?text=силиконовые+приманки+танты+2+дюйма' }],
-        rig, shortRig: rig,
-        rigWhy: isStill ? 'Лёгкий вес обеспечивает долгое зависание в толще озера.' : 'Держит дно на течении и пробивает боковой ветер.',
-        rigLinks: [{ label: 'Грузила чебурашка (Ozon)', url: 'https://www.ozon.ru/search/?text=грузила+чебурашка+набор' }],
-        lineHook: 'Шнур #0.4–#0.6 PE + флюорокарбон 0.14–0.16 мм, крючок №8–10',
-        lineWhy: 'Тонкий флюр незаметен в холодной прозрачной воде.',
-        lineLinks: [{ label: 'Флюорокарбон (Ozon)', url: 'https://www.ozon.ru/search/?text=флюорокарбон+0.16' }],
-        groundbait: 'Без прикормки — поиск стаи по ракушечнику, коряжкам и бровкам.',
-        groundbaitLinks: [{ label: 'Коробки для приманок (Ozon)', url: 'https://www.ozon.ru/search/?text=коробка+рыболовная' }],
-        tactic: (isBaroShock || isPostShock) ? 'Медленное волочение по дну с паузами по 8–10 секунд.' : 'Двойной подрыв с паузой 2–3 секунды.'
-      };
+      const rig = isBaroStress ? `Отводной поводок 1.4 м (груз ${isStill ? 6 : 12} г, пауза 7–10 сек)` : (isStill ? `Микроджиг / джиг-риг ${w} г (стоячая вода)` : `Шарнирный джиг ${w} г (под течение)`);
+      return { ...basePack, bait: isBaroStress ? 'Пассивный микро-слаг / танта 1.5" (машинное масло, лох)' : (isCold ? 'Танта / полярис 2" в натуральных тонах' : 'Твистер 2.2" / виброхвост 2.5"'), baitWhy: 'Подобрано под прозрачность и оптику воды.', baitLinks: [{ label: 'Микросиликон (Ozon)', url: 'https://www.ozon.ru/search/?text=силиконовые+приманки+танты+2+дюйма' }], rig, shortRig: rig, rigWhy: isStill ? 'Лёгкий вес даёт долгое зависание.' : 'Уверенный контроль дна на тяге.', rigLinks: [{ label: 'Чебурашки (Ozon)', url: 'https://www.ozon.ru/search/?text=грузила+чебурашка+набор' }], lineHook: 'Шнур #0.4–#0.6 PE + флюр 0.14–0.16 мм, крючок №8–10', lineWhy: `При Kd=${ctx.spot.kd} м⁻¹ тонкий флюр исключает настороженность.`, lineLinks: [{ label: 'Флюр 0.16 (Ozon)', url: 'https://www.ozon.ru/search/?text=флюорокарбон+0.16' }], groundbait: 'Без прикормки — поиск по ракушечнику и бровкам.', groundbaitLinks: [{ label: 'Коробки (Ozon)', url: 'https://www.ozon.ru/search/?text=коробка+рыболовная' }], tactic: isBaroStress ? 'Медленное волочение с паузами 8–10 сек.' : 'Двойной подрыв с паузой 2–3 сек.' };
     }
-
     if (fish.id === 'pike') {
       const w = (isStill ? 7 : (isHighFlow ? 22 : 14)) + windAdd * 2;
-      const bait = (isBaroShock || isPostShock)
-        ? 'Суспендер минноу 110–130 мм (паузы 5–7 сек) или виброхвост 4" на лёгкой голове'
-        : (isCold ? 'Крупный виброхвост 4–4.5" / поролон' : 'Воблер минноу 110 мм / колебалка 18 г');
-      const rig = isStill
-        ? `Твич вдоль травы / лёгкий джиг ${w} г + титановый поводок 20 см`
-        : `Ступенчатый джиг ${w} г + струна/титан 25 см (15 кг)`;
-      return {
-        ...basePack,
-        bait, shortBait: bait,
-        baitWhy: 'Зависающая приманка провоцирует даже малоактивную щуку.',
-        baitLinks: [{ label: 'Воблеры 110–130 (Ozon)', url: 'https://www.ozon.ru/search/?text=воблер+минноу+110+суспендер' }],
-        rig, shortRig: rig,
-        rigWhy: isStill ? 'На озере не нужен тяжёлый груз — важна плавная подача.' : 'Уверенный контроль дна на русловой бровке.',
-        rigLinks: [{ label: 'Поводки титановые (Ozon)', url: 'https://www.ozon.ru/search/?text=поводок+титановый+рыболовный' }],
-        lineHook: 'Шнур #1.2–#1.5 PE + двойник/офсет 3/0–4/0',
-        lineWhy: 'Запас прочности для коряжника и свала.',
-        lineLinks: [{ label: 'Шнур 1.2 PE (Ozon)', url: 'https://www.ozon.ru/search/?text=плетеный+шнур+1.2+pe' }],
-        groundbait: 'Без прикормки — облов границы камыша, ям и свалов.',
-        groundbaitLinks: [{ label: 'Зевник и экстрактор (Ozon)', url: 'https://www.ozon.ru/search/?text=зевник+и+экстрактор+рыболовный' }],
-        tactic: (isBaroShock || isPostShock) ? 'Долгие паузы в приямках, минимум резких рывков.' : 'Плавная ступенька с зависанием 2–4 секунды.'
-      };
+      const rig = isStill ? `Твич вдоль травы / лёгкий джиг ${w} г + титан 20 см` : `Ступенчатый джиг ${w} г + струна/титан 25 см (15 кг)`;
+      return { ...basePack, bait: isBaroStress ? 'Суспендер минноу 110–130 мм (паузы 5–7 сек) или виброхвост 4"' : (isCold ? 'Крупный виброхвост 4–4.5" / поролон' : 'Воблер минноу 110 мм / колебалка 18 г'), baitWhy: 'Зависающая приманка провоцирует хищника на бровке.', baitLinks: [{ label: 'Воблеры 110–130 (Ozon)', url: 'https://www.ozon.ru/search/?text=воблер+минноу+110+суспендер' }], rig, shortRig: rig, rigWhy: 'Надёжная подсечка и защита от среза.', rigLinks: [{ label: 'Поводки титан (Ozon)', url: 'https://www.ozon.ru/search/?text=поводок+титановый+рыболовный' }], lineHook: 'Шнур #1.2–#1.5 PE + двойник/офсет 3/0–4/0', lineWhy: 'Запас прочности для коряжника.', lineLinks: [{ label: 'Шнур 1.2 PE (Ozon)', url: 'https://www.ozon.ru/search/?text=плетеный+шнур+1.2+pe' }], groundbait: 'Без прикормки — облов границы камыша, ям и свалов.', groundbaitLinks: [{ label: 'Зевник и экстрактор (Ozon)', url: 'https://www.ozon.ru/search/?text=зевник+и+экстрактор+рыболовный' }], tactic: 'Плавная ступенька с паузами 3–5 секунд.' };
     }
-
     if (fish.id === 'zander') {
       const w = (isStill ? 10 : (isHighFlow ? 28 : 18)) + windAdd * 2;
-      const bait = (isBaroShock || isPostShock)
-        ? 'Узкий слаг / виброхвост 3.5–4" (натурал, фиолет)'
-        : 'Прогонистый виброхвост 4" / мандула (билайн, черно-красный)';
-      const rig = isStill
-        ? `Джиг ${w} г на глубоких карстовых/русловых свалах (без течения)`
-        : `Классический джиг ${w} г с перегрузом 2–3 г для чёткого стука по твёрдому дну`;
-      return {
-        ...basePack,
-        bait, shortBait: bait,
-        baitWhy: 'Узкий силуэт прогонистой рыбки — основной корм судака.',
-        baitLinks: [{ label: 'Мандула на судака (Ozon)', url: 'https://www.ozon.ru/search/?text=мандула+на+судака' }],
-        rig, shortRig: rig,
-        rigWhy: 'Чёткая ступенька по твёрдому грунту.',
-        rigLinks: [{ label: 'Джиг-головки (Ozon)', url: 'https://www.ozon.ru/search/?text=джиг+головки+набор' }],
-        lineHook: 'Шнур #1.0–#1.2 PE + шок-лидер из флюорокарбона 0.35 мм (60 см)',
-        lineWhy: 'Защита шнура от ракушки и коряг.',
-        lineLinks: [{ label: 'Флюр 0.35 мм (Ozon)', url: 'https://www.ozon.ru/search/?text=флюорокарбон+0.35' }],
-        groundbait: 'Без прикормки — выход по зорькам и ночным окнам Луны.',
-        groundbaitLinks: [{ label: 'Офсетные крючки (Ozon)', url: 'https://www.ozon.ru/search/?text=офсетные+крючки+4%2F0' }],
-        tactic: (isBaroShock || isPostShock) ? 'Короткая ступенька 1 оборот с паузой до 5 секунд.' : 'Облов нижней бровки свала на закате и рассвете.'
-      };
+      const rig = isStill ? `Джиг ${w} г на глубоких свалах (без течения)` : `Классический джиг ${w} г с перегрузом 2–3 г для стука по дну`;
+      return { ...basePack, bait: isBaroStress ? 'Узкий слаг / виброхвост 3.5–4" (натурал, фиолет)' : 'Прогонистый виброхвост 4" / мандула (билайн)', baitWhy: 'Узкий силуэт под пасть судака.', baitLinks: [{ label: 'Мандула (Ozon)', url: 'https://www.ozon.ru/search/?text=мандула+на+судака' }], rig, shortRig: rig, rigWhy: 'Чёткая ступенька по твёрдой ракушке.', rigLinks: [{ label: 'Джиг-головки (Ozon)', url: 'https://www.ozon.ru/search/?text=джиг+головки+набор' }], lineHook: 'Шнур #1.0–#1.2 PE + флюр 0.35 мм (60 см)', lineWhy: 'Защита от ракушки на бровке.', lineLinks: [{ label: 'Флюр 0.35 (Ozon)', url: 'https://www.ozon.ru/search/?text=флюорокарбон+0.35' }], groundbait: 'Без прикормки — выходы в мезопических сумерках (0.1–15 лк).', groundbaitLinks: [{ label: 'Офсеты 4/0 (Ozon)', url: 'https://www.ozon.ru/search/?text=офсетные+крючки+4%2F0' }], tactic: 'Облов нижней бровки свала на заходе Солнца и в лунные окна.' };
     }
-
     if (fish.id === 'bream') {
       const feederW = (isStill ? 25 : (isHighFlow ? 90 : 55)) + windAdd * 5;
-      const bait = (isCold || isBaroShock || isPostShock)
-        ? '2–3 мотыля + 1 утопленный опарыш (минимальный объём)'
-        : 'Пучок мотыля с опарышем или бутерброд червь + опарыш';
-      const rig = isStill
-        ? `Инлайн / метод-флэт или кормушка-пуля ${feederW} г (для озера/затона)`
-        : `Асимметричная петля / инлайн, кормушка-клетка ${feederW} г (для течения)`;
-      return {
-        ...basePack,
-        bait, shortBait: bait,
-        baitWhy: isCold ? 'В холодной воде лещ берёт только животную насадку малого размера.' : 'Питательная насадка удерживает крупного леща.',
-        baitLinks: [{ label: 'Кормушки фидерные (Ozon)', url: 'https://www.ozon.ru/search/?text=кормушка+фидерная' }],
-        rig, shortRig: rig,
-        rigWhy: isStill ? 'В стоячей воде не нужен тяжёлый якорь.' : 'Кормушка уверенно держит дно на течении.',
-        rigLinks: [{ label: 'Фидергам (Ozon)', url: 'https://www.ozon.ru/search/?text=фидергам+для+рыбалки' }],
-        lineHook: `Шнур #0.8 PE + фидергам 15 см + поводок ${(isBaroShock || isPostShock) ? '0.10 мм (90 см)' : '0.12–0.14 мм (70 см)'}, крючок №14–16`,
-        lineWhy: 'Тонкий поводок с амортизатором не настораживает леща.',
-        lineLinks: [{ label: 'Крючки №14 (Ozon)', url: 'https://www.ozon.ru/search/?text=крючки+рыболовные+14' }],
-        groundbait: isCold
-          ? 'Тёмная мелкофракционная смесь (DUNAEV Лещ Чёрный) + кормовой мотыль (без каш)'
-          : 'Крупнофракционная лещовая смесь (DUNAEV Лещ + пшено/горох + резаный опарыш)',
-        groundbaitLinks: [{ label: 'DUNAEV Лещ Чёрный (Ozon)', url: 'https://www.ozon.ru/search/?text=прикормка+dunaev+лещ+черный' }],
-        tactic: (isBaroShock || isPostShock) ? 'Перезаброс раз в 10–12 минут, минимум ароматики.' : 'Стартовый закорм 5–7 кормушек, темп 5–7 минут.'
-      };
+      const rig = isStill ? `Инлайн / флэт или кормушка-пуля ${feederW} г` : `Асимметричная петля / инлайн, кормушка ${feederW} г`;
+      return { ...basePack, bait: (isCold || isBaroStress) ? '2–3 мотыля + 1 утопленный опарыш' : 'Пучок мотыля с опарышем / червь', baitWhy: 'Деликатная подача насадкой.', baitLinks: [{ label: 'Кормушки (Ozon)', url: 'https://www.ozon.ru/search/?text=кормушка+фидерная' }], rig, shortRig: rig, rigWhy: 'Держит точку на дне.', rigLinks: [{ label: 'Фидергам (Ozon)', url: 'https://www.ozon.ru/search/?text=фидергам+для+рыбалки' }], lineHook: `Шнур #0.8 PE + фидергам 15 см + поводок ${isBaroStress ? '0.10 мм (90 см)' : '0.12–0.14 мм (70 см)'}, крючок №14–16`, lineWhy: 'Тонкий поводок для осторожного леща.', lineLinks: [{ label: 'Крючки №14 (Ozon)', url: 'https://www.ozon.ru/search/?text=крючки+рыболовные+14' }], groundbait: isCold ? 'DUNAEV Лещ Чёрный + кормовой мотыль (без каш)' : 'DUNAEV Лещ + крупная фракция + резаный опарыш', groundbaitLinks: [{ label: 'DUNAEV Лещ (Ozon)', url: 'https://www.ozon.ru/search/?text=прикормка+dunaev+лещ+черный' }], tactic: 'Стартовый закорм 5 кормушек, темп 6–8 мин.' };
     }
-
     if (fish.id === 'roach' || fish.id === 'silverbream') {
-      const floatOrFeeder = isStill
-        ? 'Мах / болонка 5–6 м (поплавок 1.5–2 г) или лёгкий пикер 25 г'
-        : `Фидер: кормушка ${isHighFlow ? 70 : 45} г, патерностер`;
-      const bait = (isCold || isBaroShock || isPostShock)
-        ? '1–2 личинки мотыля или 1 мелкий опарыш чулком'
-        : 'Опарыш (белый + красный) или перловка / мотыль';
-      return {
-        ...basePack,
-        bait, shortBait: bait,
-        baitWhy: 'Нежная насадка под аккуратную поклёвку.',
-        baitLinks: [{ label: 'Поплавки 2 г (Ozon)', url: 'https://www.ozon.ru/search/?text=поплавок+рыболовный+2г' }],
-        rig: floatOrFeeder, shortRig: floatOrFeeder,
-        rigWhy: isStill ? 'В стоячей воде озера поплавок показывает малейшее прикосновение.' : 'Фидер удерживает насадку у дна на тяге.',
-        rigLinks: [{ label: 'Поводковая леска 0.10 (Ozon)', url: 'https://www.ozon.ru/search/?text=леска+поводковая+0.10' }],
-        lineHook: 'Основная 0.16 мм + поводок 0.09–0.10 мм (60–80 см), лёгкий крючок №16–18',
-        lineWhy: 'Тонкая оснастка для прозрачной воды.',
-        lineLinks: [{ label: 'Крючки №16 (Ozon)', url: 'https://www.ozon.ru/search/?text=крючки+рыболовные+16' }],
-        groundbait: isCold
-          ? 'Тёмная плотвиная пылящая смесь (DUNAEV Плотва Чёрная) + грунт 1:1'
-          : 'Активно лифтующая смесь (DUNAEV Плотва + копра-меласса)',
-        groundbaitLinks: [{ label: 'DUNAEV Плотва (Ozon)', url: 'https://www.ozon.ru/search/?text=прикормка+dunaev+плотва' }],
-        tactic: 'Регулярный докорм небольшими порциями для создания столба мути.'
-      };
+      const rig = isStill ? 'Мах / болонка 5–6 м (поплавок 1.5–2 г) или пикер 25 г' : `Фидер: кормушка ${isHighFlow ? 70 : 45} г, патерностер`;
+      return { ...basePack, bait: (isCold || isBaroStress) ? '1–2 личинки мотыля или 1 мелкий опарыш' : 'Опарыш (белый + красный) / перловка / мотыль', baitWhy: 'Нежная насадка под аккуратную поклёвку.', baitLinks: [{ label: 'Поплавки 2 г (Ozon)', url: 'https://www.ozon.ru/search/?text=поплавок+рыболовный+2г' }], rig, shortRig: rig, rigWhy: 'Максимальная чувствительность оснастки.', rigLinks: [{ label: 'Леска 0.10 (Ozon)', url: 'https://www.ozon.ru/search/?text=леска+поводковая+0.10' }], lineHook: 'Основная 0.16 мм + поводок 0.09–0.10 мм (70 см), крючок №16–18', lineWhy: 'Не настораживает рыбу в чистой воде.', lineLinks: [{ label: 'Крючки №16 (Ozon)', url: 'https://www.ozon.ru/search/?text=крючки+рыболовные+16' }], groundbait: isCold ? 'DUNAEV Плотва Чёрная + грунт 1:1' : 'DUNAEV Плотва + копра-меласса', groundbaitLinks: [{ label: 'DUNAEV Плотва (Ozon)', url: 'https://www.ozon.ru/search/?text=прикормка+dunaev+плотва' }], tactic: 'Регулярный докорм малыми порциями.' };
     }
-
     if (fish.id === 'ide') {
-      const bait = (isBaroShock || isPostShock)
-        ? 'Тонущий стик / тейл-спиннер 14–18 г в придонном слое'
-        : 'Пилькер / кастмастер 18–24 г (серебро) или уокер';
-      const rig = 'Дальний заброс + флюорокарбоновый лидер 0.28 мм (1.2 м) без блестящих застёжек';
-      return {
-        ...basePack,
-        bait, shortBait: bait,
-        baitWhy: 'Компактная приманка летит за 60–70 метров к осторожному жереху.',
-        baitLinks: [{ label: 'Пилькеры на жереха (Ozon)', url: 'https://www.ozon.ru/search/?text=пилькер+на+жереха+20г' }],
-        rig, shortRig: rig,
-        rigWhy: 'Маскировка шнура перед приманкой.',
-        rigLinks: [{ label: 'Тейл-спиннеры (Ozon)', url: 'https://www.ozon.ru/search/?text=тейл+спиннер+18г' }],
-        lineHook: 'Гладкий 8-жильный шнур #0.8–#1.0 PE + тройник с опушкой',
-        lineWhy: 'Максимальная дальность заброса.',
-        lineLinks: [{ label: 'Шнур 8-жильный 0.8 PE (Ozon)', url: 'https://www.ozon.ru/search/?text=шнур+8+жильный+0.8+pe' }],
-        groundbait: 'Без прикормки — поиск боя и обраток на струе (на озёрах редок).',
-        groundbaitLinks: [{ label: 'Поляризационные очки (Ozon)', url: 'https://www.ozon.ru/search/?text=очки+поляризационные+для+рыбалки' }],
-        tactic: isCold || isBaroShock ? 'Медленная равномерка у дна на выходе из ям.' : 'Быстрая проводка в верхнем слое со сбоями.'
-      };
+      const rig = 'Дальний заброс + флюр-лидер 0.28 мм (1.2 м) без блестящих застёжек';
+      return { ...basePack, bait: isBaroStress ? 'Тонущий стик / тейл-спиннер 14–18 г у дна' : 'Пилькер / кастмастер 18–24 г (серебро)', baitWhy: 'Дальний заброс 60+ м к осторожному жереху.', baitLinks: [{ label: 'Пилькеры (Ozon)', url: 'https://www.ozon.ru/search/?text=пилькер+на+жереха+20г' }], rig, shortRig: rig, rigWhy: 'Маскировка шнура перед приманкой.', rigLinks: [{ label: 'Тейл-спиннеры (Ozon)', url: 'https://www.ozon.ru/search/?text=тейл+спиннер+18г' }], lineHook: '8-жильный шнур #0.8–#1.0 PE + тройник с опушкой', lineWhy: 'Дальность и мягкость вылета.', lineLinks: [{ label: 'Шнур 8-жильный (Ozon)', url: 'https://www.ozon.ru/search/?text=шнур+8+жильный+0.8+pe' }], groundbait: 'Без прикормки — поиск боя и обраток на струе.', groundbaitLinks: [{ label: 'Полярики (Ozon)', url: 'https://www.ozon.ru/search/?text=очки+поляризационные+для+рыбалки' }], tactic: isCold ? 'Медленная проводка у дна на выходе из ям.' : 'Быстрая проводка в верхнем слое.' };
     }
-
     const sinkerW = (isStill ? 50 : 120) + windAdd * 10;
-    const bait = (isCold || isBaroShock)
-      ? 'Пучок выползков на дне ямы (минимальная активность сома)'
-      : 'Пучок выползков + перловица / нарезка свежей рыбы';
     const rig = `Донная снасть с подводным поплавком 15 г и грузилом ${sinkerW} г`;
-    return {
-      ...basePack,
-      bait, shortBait: bait,
-      baitWhy: 'Объёмная белковая насадка приподнята над грунтом.',
-      baitLinks: [{ label: 'Подводный поплавок (Ozon)', url: 'https://www.ozon.ru/search/?text=подводный+поплавок+на+сома' }],
-      rig, shortRig: rig,
-      rigWhy: 'Поднимает насадку в горизонт прохода сома.',
-      rigLinks: [{ label: 'Грузила 120 г (Ozon)', url: 'https://www.ozon.ru/search/?text=грузило+рыболовное+120г' }],
-      lineHook: 'Шнур 0.35–0.45 мм + поводок 0.8–1.0 мм, одинарник 6/0–8/0',
-      lineWhy: 'Защита от «щётки» сома и ракушки.',
-      lineLinks: [{ label: 'Крючки на сома (Ozon)', url: 'https://www.ozon.ru/search/?text=крючки+на+сома+8%2F0' }],
-      groundbait: 'Без прикормки — постановка снастей на выходе из ямы в сумерках.',
-      groundbaitLinks: [{ label: 'Сигнализаторы поклёвки (Ozon)', url: 'https://www.ozon.ru/search/?text=сигнализатор+поклёвки+бубенчик' }],
-      tactic: isCold ? 'При воде ниже 12°C сом стоит в зимовальных ямах и почти не кормится.' : 'Ловля с заката до 02:00 на бровке ямы.'
-    };
+    return { ...basePack, bait: isCold ? 'Пучок выползков на дне ямы (минимальная активность)' : 'Пучок выползков + перловица / нарезка рыбы', baitWhy: 'Приподнята над илом и ракушкой.', baitLinks: [{ label: 'Подводный поплавок (Ozon)', url: 'https://www.ozon.ru/search/?text=подводный+поплавок+на+сома' }], rig, shortRig: rig, rigWhy: 'Держит насадку в горизонте прохода сома.', rigLinks: [{ label: 'Грузила 120 г (Ozon)', url: 'https://www.ozon.ru/search/?text=грузило+рыболовное+120г' }], lineHook: 'Шнур 0.35–0.45 мм + поводок 0.8–1.0 мм, одинарник 6/0–8/0', lineWhy: 'Защита от «щётки» сома.', lineLinks: [{ label: 'Крючки на сома (Ozon)', url: 'https://www.ozon.ru/search/?text=крючки+на+сома+8%2F0' }], groundbait: 'Без прикормки — постановка на выходе из ямы в темноте.', groundbaitLinks: [{ label: 'Сигнализаторы (Ozon)', url: 'https://www.ozon.ru/search/?text=сигнализатор+поклёвки+бубенчик' }], tactic: isCold ? 'При воде <12°C сом стоит в ямах.' : 'Ловля после захода Солнца.' };
   }
 
   /**
-   * Сбалансированная модель оценки активности (5% - 92%):
-   * - В нормальную погоду без барического удара показывает реальные 45-85% в зависимости от времени, ветра и Луны.
-   * - При резком скачке/падении давления (>=10 мм/сутки или >=3.5 мм/6ч) обрушивает прогноз до 5-16%.
+   * 6. Интегральная математическая оценка вероятности клёва (%)
    */
   function evaluateBite(params) {
-    const {
-      hour, pressMm, pressDelta6, pressDelta24, prev24Shock,
-      maxSwing48, hasFull24History, wind, gusts, cloud, waterTemp, astro, spot
-    } = params;
+    const { hour, bladder, optics, wind, gusts, waterTemp, astro, spot } = params;
     const fish = params.fish || getActiveFish();
     const factors = [];
 
-    // 1. Суточный биоритм вида (реалистичная база: 30-48%)
-    let timeScore = 36;
-    if (fish.lightPref === 'twilight') {
-      timeScore = (astro.nearDawnDusk || hour >= 20 || hour <= 4) ? 48 : 30;
-    } else if (fish.lightPref === 'morning') {
-      timeScore = ((hour >= astro.sunriseH - 1 && hour <= astro.sunriseH + 4) || astro.nearDawnDusk) ? 48 : 34;
-    } else if (fish.lightPref === 'night') {
-      timeScore = (hour >= 21 || hour <= 4) ? 48 : 26;
-    } else if (fish.lightPref === 'overcast') {
-      timeScore = (astro.nearDawnDusk || (hour >= 8 && hour <= 17)) ? 46 : 32;
-    } else {
-      timeScore = (hour >= 7 && hour <= 16) ? 46 : 30;
-    }
+    // 1. Базовая активность из подводной оптики (Люкс на глубине z при Kd водоёма)
     factors.push({
-      name: `Суточный биоритм (${fish.name}, ${String(hour).padStart(2, '0')}:00)`,
-      val: timeScore,
+      name: `Оптика воды (${fish.name}, ${String(hour).padStart(2, '0')}:00 • ${optics.waterLux} лк на ${fish.typDepthM} м, ${astro.solarPhaseLabel})`,
+      val: optics.baseScore,
       base: true
     });
 
-    // 2. Барометрический тренд: учитываем скорость, направление и вчерашний слом
+    // 2. Физика плавательного пузыря (ОДУ Бойля–Мариотта): непрерывная функция нескомпенсированного перепада ΔP
+    const absUncomp = Math.abs(bladder.uncompensatedMm);
     let baroScore = 0;
     let baroLabel = '';
-    const abs24 = Math.abs(pressDelta24);
-    const abs6 = Math.abs(pressDelta6);
-    const absPrev24 = Math.abs(prev24Shock);
 
-    if (!hasFull24History) {
-      if (abs6 >= 3.8) baroScore = -42;
-      else if (abs6 >= 2.2) baroScore = -20;
-      else if (pressDelta6 <= -0.6 && pressDelta6 > -2.2) baroScore = +7;
-      else if (abs6 <= 1.2) baroScore = +10;
-      else baroScore = +3;
-      baroLabel = `Барометр (${pressMm} мм, Δ6ч: ${pressDelta6 >= 0 ? '+' : ''}${pressDelta6.toFixed(1)} мм, начало архива)`;
+    if (absUncomp >= 1.8) {
+      // Гладкая степенная функция стресса от нескомпенсированного перепада давления пузыря
+      baroScore = -Math.min(48, Math.round(5.8 * Math.pow(absUncomp - 1.2, 1.35)));
+      baroLabel = `Плавательный пузырь (ΔP: ${bladder.uncompensatedMm >= 0 ? '+' : ''}${bladder.uncompensatedMm} мм, деформ. ${bladder.volumeStrainPct}%, τ=${fish.tauAdapt}ч)`;
+    } else if (bladder.dpDt6 <= -0.22 && bladder.dpDt6 >= -0.95) {
+      // Предфронтальный мягкий спад давления (до наступления барического шока)
+      baroScore = +10;
+      baroLabel = `Барометр (${bladder.pressMm} мм — мягкий предфронтальный спад ${bladder.dpDt6} мм/ч)`;
     } else {
-      if (abs24 >= 10.5 || abs6 >= 3.8) {
-        baroScore = -52; // Сверхскачок (+14 мм и выше): полный барический шок
-      } else if (abs24 >= 7.5 || abs6 >= 2.6) {
-        baroScore = -32; // Резкий слом давления
-      } else if (absPrev24 >= 9.0 && abs24 < 6.0) {
-        baroScore = -12; // Остаточная адаптация после вчерашнего скачка
-      } else if (pressDelta24 <= -1.5 && pressDelta24 >= -6.5 && abs6 < 1.8) {
-        baroScore = +8;  // Плавное падение давления (усиливает жор)
-      } else if (abs24 <= 3.5 && abs6 <= 1.3) {
-        baroScore = +12; // Стабильный барометр
-      } else {
-        baroScore = +4;  // Плавный естественный ход
-      }
-      const lagNote = (abs24 < 6.0 && absPrev24 >= 9.0)
-        ? `, вчера скачок ${prev24Shock >= 0 ? '+' : ''}${prev24Shock.toFixed(1)}`
-        : '';
-      baroLabel = `Барометр (${pressMm} мм, Δ24ч: ${pressDelta24 >= 0 ? '+' : ''}${pressDelta24.toFixed(1)} мм${lagNote})`;
+      // Гладкое экспоненциальное насыщение бонуса адаптации при ровном давлении (1 - exp(-t / 16))
+      const adaptProgress = 1 - Math.exp(-bladder.stableHours / 16);
+      baroScore = Math.round(4 + 12 * adaptProgress);
+      baroLabel = `Барометр (${bladder.pressMm} мм — пузырь адаптирован, ровно ${bladder.stableHours}ч)`;
     }
     factors.push({ name: baroLabel, val: baroScore });
 
-    // 3. Сезонная температура воды для данного вида
-    let tempScore = 0;
-    const [cMin, cMax] = fish.comfortTemp || [4, 20];
-    const coldLimit = fish.coldLimit ?? 1.5;
-
-    if (waterTemp >= cMin && waterTemp <= cMax) {
-      tempScore = +7; // В пределах комфортного сезонного диапазона вида
-    } else if (waterTemp < coldLimit) {
-      tempScore = fish.id === 'catfish' ? -32 : -14; // Ледостав / зимний анабиоз
-    } else if (waterTemp < cMin) {
-      tempScore = fish.id === 'catfish' ? -18 : -5;  // Прохладнее оптимума, но рыба питается
-    } else {
-      tempScore = -6; // Перегрев воды выше комфорта
+    // Синергия стабилизации на зорьках (когда давление ровно >= 14ч и рыба выходит по расписанию)
+    if (absUncomp < 1.8 && bladder.stableHours >= 14 && astro.nearDawnDusk) {
+      const synergy = Math.round(5 * Math.min(1, bladder.stableHours / 24));
+      if (synergy > 0) {
+        factors.push({ name: 'Стабильный барометр × зорька (предсказуемый выход)', val: synergy });
+      }
     }
-    factors.push({ name: `Температура воды (~${waterTemp}°C, профиль: ${fish.name})`, val: tempScore });
 
-    // 4. Ветер, волна и защита акватории
+    // 3. Биоэнергетический температурный индекс Торнтона–Лессема f(Tw) in [0, 1]
+    const fT = thorntonLessemConsumption(waterTemp, fish.tl);
+    // Отображаем f(T) в диапазон [-26% .. +8%] (для сома при холодной воде штраф глубже до -34%)
+    const tempScore = fT >= 0.5
+      ? Math.round((fT - 0.5) * 16)
+      : Math.round((fT - 0.5) * (fish.id === 'catfish' ? 68 : 42));
+    factors.push({
+      name: `Биоэнергетика воды (~${waterTemp}°C, индекс потребления f(T)=${fT.toFixed(2)})`,
+      val: tempScore
+    });
+
+    // 4. Ветро-волновая аэрация и ветровой разгон (Fetch)
     let windScore = 0;
     const isSheltered = spot.exposure === 'sheltered';
-    if (wind >= 1.5 && wind <= 5.0) {
-      windScore = +8;
+    if (wind >= 1.5 && wind <= 4.8) {
+      windScore = +7; // лёгкая рябь: аэрация и рассеивание поверхностных бликов
     } else if (wind < 1.5) {
-      windScore = (cloud < 25 && hour >= 9 && hour <= 16) ? -2 : +3;
+      windScore = (astro.sunAltDeg > 10 && optics.waterLux > 2000) ? -3 : +2;
     } else if (wind <= 8.0) {
-      windScore = isSheltered ? +6 : -8;
+      windScore = isSheltered ? +5 : -Math.round((wind - 4.8) * 3.0);
     } else {
-      windScore = isSheltered ? +1 : -22;
+      windScore = isSheltered ? 0 : -Math.min(24, Math.round(10 + (wind - 8.0) * 3.5));
     }
-    if (!isSheltered && (Number(gusts) || 0) >= 10.5) {
-      windScore -= 5;
-    }
+    if (!isSheltered && (Number(gusts) || 0) >= 11.0) windScore -= 4;
     factors.push({
-      name: isSheltered && wind > 5
-        ? `Защита озера/затона от волны (${wind.toFixed(1)} м/с)`
-        : `Ветер и порывы (${wind.toFixed(1)} / ${(Number(gusts) || wind).toFixed(1)} м/с)`,
+      name: isSheltered && wind > 5 ? `Укрытие от ветрового разгона (${wind.toFixed(1)} м/с)` : `Ветер и порывы (${wind.toFixed(1)} / ${(Number(gusts) || wind).toFixed(1)} м/с)`,
       val: windScore
     });
 
-    // 5. Облачность и освещённость
-    let lightScore = 0;
-    if (cloud >= 45 && cloud <= 92) lightScore = +7;
-    else if (cloud < 20 && hour >= 10 && hour <= 16) lightScore = -4;
-    else lightScore = +3;
-    factors.push({ name: `Облачность (${cloud}%)`, val: lightScore });
-
-    // 6. Луна, лунный день и солунарные окна
-    let astroScore = 0;
-    let moonNote = `${astro.lunarDay} л.д., ${astro.phaseName} (${astro.illum}%)`;
-    if (astro.nearMajorMoon) {
-      astroScore = astro.isSyzygy ? +11 : +8;
-      moonNote += ' • главное окно (кульминация/надир)';
-    } else if (astro.nearMinorMoon) {
-      astroScore = +5;
-      moonNote += ' • малое окно (восход/заход Луны)';
-    } else if (astro.isSyzygy) {
-      astroScore = +3;
-    } else {
-      astroScore = astro.growing ? +2 : 0;
-    }
-
-    if ((hour >= 21 || hour <= 4) && astro.illum >= 75 && cloud < 35 && fish.id !== 'catfish') {
-      astroScore -= 5;
-      moonNote += ' • яркий свет ночью';
-    }
-    factors.push({ name: `Луна (${moonNote})`, val: astroScore });
+    // 5. Солунарный индекс Джона Олдена Найта (гауссовы Major/Minor окна × приливный фактор × сизигия)
+    const solunarRaw = (1.0 * astro.majorGauss + 0.55 * astro.minorGauss) *
+                       (0.75 + 0.35 * astro.syzygyFactor) *
+                       astro.tidalForceFactor;
+    // Резонанс при совпадении солунарного окна с солнечной зорькой
+    const dawnMoonOverlap = (astro.nearDawnDusk && (astro.majorGauss > 0.35 || astro.minorGauss > 0.35)) ? 1.25 : 1.0;
+    const solunarScore = Math.min(14, Math.round(solunarRaw * dawnMoonOverlap * 9.5));
+    const solunarTag = astro.nearMajorMoon ? 'Major-окно (кульминация)' : (astro.nearMinorMoon ? 'Minor-окно (восход/заход)' : 'межпиковый интервал');
+    factors.push({
+      name: `Солунар Луны (${astro.lunarDay} л.д., ${astro.phaseName} ${astro.illumPct}% • ${solunarTag})`,
+      val: solunarScore
+    });
 
     const rawTotal = factors.reduce((s, f) => s + f.val, 0);
-    const total = Math.max(5, Math.min(92, Math.round(rawTotal)));
-    return { pct: total, factors };
+    const total = Math.max(4, Math.min(94, Math.round(rawTotal)));
+    return { pct: total, factors, fT };
   }
 
   async function fetchWithTimeout(url, ms = 7000) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), ms);
-    try {
-      const res = await fetch(url, { signal: controller.signal });
-      clearTimeout(timer);
-      return res;
-    } catch (e) {
-      clearTimeout(timer);
-      throw e;
-    }
+    try { const res = await fetch(url, { signal: controller.signal }); clearTimeout(timer); return res; }
+    catch (e) { clearTimeout(timer); throw e; }
   }
 
   function buildFallbackHourly() {
     const month = new Date().getMonth();
     const seasonalAir = [-9, -8, -2, 6, 14, 19, 22, 20, 14, 6, -1, -7][month];
-    const time = [];
-    const temperature_2m = [];
-    const surface_pressure = [];
-    const wind_speed_10m = [];
-    const wind_gusts_10m = [];
-    const wind_direction_10m = [];
-    const cloud_cover = [];
-    const precipitation = [];
-    const weather_code = [];
-
-    for (let d = -2; d <= 2; d++) {
+    const time = [], temperature_2m = [], pressure_msl = [], wind_speed_10m = [], wind_gusts_10m = [], wind_direction_10m = [], cloud_cover = [], precipitation = [], weather_code = [];
+    for (let d = -4; d <= 2; d++) {
       const dateStr = getMskDateStr(d);
       for (let h = 0; h < 24; h++) {
         time.push(`${dateStr}T${String(h).padStart(2, '0')}:00`);
-        temperature_2m.push(seasonalAir);
-        surface_pressure.push(1013);
-        wind_speed_10m.push(3.0);
-        wind_gusts_10m.push(5.0);
-        wind_direction_10m.push(270);
-        cloud_cover.push(60);
-        precipitation.push(0);
-        weather_code.push(2);
+        temperature_2m.push(seasonalAir); pressure_msl.push(1013);
+        wind_speed_10m.push(3.0); wind_gusts_10m.push(5.0); wind_direction_10m.push(270);
+        cloud_cover.push(60); precipitation.push(0); weather_code.push(2);
       }
     }
-    return {
-      isFallback: true,
-      hourly: {
-        time, temperature_2m, surface_pressure, wind_speed_10m,
-        wind_gusts_10m, wind_direction_10m, cloud_cover, precipitation, weather_code
-      }
-    };
+    return { isFallback: true, hourly: { time, temperature_2m, pressure_msl, wind_speed_10m, wind_gusts_10m, wind_direction_10m, cloud_cover, precipitation, weather_code } };
   }
 
   async function syncAllWeather(spots) {
     const uncached = spots.filter(sp => !weatherCache[`${sp.lat.toFixed(4)}_${sp.lon.toFixed(4)}`]);
     if (uncached.length === 0) return;
-
     const lats = uncached.map(s => s.lat.toFixed(4)).join(',');
     const lons = uncached.map(s => s.lon.toFixed(4)).join(',');
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&hourly=temperature_2m,surface_pressure,wind_speed_10m,wind_gusts_10m,wind_direction_10m,cloud_cover,precipitation,weather_code&past_days=2&forecast_days=3&wind_speed_unit=ms&timezone=Europe%2FMoscow`;
-
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&hourly=temperature_2m,pressure_msl,wind_speed_10m,wind_gusts_10m,wind_direction_10m,cloud_cover,precipitation,weather_code&past_days=4&forecast_days=3&wind_speed_unit=ms&timezone=Europe%2FMoscow`;
     try {
       const res = await fetchWithTimeout(url, 7000);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const raw = await res.json();
       const arr = Array.isArray(raw) ? raw : [raw];
-
       uncached.forEach((sp, idx) => {
         const key = `${sp.lat.toFixed(4)}_${sp.lon.toFixed(4)}`;
         const item = arr[idx] || arr[0];
         if (item && item.hourly && Array.isArray(item.hourly.temperature_2m)) {
+          // Предвычисляем давление в мм рт.ст. для всего 168-часового ряда
+          const pRaw = item.hourly.pressure_msl || item.hourly.surface_pressure || [];
+          item.hourly._pressMm = pRaw.map(v => typeof v === 'number' ? v * 0.750062 : 755);
           weatherCache[key] = item;
         }
       });
-
-      const timeStr = new Date().toLocaleTimeString('ru-RU', {
-        timeZone: 'Europe/Moscow',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-      dataSourceLabel = `● Архив 48ч + прогноз МСК (${timeStr})`;
+      const timeStr = new Date().toLocaleTimeString('ru-RU', { timeZone: 'Europe/Moscow', hour: '2-digit', minute: '2-digit' });
+      dataSourceLabel = `● Метеоархив 96ч + прогноз МСК (${timeStr})`;
       dataSourceWarn = false;
     } catch (err) {
       dataSourceLabel = '● Автономный режим (нет связи с метеосервером)';
       dataSourceWarn = true;
       uncached.forEach(sp => {
         const key = `${sp.lat.toFixed(4)}_${sp.lon.toFixed(4)}`;
-        if (!weatherCache[key]) weatherCache[key] = buildFallbackHourly();
+        if (!weatherCache[key]) {
+          const fb = buildFallbackHourly();
+          fb.hourly._pressMm = fb.hourly.pressure_msl.map(v => v * 0.750062);
+          weatherCache[key] = fb;
+        }
       });
     }
   }
 
   function getPointWeather(sp) {
     const key = `${sp.lat.toFixed(4)}_${sp.lon.toFixed(4)}`;
-    return weatherCache[key] || buildFallbackHourly();
+    if (!weatherCache[key]) {
+      const fb = buildFallbackHourly();
+      fb.hourly._pressMm = fb.hourly.pressure_msl.map(v => v * 0.750062);
+      weatherCache[key] = fb;
+    }
+    return weatherCache[key];
   }
 
-  function extractSlotContext(dataObj, spot, daySpec, hour, fish) {
+  function extractSlotContext(dataObj, spot, daySpec, hour, fishInput) {
+    const fish = fishInput || getActiveFish();
     const h = dataObj.hourly;
+    const pArrMm = h._pressMm || (h.pressure_msl || []).map(v => v * 0.750062);
     const mskDateStr = getMskDateStr(daySpec.offset);
     const targetIso = `${mskDateStr}T${String(hour).padStart(2, '0')}:00`;
-
     let idx = Array.isArray(h.time) ? h.time.indexOf(targetIso) : -1;
-    if (idx === -1) {
-      const maxLen = Math.max(0, h.temperature_2m.length - 1);
-      idx = Math.min(maxLen, Math.max(0, (2 + daySpec.offset) * 24 + hour));
-    }
+    if (idx === -1) idx = Math.min(Math.max(0, h.temperature_2m.length - 1), Math.max(0, (4 + daySpec.offset) * 24 + hour));
 
-    const hasFull24History = idx >= 24;
-    const idx6 = Math.max(0, idx - 6);
-    const idx24 = Math.max(0, idx - 24);
-    const idx48 = Math.max(0, idx - 48);
+    // Кэшируем ряд температуры воды для данного водоёма по ОДУ тепловой инерции
+    const twKey = `_tw_${spot.tauThermal}`;
+    if (!h[twKey]) {
+      h[twKey] = buildWaterTempSeries(h.temperature_2m, h.time || [], spot.tauThermal);
+    }
 
     const temp = h.temperature_2m[idx] ?? 5;
-    const pNow = h.surface_pressure[idx] ?? 1013;
-    const p6 = h.surface_pressure[idx6] ?? pNow;
-    const p24 = h.surface_pressure[idx24] ?? pNow;
-    const p48 = h.surface_pressure[idx48] ?? p24;
-
-    const pressMm = Math.round(pNow * 0.750062);
-    const pressDelta6 = +((pNow - p6) * 0.750062).toFixed(1);
-    const pressDelta24 = +((pNow - p24) * 0.750062).toFixed(1);
-    const pressDelta48 = +((pNow - p48) * 0.750062).toFixed(1);
-    const prev24Shock = idx >= 36 ? +((p24 - p48) * 0.750062).toFixed(1) : 0;
-
-    let minP = pNow;
-    let maxP = pNow;
-    for (let i = idx48; i <= idx; i++) {
-      const val = h.surface_pressure[i];
-      if (typeof val === 'number') {
-        if (val < minP) minP = val;
-        if (val > maxP) maxP = val;
-      }
-    }
-    const maxSwing48 = +((maxP - minP) * 0.750062).toFixed(1);
-
+    const waterTemp = h[twKey][idx] ?? 5.0;
     const wind = h.wind_speed_10m[idx] ?? 3.5;
     const gusts = h.wind_gusts_10m ? (h.wind_gusts_10m[idx] ?? wind + 2) : wind + 2;
     const windDir = h.wind_direction_10m ? (h.wind_direction_10m[idx] ?? 270) : 270;
     const cloud = h.cloud_cover[idx] ?? 60;
     const precip = h.precipitation[idx] ?? 0;
     const wCode = h.weather_code ? (h.weather_code[idx] ?? 2) : 2;
-    const waterTemp = estimateWaterTemp(h.temperature_2m, idx, spot.thermalGroup, mskDateStr);
+
+    const bladder = computeSwimBladderState(pArrMm, idx, fish);
     const astro = getAstronomy(spot.lat, spot.lon, daySpec.offset, hour);
+    const optics = computeUnderwaterOptics(fish, spot, astro, cloud);
 
-    return {
-      spot,
-      fish: fish || getActiveFish(),
-      daySpec,
-      mskDateStr,
-      hour,
-      temp,
-      pressMm,
-      pressDelta6,
-      pressDelta24,
-      pressDelta48,
-      prev24Shock,
-      maxSwing48,
-      hasFull24History,
-      wind,
-      gusts,
-      windDir,
-      cloud,
-      precip,
-      wCode,
-      waterTemp,
-      astro,
-      isFallback: !!dataObj.isFallback
-    };
+    return { spot, fish, daySpec, mskDateStr, hour, temp, waterTemp, bladder, astro, optics, wind, gusts, windDir, cloud, precip, wCode };
   }
 
-  function scoreClass(pct) {
-    if (pct >= 62) return 's-high';
-    if (pct >= 35) return 's-mid';
-    return 's-low';
-  }
-
-  function scoreColor(pct) {
-    if (pct >= 62) return 'var(--green)';
-    if (pct >= 35) return 'var(--amber)';
-    return 'var(--red)';
-  }
+  function scoreClass(pct) { return pct >= 60 ? 's-high' : (pct >= 30 ? 's-mid' : 's-low'); }
+  function scoreColor(pct) { return pct >= 60 ? 'var(--green)' : (pct >= 30 ? 'var(--amber)' : 'var(--red)'); }
 
   function renderPills() {
-    const fishWrap = document.getElementById('fish-pills');
-    fishWrap.innerHTML = FISH_MODELS.map((f, i) =>
+    document.getElementById('fish-pills').innerHTML = FISH_MODELS.map((f, i) =>
       `<button class="pill ${i === selectedFishIdx ? 'active' : ''}" onclick="selectFish(${i})">${escapeHtml(f.name)}</button>`
     ).join('');
-
-    const dayWrap = document.getElementById('day-pills');
     const dayLabels = getDayLabels();
-    dayWrap.innerHTML = dayLabels.map((lbl, i) => {
-      const isPast = DAY_SPECS[i].isPast ? 'past' : '';
-      return `<button class="pill day-pill ${isPast} ${i === selectedDayIdx ? 'active' : ''}" onclick="selectDay(${i})">${escapeHtml(lbl)}</button>`;
-    }).join('');
-
-    const wfWrap = document.getElementById('water-filter-pills');
-    wfWrap.innerHTML = WATER_FILTERS.map(wf =>
+    document.getElementById('day-pills').innerHTML = dayLabels.map((lbl, i) =>
+      `<button class="pill day-pill ${DAY_SPECS[i].isPast ? 'past' : ''} ${i === selectedDayIdx ? 'active' : ''}" onclick="selectDay(${i})">${escapeHtml(lbl)}</button>`
+    ).join('');
+    document.getElementById('water-filter-pills').innerHTML = WATER_FILTERS.map(wf =>
       `<button class="pill water-pill ${wf.id === selectedWaterFilter ? 'active' : ''}" onclick="selectWaterFilter('${wf.id}')">${escapeHtml(wf.label)}</button>`
     ).join('');
   }
@@ -1565,45 +994,33 @@
   async function renderAll() {
     renderPills();
     const statusEl = document.getElementById('radar-status');
-    statusEl.textContent = '● Загрузка метеоархива и прогноза...';
+    statusEl.textContent = '● Загрузка метеоархива 96ч и прогноза...';
     statusEl.classList.remove('warn');
 
     try {
       const allSpots = getAllSpots();
       await syncAllWeather(allSpots);
-
       statusEl.textContent = dataSourceLabel;
       if (dataSourceWarn) statusEl.classList.add('warn');
 
-      const fish = getActiveFish();
-      const daySpec = getActiveDaySpec();
-      const hour = getActiveHour();
-
-      let visibleSpots = getFilteredSpots();
-      if (visibleSpots.length === 0) {
-        visibleSpots = allSpots;
-      }
+      const fish = getActiveFish(), daySpec = getActiveDaySpec(), hour = getActiveHour();
+      const filtered = getFilteredSpots();
+      const visibleSpots = filtered.length ? filtered : allSpots;
 
       const spotResults = visibleSpots.map(sp => {
-        const pack = getPointWeather(sp);
-        const ctx = extractSlotContext(pack, sp, daySpec, hour, fish);
-        const res = evaluateBite(ctx);
-        return { spot: sp, pack, ctx, res };
+        const ctx = extractSlotContext(getPointWeather(sp), sp, daySpec, hour, fish);
+        return { spot: sp, ctx, res: evaluateBite(ctx) };
       });
-
-      let bestPct = -1;
-      spotResults.forEach(r => { if (r.res.pct > bestPct) bestPct = r.res.pct; });
+      const bestPct = Math.max(...spotResults.map(r => r.res.pct));
 
       document.getElementById('spots-grid').innerHTML = spotResults.map(r => {
-        const isSelected = r.spot.id === activeSpot.id;
-        const isBest = r.res.pct === bestPct;
         const wbCls = r.spot.category === 'river' ? 'wb-river' : (r.spot.badge === 'Затон' ? 'wb-zaton' : 'wb-lake');
-        const deltaStr = r.ctx.hasFull24History
-          ? `Δ24ч: ${r.ctx.pressDelta24 >= 0 ? '+' : ''}${r.ctx.pressDelta24} мм`
-          : `Δ6ч: ${r.ctx.pressDelta6 >= 0 ? '+' : ''}${r.ctx.pressDelta6} мм`;
+        const baroText = Math.abs(r.ctx.bladder.uncompensatedMm) < 1.8
+          ? `Пузырь норма (${r.ctx.bladder.stableHours}ч)`
+          : `ΔP пуз: ${r.ctx.bladder.uncompensatedMm >= 0 ? '+' : ''}${r.ctx.bladder.uncompensatedMm} мм`;
         return `
-          <div class="spot-card ${isSelected ? 'selected' : ''}" onclick="selectSpotById('${escapeHtml(r.spot.id)}')">
-            ${isBest ? '<div class="best-badge">Лучший вариант</div>' : ''}
+          <div class="spot-card ${r.spot.id === activeSpot.id ? 'selected' : ''}" onclick="selectSpotById('${escapeHtml(r.spot.id)}')">
+            ${r.res.pct === bestPct ? '<div class="best-badge">Лучший вариант</div>' : ''}
             <div class="spot-top">
               <div>
                 <span class="wb-tag ${wbCls}">${escapeHtml(r.spot.badge || 'Водоём')}</span>
@@ -1614,178 +1031,94 @@
             </div>
             <div class="spot-note">${escapeHtml(r.spot.roadNote || 'Пользовательская точка')}</div>
             <div class="spot-metrics">
-              <span>💨 ${r.ctx.wind.toFixed(1)} м/с (${windDirText(r.ctx.windDir)})</span>
-              <span>🌡 Вода ~${r.ctx.waterTemp}°C</span>
-              <span>⏲ ${deltaStr}</span>
+              <span>💨 ${r.ctx.wind.toFixed(1)} м/с</span>
+              <span>🌡 ~${r.ctx.waterTemp}°C</span>
+              <span>⏲ ${baroText}</span>
             </div>
-          </div>
-        `;
+          </div>`;
       }).join('');
 
       const activePack = getPointWeather(activeSpot);
       const dayLabels = getDayLabels();
-      document.getElementById('hourly-heading').textContent =
-        `2. Почасовая активность: ${activeSpot.name} • ${fish.name} • ${dayLabels[selectedDayIdx]}`;
+      document.getElementById('hourly-heading').textContent = `2. Почасовой ход клёва (24ч): ${activeSpot.name} • ${fish.name} • ${dayLabels[selectedDayIdx]}`;
 
-      document.getElementById('hourly-grid').innerHTML = HOUR_SLOTS.map((hVal, sIdx) => {
+      document.getElementById('hourly-grid').innerHTML = HOURS_24.map(hVal => {
         const c = extractSlotContext(activePack, activeSpot, daySpec, hVal, fish);
         const ev = evaluateBite(c);
         const tags = [];
         if (c.astro.nearDawnDusk) tags.push('<span class="h-tag">ЗОРЬКА</span>');
         if (c.astro.nearMajorMoon) tags.push('<span class="h-tag moon">ЛУНА</span>');
-        else if (c.astro.nearMinorMoon) tags.push('<span class="h-tag moon">ВОСХ.ЛУНЫ</span>');
-        if (ev.pct >= 68 && tags.length === 0) tags.push('<span class="h-tag">ПИК</span>');
-
+        else if (c.astro.nearMinorMoon) tags.push('<span class="h-tag moon">ВОСХ.Л</span>');
         return `
-          <div class="hour-box ${sIdx === selectedHourSlot ? 'active' : ''}" onclick="selectHourSlot(${sIdx})">
+          <div class="hour-box ${hVal === selectedHour ? 'active' : ''}" onclick="selectHour(${hVal})">
             <div class="h-time">${String(hVal).padStart(2, '0')}:00</div>
             <div class="h-val" style="color:${scoreColor(ev.pct)}">${ev.pct}%</div>
-            <div class="h-sub">${c.temp > 0 ? '+' : ''}${Math.round(c.temp)}°</div>
+            <div class="h-sub">${c.optics.waterLux >= 1 ? Math.round(c.optics.waterLux) : c.optics.waterLux} лк</div>
             ${tags.length ? `<div class="h-tags">${tags.join('')}</div>` : ''}
-          </div>
-        `;
+          </div>`;
       }).join('');
 
       const curCtx = extractSlotContext(activePack, activeSpot, daySpec, hour, fish);
       const curEval = evaluateBite(curCtx);
       const kit = buildReadyKit(fish, curCtx);
 
-      document.getElementById('arsenal-heading').textContent =
-        `3. Рабочий комплект: ${fish.name} • ${activeSpot.name} (${String(hour).padStart(2, '0')}:00)`;
-      document.getElementById('scenario-title').textContent = `Погодный сценарий: ${kit.scenarioName}`;
+      document.getElementById('arsenal-heading').textContent = `3. Рабочий комплект: ${fish.name} • ${activeSpot.name} (${String(hour).padStart(2, '0')}:00)`;
+      document.getElementById('scenario-title').textContent = `Гидрометеорологический сценарий: ${kit.scenarioName}`;
       document.getElementById('scenario-desc').textContent = kit.scenarioWhy;
 
+      const renderBuy = (links) => `<div class="buy-links">${(links || []).map(l => `<a class="buy-chip" href="${l.url}" target="_blank" rel="noopener">${escapeHtml(l.label)} ↗</a>`).join('')}</div>`;
       document.getElementById('arsenal-grid').innerHTML = `
-        <div class="arsenal-card">
-          <div>
-            <div class="arsenal-kicker">🎯 1. Приманка / Насадка</div>
-            <div class="arsenal-main">${escapeHtml(kit.bait)}</div>
-          </div>
-          <div class="arsenal-sub">
-            ${escapeHtml(kit.baitWhy)}
-            <div class="buy-links">
-              ${(kit.baitLinks || []).map(l => `<a class="buy-chip" href="${l.url}" target="_blank" rel="noopener">${escapeHtml(l.label)} ↗</a>`).join('')}
-            </div>
-          </div>
-        </div>
-
-        <div class="arsenal-card">
-          <div>
-            <div class="arsenal-kicker">⚙️ 2. Оснастка под водоём</div>
-            <div class="arsenal-main">${escapeHtml(kit.rig)}</div>
-          </div>
-          <div class="arsenal-sub">
-            ${escapeHtml(kit.rigWhy)}
-            <div class="buy-links">
-              ${(kit.rigLinks || []).map(l => `<a class="buy-chip" href="${l.url}" target="_blank" rel="noopener">${escapeHtml(l.label)} ↗</a>`).join('')}
-            </div>
-          </div>
-        </div>
-
-        <div class="arsenal-card">
-          <div>
-            <div class="arsenal-kicker">🪝 3. Леска / Поводок</div>
-            <div class="arsenal-main">${escapeHtml(kit.lineHook)}</div>
-          </div>
-          <div class="arsenal-sub">
-            ${escapeHtml(kit.lineWhy)}
-            <div class="buy-links">
-              ${(kit.lineLinks || []).map(l => `<a class="buy-chip" href="${l.url}" target="_blank" rel="noopener">${escapeHtml(l.label)} ↗</a>`).join('')}
-            </div>
-          </div>
-        </div>
-
-        <div class="arsenal-card">
-          <div>
-            <div class="arsenal-kicker">🪣 4. Прикормка / Поиск</div>
-            <div class="arsenal-main">${escapeHtml(kit.groundbait)}</div>
-          </div>
-          <div class="arsenal-sub">
-            ${escapeHtml(kit.tactic)}
-            <div class="buy-links">
-              ${(kit.groundbaitLinks || []).map(l => `<a class="buy-chip" href="${l.url}" target="_blank" rel="noopener">${escapeHtml(l.label)} ↗</a>`).join('')}
-            </div>
-          </div>
-        </div>
-
-        <div class="arsenal-card spray-card">
-          <div>
-            <div class="arsenal-kicker" style="color:var(--green)">💨 5. Брызгалка (Аттрактант)</div>
-            <div class="arsenal-main">${escapeHtml(kit.spray)}</div>
-          </div>
-          <div class="arsenal-sub">
-            ${escapeHtml(kit.sprayWhy)}<br><strong>Нюанс:</strong> ${escapeHtml(kit.doseNote)}
-            <div class="buy-links">
-              ${(kit.links || []).map(l => `<a class="buy-chip" href="${l.url}" target="_blank" rel="noopener">${escapeHtml(l.label)} ↗</a>`).join('')}
-            </div>
-          </div>
-        </div>
-
-        <div class="arsenal-card">
-          <div>
-            <div class="arsenal-kicker">🎒 6. Снаряжение и берег</div>
-            <div class="arsenal-main">${escapeHtml(kit.checklist)}</div>
-          </div>
-          <div class="arsenal-sub">
-            ${escapeHtml(activeSpot.roadNote || 'Подъезд стандартный.')}
-            <div class="buy-links">
-              ${(kit.gearLinks || []).map(l => `<a class="buy-chip" href="${l.url}" target="_blank" rel="noopener">${escapeHtml(l.label)} ↗</a>`).join('')}
-            </div>
-          </div>
-        </div>
+        <div class="arsenal-card"><div><div class="arsenal-kicker">🎯 1. Приманка / Насадка</div><div class="arsenal-main">${escapeHtml(kit.bait)}</div></div><div class="arsenal-sub">${escapeHtml(kit.baitWhy)}${renderBuy(kit.baitLinks)}</div></div>
+        <div class="arsenal-card"><div><div class="arsenal-kicker">⚙️ 2. Оснастка под водоём</div><div class="arsenal-main">${escapeHtml(kit.rig)}</div></div><div class="arsenal-sub">${escapeHtml(kit.rigWhy)}${renderBuy(kit.rigLinks)}</div></div>
+        <div class="arsenal-card"><div><div class="arsenal-kicker">🪝 3. Леска / Поводок</div><div class="arsenal-main">${escapeHtml(kit.lineHook)}</div></div><div class="arsenal-sub">${escapeHtml(kit.lineWhy)}${renderBuy(kit.lineLinks)}</div></div>
+        <div class="arsenal-card"><div><div class="arsenal-kicker">🪣 4. Прикормка / Поиск</div><div class="arsenal-main">${escapeHtml(kit.groundbait)}</div></div><div class="arsenal-sub">${escapeHtml(kit.tactic)}${renderBuy(kit.groundbaitLinks)}</div></div>
+        <div class="arsenal-card spray-card"><div><div class="arsenal-kicker" style="color:var(--green)">💨 5. Брызгалка (Аттрактант)</div><div class="arsenal-main">${escapeHtml(kit.spray)}</div></div><div class="arsenal-sub">${escapeHtml(kit.sprayWhy)}<br><strong>Нюанс:</strong> ${escapeHtml(kit.doseNote)}${renderBuy(kit.links)}</div></div>
+        <div class="arsenal-card"><div><div class="arsenal-kicker">🎒 6. Снаряжение и берег</div><div class="arsenal-main">${escapeHtml(kit.checklist)}</div></div><div class="arsenal-sub">${escapeHtml(activeSpot.roadNote || 'Подъезд стандартный.')}${renderBuy(kit.gearLinks)}</div></div>
       `;
 
+      // Сводка по всем 5 дням: выбранный час + точный пиковый час из 24 часов
       document.getElementById('shift-grid').innerHTML = DAY_SPECS.map((dSp, dIdx) => {
-        const dCtx = extractSlotContext(activePack, activeSpot, dSp, 9, fish);
+        const dCtx = extractSlotContext(activePack, activeSpot, dSp, hour, fish);
         const dEv = evaluateBite(dCtx);
-        const dKit = buildReadyKit(fish, dCtx);
-        const baroShort = dCtx.hasFull24History
-          ? `Δ24ч: ${dCtx.pressDelta24 >= 0 ? '+' : ''}${dCtx.pressDelta24} мм`
-          : `Δ6ч: ${dCtx.pressDelta6 >= 0 ? '+' : ''}${dCtx.pressDelta6} мм`;
+        let bestH = 0, bestDayPct = -1;
+        HOURS_24.forEach(hv => {
+          const hEv = evaluateBite(extractSlotContext(activePack, activeSpot, dSp, hv, fish));
+          if (hEv.pct > bestDayPct) { bestDayPct = hEv.pct; bestH = hv; }
+        });
+        const baroShort = Math.abs(dCtx.bladder.uncompensatedMm) < 1.8
+          ? `Ровно ${dCtx.bladder.stableHours}ч (${dCtx.bladder.pressMm} мм)`
+          : `ΔP пузыря: ${dCtx.bladder.uncompensatedMm >= 0 ? '+' : ''}${dCtx.bladder.uncompensatedMm} мм`;
         return `
           <div class="shift-card ${dIdx === selectedDayIdx ? 'current-day' : ''}" onclick="selectDay(${dIdx})">
-            <div class="shift-head">
-              <span>${escapeHtml(dayLabels[dIdx])}</span>
-              <span style="color:${scoreColor(dEv.pct)}">${dEv.pct}%</span>
-            </div>
-            <div class="shift-weather">
-              ${weatherDesc(dCtx.wCode)} • ${dCtx.temp > 0 ? '+' : ''}${Math.round(dCtx.temp)}°C • ${baroShort}
-            </div>
-            <div class="shift-gear">
-              <strong>Луна:</strong> ${dCtx.astro.lunarDay} л.д., ${escapeHtml(dCtx.astro.phaseName)} (${dCtx.astro.illum}%)<br>
-              <strong>Снасть:</strong> ${escapeHtml(dKit.shortRig)}
-            </div>
-          </div>
-        `;
+            <div class="shift-head"><span>${escapeHtml(dayLabels[dIdx])}</span><span style="color:${scoreColor(dEv.pct)}">${dEv.pct}%</span></div>
+            <div class="shift-weather">${weatherDesc(dCtx.wCode)} • ${dCtx.temp > 0 ? '+' : ''}${Math.round(dCtx.temp)}°C • ${baroShort}</div>
+            <div class="shift-gear"><strong>Пик суток (${String(bestH).padStart(2, '0')}:00):</strong> <span style="color:${scoreColor(bestDayPct)}; font-weight:700;">${bestDayPct}%</span><br><strong>Луна:</strong> ${dCtx.astro.lunarDay} л.д., ${escapeHtml(dCtx.astro.phaseName)} (${dCtx.astro.illumPct}%)</div>
+          </div>`;
       }).join('');
 
-      document.getElementById('factors-title').textContent = `🧮 Расчёт факторов клёва (Итог: ${curEval.pct}%)`;
+      document.getElementById('factors-title').textContent = `🧮 Математическая детализация расчёта (Итог: ${curEval.pct}%)`;
       document.getElementById('factors-list').innerHTML = curEval.factors.map(f => {
         const cls = f.base ? 'f-neu' : (f.val > 0 ? 'f-pos' : (f.val < 0 ? 'f-neg' : 'f-neu'));
         const prefix = f.base ? 'База ' : (f.val > 0 ? '+' : '');
         return `<div class="factor-item"><span>${escapeHtml(f.name)}</span><span class="${cls}">${prefix}${f.val}%</span></div>`;
       }).join('');
 
-      const delta24Text = curCtx.hasFull24History
-        ? `${curCtx.pressDelta24 >= 0 ? '+' : ''}${curCtx.pressDelta24} мм`
-        : 'н/д (начало архива)';
-      const delta48Text = curCtx.hasFull24History
-        ? `${curCtx.pressDelta48 >= 0 ? '+' : ''}${curCtx.pressDelta48} мм (размах ${curCtx.maxSwing48} мм)`
-        : 'н/д (начало архива)';
+      const bladderTypeRus = fish.bladderType === 'physoclist'
+        ? `закрытый (газовая железа, τ = ${fish.tauAdapt} ч)`
+        : `открытый (воздушный проток, τ = ${fish.tauAdapt} ч)`;
 
       document.getElementById('meteo-details').innerHTML = `
-        <div class="factor-item"><span>Давление сейчас:</span><span>${curCtx.pressMm} мм рт.ст.</span></div>
-        <div class="factor-item"><span>Тренд за 6 часов:</span><span style="color:${Math.abs(curCtx.pressDelta6) > 2.5 ? 'var(--red)' : 'var(--text)'}">${curCtx.pressDelta6 >= 0 ? '+' : ''}${curCtx.pressDelta6} мм</span></div>
-        <div class="factor-item"><span>Тренд за сутки (Δ24ч):</span><span style="color:${Math.abs(curCtx.pressDelta24) >= 7.5 ? 'var(--red)' : 'var(--green)'}">${delta24Text}</span></div>
-        <div class="factor-item"><span>Динамика за 48ч (вчера/позавчера):</span><span>${delta48Text}</span></div>
+        <div class="factor-item"><span>Атм. давление / равновесное Peq:</span><span>${curCtx.bladder.pressMm} / ${curCtx.bladder.pEqMm} мм рт.ст.</span></div>
+        <div class="factor-item"><span>Плавательный пузырь (${fish.name}):</span><span style="color:${Math.abs(curCtx.bladder.uncompensatedMm) < 1.8 ? 'var(--green)' : 'var(--red)'}; font-weight:600;">${bladderTypeRus}</span></div>
+        <div class="factor-item"><span>Нескомпенс. сдвиг ΔP / стабильность:</span><span>${curCtx.bladder.uncompensatedMm >= 0 ? '+' : ''}${curCtx.bladder.uncompensatedMm} мм (${curCtx.bladder.volumeStrainPct}%) • ровно ${curCtx.bladder.stableHours}ч</span></div>
+        <div class="factor-item"><span>Освещённость у дна Ew (Kd=${activeSpot.kd}):</span><span>${curCtx.optics.waterLux} лк (log₁₀ Ew = ${curCtx.optics.logWaterLux}, оптимум ${fish.optLogLux})</span></div>
+        <div class="factor-item"><span>Темп. воды / индекс Торнтона–Лессема:</span><span>~${curCtx.waterTemp}°C (τ=${activeSpot.tauThermal}ч) • f(T) = ${curEval.fT.toFixed(2)}</span></div>
         <div class="factor-item"><span>Ветер и порывы:</span><span>${curCtx.wind.toFixed(1)} м/с (порывы ${curCtx.gusts.toFixed(1)} м/с), ${windDirText(curCtx.windDir)}</span></div>
-        <div class="factor-item"><span>Температура воды (инерция):</span><span>~${curCtx.waterTemp}°C</span></div>
-        <div class="factor-item"><span>Восход / Закат Солнца:</span><span>${curCtx.astro.sunriseStr} / ${curCtx.astro.sunsetStr}</span></div>
-        <div class="factor-item"><span>Луна (день / фаза / свет):</span><span>${curCtx.astro.lunarDay} л.д. • ${escapeHtml(curCtx.astro.phaseName)} (${curCtx.astro.illum}%)</span></div>
-        <div class="factor-item"><span>Главные окна Луны (солунар):</span><span style="color:var(--purple); font-weight:600;">${curCtx.astro.majorWindows}</span></div>
-        <div class="factor-item"><span>Малые окна (восход / заход Луны):</span><span>${curCtx.astro.minorWindows}</span></div>
+        <div class="factor-item"><span>Солнце (высота / восход / закат):</span><span>${curCtx.astro.sunAltDeg}° • ${curCtx.astro.sunriseStr} / ${curCtx.astro.sunsetStr}</span></div>
+        <div class="factor-item"><span>Луна (день / фаза / свет):</span><span>${curCtx.astro.lunarDay} л.д. • ${escapeHtml(curCtx.astro.phaseName)} (${curCtx.astro.illumPct}%)</span></div>
+        <div class="factor-item"><span>Major-окна Луны (зенит / надир):</span><span style="color:var(--purple); font-weight:600;">${curCtx.astro.majorWindows}</span></div>
+        <div class="factor-item"><span>Minor-окна (восход / заход Луны):</span><span>${curCtx.astro.minorWindows}</span></div>
       `;
-
       renderSavedList();
     } catch (err) {
       statusEl.textContent = '● Ошибка расчёта';
@@ -1795,7 +1128,7 @@
 
   function selectFish(idx) { selectedFishIdx = idx; renderAll(); }
   function selectDay(idx) { selectedDayIdx = idx; renderAll(); }
-  function selectHourSlot(idx) { selectedHourSlot = idx; renderAll(); }
+  function selectHour(h) { selectedHour = h; renderAll(); }
   function selectWaterFilter(id) { selectedWaterFilter = id; renderAll(); }
 
   function selectSpotById(id) {
@@ -1809,68 +1142,44 @@
     }
   }
 
-  function forceRefresh() {
-    weatherCache = {};
-    renderAll();
-  }
+  function forceRefresh() { weatherCache = {}; renderAll(); }
 
   function getWaterTypeConfig(wt) {
-    return {
-      lake_still:   { category: 'lake',  badge: 'Озеро', exposure: 'sheltered', flow: 'still',       thermalGroup: 'lake',         label: 'Озеро / пруд' },
-      zaton_still:  { category: 'lake',  badge: 'Затон', exposure: 'sheltered', flow: 'still',       thermalGroup: 'lake',         label: 'Затон / залив' },
-      river_medium: { category: 'river', badge: 'Река',  exposure: 'sheltered', flow: 'medium-high', thermalGroup: 'river_medium', label: 'Река (средняя тяга)' },
-      river_high:   { category: 'river', badge: 'Река',  exposure: 'open',      flow: 'high',        thermalGroup: 'river_large',  label: 'Река (сильная тяга)' }
-    }[wt] || { category: 'lake', badge: 'Озеро', exposure: 'sheltered', flow: 'still', thermalGroup: 'lake', label: 'Озеро' };
+    return ({
+      lake_still:   { category: 'lake',  badge: 'Озеро', exposure: 'sheltered', flow: 'still',       kd: 0.65, tauThermal: 90,  label: 'Озеро / пруд' },
+      zaton_still:  { category: 'lake',  badge: 'Затон', exposure: 'sheltered', flow: 'still',       kd: 0.78, tauThermal: 95,  label: 'Затон / залив' },
+      river_medium: { category: 'river', badge: 'Река',  exposure: 'sheltered', flow: 'medium-high', kd: 0.82, tauThermal: 115, label: 'Река (средняя тяга)' },
+      river_high:   { category: 'river', badge: 'Река',  exposure: 'open',      flow: 'high',        kd: 0.85, tauThermal: 185, label: 'Река (сильная тяга)' }
+    })[wt] || { category: 'lake', badge: 'Озеро', exposure: 'sheltered', flow: 'still', kd: 0.70, tauThermal: 90, label: 'Озеро' };
   }
 
   function onWaterTypeSelectChange() {
     if (activeSpot && activeSpot.id === 'temp_click') {
-      const wt = document.getElementById('custom-water-type').value;
-      const cfg = getWaterTypeConfig(wt);
-      activeSpot = {
-        ...activeSpot,
-        category: cfg.category,
-        badge: cfg.badge,
-        exposure: cfg.exposure,
-        flow: cfg.flow,
-        thermalGroup: cfg.thermalGroup
-      };
+      const cfg = getWaterTypeConfig(document.getElementById('custom-water-type').value);
+      activeSpot = { ...activeSpot, category: cfg.category, badge: cfg.badge, exposure: cfg.exposure, flow: cfg.flow, kd: cfg.kd, tauThermal: cfg.tauThermal };
       renderAll();
     }
   }
 
   function saveCustomSpot() {
-    const coordsStr = document.getElementById('custom-coords').value;
     const name = document.getElementById('custom-name').value.trim();
     const depth = document.getElementById('custom-depth').value.trim();
-    const wt = document.getElementById('custom-water-type').value;
+    const parts = document.getElementById('custom-coords').value.split(',').map(Number);
     if (!name) { alert('Введите название озера, реки или точки'); return; }
-    const parts = coordsStr.split(',').map(Number);
     if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1])) return;
 
-    const wtConfig = getWaterTypeConfig(wt);
-
+    const cfg = getWaterTypeConfig(document.getElementById('custom-water-type').value);
     const newSpot = {
       id: 'custom_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
-      name,
-      category: wtConfig.category,
-      badge: wtConfig.badge,
-      type: depth ? `${wtConfig.label} • Эхолот: ${depth}` : `${wtConfig.label} • Своя точка`,
-      exposure: wtConfig.exposure,
-      flow: wtConfig.flow,
-      thermalGroup: wtConfig.thermalGroup,
-      lat: parts[0],
-      lon: parts[1],
+      name, category: cfg.category, badge: cfg.badge,
+      type: depth ? `${cfg.label} • Эхолот: ${depth}` : `${cfg.label} • Своя точка`,
+      exposure: cfg.exposure, flow: cfg.flow, kd: cfg.kd, tauThermal: cfg.tauThermal,
+      lat: parts[0], lon: parts[1],
       roadNote: depth ? `Глубина по эхолоту: ${depth}` : 'Пользовательская точка'
     };
     customSpots.push(newSpot);
     try { localStorage.setItem('mari_el_waypoints_v7', JSON.stringify(customSpots)); } catch (e) {}
-
-    if (tempMarker && yandexMap) {
-      yandexMap.geoObjects.remove(tempMarker);
-      tempMarker = null;
-    }
-
+    if (tempMarker && yandexMap) { yandexMap.geoObjects.remove(tempMarker); tempMarker = null; }
     document.getElementById('custom-name').value = '';
     document.getElementById('custom-depth').value = '';
     activeSpot = { ...newSpot };
@@ -1882,10 +1191,7 @@
     e.stopPropagation();
     customSpots = customSpots.filter(s => s.id !== id);
     try { localStorage.setItem('mari_el_waypoints_v7', JSON.stringify(customSpots)); } catch (e) {}
-    if (spotMarkers[id] && yandexMap) {
-      yandexMap.geoObjects.remove(spotMarkers[id]);
-      delete spotMarkers[id];
-    }
+    if (spotMarkers[id] && yandexMap) { yandexMap.geoObjects.remove(spotMarkers[id]); delete spotMarkers[id]; }
     if (activeSpot.id === id) activeSpot = { ...BASE_SPOTS[0] };
     renderAll();
   }
@@ -1898,29 +1204,18 @@
     }
     wrap.innerHTML = customSpots.map(s => `
       <div class="saved-row" style="cursor:pointer" onclick="selectSpotById('${escapeHtml(s.id)}')">
-        <div>
-          <strong>${escapeHtml(s.name)}</strong>
-          <div style="font-size:0.73rem; color:var(--muted)">${escapeHtml(s.type)}</div>
-        </div>
+        <div><strong>${escapeHtml(s.name)}</strong><div style="font-size:0.73rem; color:var(--muted)">${escapeHtml(s.type)}</div></div>
         <button class="btn-outline" style="padding:0.2rem 0.5rem; color:var(--red)" onclick="deleteCustomSpot('${escapeHtml(s.id)}', event)">✕</button>
-      </div>
-    `).join('');
+      </div>`).join('');
   }
 
   function switchMapMode(mode) {
     currentMapMode = mode;
-    ['yandex', 'radar', 'wind'].forEach(m => {
-      document.getElementById(`tab-${m}`).classList.toggle('active', m === mode);
-    });
-    const yDiv = document.getElementById('yandex-map');
-    const wFrame = document.getElementById('windy-iframe');
-
-    if (mode === 'yandex') {
-      yDiv.style.display = 'block';
-      wFrame.style.display = 'none';
-    } else {
-      yDiv.style.display = 'none';
-      wFrame.style.display = 'block';
+    ['yandex', 'radar', 'wind'].forEach(m => document.getElementById(`tab-${m}`).classList.toggle('active', m === mode));
+    const yDiv = document.getElementById('yandex-map'), wFrame = document.getElementById('windy-iframe');
+    if (mode === 'yandex') { yDiv.style.display = 'block'; wFrame.style.display = 'none'; }
+    else {
+      yDiv.style.display = 'none'; wFrame.style.display = 'block';
       const overlay = mode === 'radar' ? 'radar' : 'wind';
       wFrame.src = `https://embed.windy.com/embed2.html?lat=${activeSpot.lat}&lon=${activeSpot.lon}&detailLat=${activeSpot.lat}&detailLon=${activeSpot.lon}&width=650&height=440&zoom=9&level=surface&overlay=${overlay}&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=&metricWind=m%2Fs&metricTemp=%C2%B0C`;
     }
@@ -1928,14 +1223,9 @@
 
   function addMarkerToYandex(sp) {
     if (!yandexMap || typeof ymaps === 'undefined') return;
-    if (spotMarkers[sp.id]) {
-      yandexMap.geoObjects.remove(spotMarkers[sp.id]);
-    }
+    if (spotMarkers[sp.id]) yandexMap.geoObjects.remove(spotMarkers[sp.id]);
     const preset = sp.category === 'lake' ? 'islands#violetCircleDotIcon' : 'islands#blueFishingIcon';
-    const pm = new ymaps.Placemark([sp.lat, sp.lon], {
-      balloonContentHeader: escapeHtml(sp.name),
-      balloonContentBody: escapeHtml(sp.type)
-    }, { preset });
+    const pm = new ymaps.Placemark([sp.lat, sp.lon], { balloonContentHeader: escapeHtml(sp.name), balloonContentBody: escapeHtml(sp.type) }, { preset });
     pm.events.add('click', () => selectSpotById(sp.id));
     yandexMap.geoObjects.add(pm);
     spotMarkers[sp.id] = pm;
@@ -1944,54 +1234,28 @@
   function initYandexMap() {
     if (typeof ymaps === 'undefined') return;
     ymaps.ready(() => {
-      yandexMap = new ymaps.Map('yandex-map', {
-        center: [56.320000, 47.450000],
-        zoom: 9,
-        type: 'yandex#hybrid',
-        controls: ['zoomControl', 'typeSelector', 'rulerControl']
-      });
+      yandexMap = new ymaps.Map('yandex-map', { center: [56.320000, 47.450000], zoom: 9, type: 'yandex#hybrid', controls: ['zoomControl', 'typeSelector', 'rulerControl'] });
       getAllSpots().forEach(addMarkerToYandex);
-
       yandexMap.events.add('click', (e) => {
         const coords = e.get('coords');
         document.getElementById('custom-coords').value = `${coords[0].toFixed(5)}, ${coords[1].toFixed(5)}`;
         if (tempMarker) yandexMap.geoObjects.remove(tempMarker);
         tempMarker = new ymaps.Placemark(coords, {}, { preset: 'islands#redDotIcon' });
         yandexMap.geoObjects.add(tempMarker);
-
-        const wt = document.getElementById('custom-water-type').value;
-        const cfg = getWaterTypeConfig(wt);
-        activeSpot = {
-          id: 'temp_click',
-          name: `Точка (${coords[0].toFixed(3)}, ${coords[1].toFixed(3)})`,
-          category: cfg.category,
-          badge: cfg.badge,
-          type: 'Выбранная точка на карте',
-          exposure: cfg.exposure,
-          flow: cfg.flow,
-          thermalGroup: cfg.thermalGroup,
-          lat: coords[0],
-          lon: coords[1],
-          roadNote: 'Временная точка клика — выберите тип водоёма и нажмите «Сохранить».'
-        };
+        const cfg = getWaterTypeConfig(document.getElementById('custom-water-type').value);
+        activeSpot = { id: 'temp_click', name: `Точка (${coords[0].toFixed(3)}, ${coords[1].toFixed(3)})`, category: cfg.category, badge: cfg.badge, type: 'Выбранная точка на карте', exposure: cfg.exposure, flow: cfg.flow, kd: cfg.kd, tauThermal: cfg.tauThermal, lat: coords[0], lon: coords[1], roadNote: 'Временная точка клика — выберите тип водоёма и нажмите «Сохранить».' };
         renderAll();
       });
     });
   }
 
-  function initExternalLinks() {
-    const links = [
-      { name: 'Яндекс.Погода (Козьмодемьянск)', url: 'https://yandex.ru/pogoda/kozmodemyansk' },
-      { name: 'Яндекс.Погода (Йошкар-Ола)', url: 'https://yandex.ru/pogoda/yoshkar-ola' },
-      { name: 'Windguru (Волга / Чебоксарское)', url: 'https://www.windguru.cz/502234' },
-      { name: 'RP5 Козьмодемьянск', url: 'https://rp5.ru/Погода_в_Козьмодемьянске' }
-    ];
-    document.getElementById('external-links').innerHTML = links.map(l =>
-      `<a class="btn-outline" href="${l.url}" target="_blank" rel="noopener">${escapeHtml(l.name)} ↗</a>`
-    ).join('');
-  }
+  document.getElementById('external-links').innerHTML = [
+    { name: 'Яндекс.Погода (Козьмодемьянск)', url: 'https://yandex.ru/pogoda/kozmodemyansk' },
+    { name: 'Яндекс.Погода (Йошкар-Ола)', url: 'https://yandex.ru/pogoda/yoshkar-ola' },
+    { name: 'Windguru (Волга / Чебоксарское)', url: 'https://www.windguru.cz/502234' },
+    { name: 'RP5 Козьмодемьянск', url: 'https://rp5.ru/Погода_в_Козьмодемьянске' }
+  ].map(l => `<a class="btn-outline" href="${l.url}" target="_blank" rel="noopener">${escapeHtml(l.name)} ↗</a>`).join('');
 
-  initExternalLinks();
   initYandexMap();
   renderAll();
 </script>
