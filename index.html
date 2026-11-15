@@ -204,7 +204,7 @@
   </footer>
 
   <script>
-    const API_BASE_URL = 'https://fishing-mari-el.vercel.app';
+    const ACTIGATOR_KEY = 'jK3GuoEiPYa8HxA5_ZuUrqSUpwPMrWUj';
 
     const SPOTS = [
       { id: 'mumariha', name: 'Мумариха', lat: 56.311946, lon: 46.496244 },
@@ -242,42 +242,35 @@
       });
     }
 
-    function calculateBiteRating(fact, info, actigator) {
-      if (actigator && actigator.f_index != null) {
-        const idx = actigator.f_index;
+    function calculateBiteRating(pressure, windSpeed, fIndex) {
+      if (fIndex != null) {
         let count = 3;
-        if (idx >= 80) count = 5;
-        else if (idx >= 65) count = 4;
-        else if (idx >= 45) count = 3;
-        else if (idx >= 25) count = 2;
+        if (fIndex >= 80) count = 5;
+        else if (fIndex >= 65) count = 4;
+        else if (fIndex >= 45) count = 3;
+        else if (fIndex >= 25) count = 2;
         else count = 1;
 
-        return {
-          text: `${'🐟'.repeat(count)} (${count}/5) • F.Индекс: ${idx}/100`
-        };
+        return `${'🐟'.repeat(count)} (${count}/5) • F.Индекс: ${fIndex}/100`;
       }
-
-      const pressure = fact?.pressure_mm;
-      const normalPressure = info?.def_pressure_mm ?? 752;
-      const windSpeed = fact?.wind_speed;
 
       if (pressure == null || windSpeed == null) {
-        return { text: '🐟🐟🐟 (3/5)' };
+        return '🐟🐟🐟 (3/5)';
       }
 
-      const pressureDiff = Math.abs(pressure - normalPressure);
+      const pressureDiff = Math.abs(pressure - 752);
 
       if (pressureDiff < 3 && windSpeed < 6) {
         const count = (pressureDiff < 1.5 && windSpeed < 3.5) ? 5 : 4;
-        return { text: `${'🐟'.repeat(count)} (${count}/5)` };
+        return `${'🐟'.repeat(count)} (${count}/5)`;
       }
 
       if (pressureDiff > 7 || windSpeed > 10) {
         const count = (pressureDiff > 11 || windSpeed > 14) ? 1 : 2;
-        return { text: `${'🐟'.repeat(count)} (${count}/5)` };
+        return `${'🐟'.repeat(count)} (${count}/5)`;
       }
 
-      return { text: '🐟🐟🐟 (3/5)' };
+      return '🐟🐟🐟 (3/5)';
     }
 
     function renderCardSkeleton(spot) {
@@ -300,24 +293,24 @@
       `;
     }
 
-    function updateCardWithData(spot, data) {
+    function updateCard(spot, meteo, fIndex) {
       const card = document.getElementById(`card-${spot.id}`);
       const body = card.querySelector('.card-body');
       const biteEl = document.getElementById(`bite-${spot.id}`);
 
-      const fact = data?.fact;
-      const info = data?.info;
-      const actigator = data?.actigator;
-
-      if (!fact && !actigator) {
-        showCardError(spot);
+      if (!meteo && fIndex == null) {
+        body.innerHTML = `<div class="error-msg">Данные недоступны</div>`;
+        biteEl.textContent = 'Клёв: нет данных';
         return;
       }
 
-      const temp = fact?.temp != null ? `${fact.temp > 0 ? '+' : ''}${Math.round(fact.temp)} °C` : 'нет данных';
-      const pressure = fact?.pressure_mm != null ? `${fact.pressure_mm} мм рт. ст.` : 'нет данных';
-      const wind = fact?.wind_speed != null ? `${fact.wind_speed} м/с` : 'нет данных';
-      const waterTemp = fact?.temp_water != null ? `${fact.temp_water > 0 ? '+' : ''}${fact.temp_water} °C` : 'нет данных';
+      const tempVal = meteo?.temperature_2m;
+      const pressMm = meteo?.surface_pressure != null ? Math.round(meteo.surface_pressure * 0.750062) : null;
+      const windVal = meteo?.wind_speed_10m;
+
+      const temp = tempVal != null ? `${tempVal > 0 ? '+' : ''}${Math.round(tempVal)} °C` : 'нет данных';
+      const pressure = pressMm != null ? `${pressMm} мм рт. ст.` : 'нет данных';
+      const wind = windVal != null ? `${windVal} м/с` : 'нет данных';
 
       body.innerHTML = `
         <div class="weather-row">
@@ -332,23 +325,9 @@
           <span class="weather-label">Ветер:</span>
           <span class="weather-value">${wind}</span>
         </div>
-        <div class="weather-row">
-          <span class="weather-label">Температура воды:</span>
-          <span class="weather-value">${waterTemp}</span>
-        </div>
       `;
 
-      const bite = calculateBiteRating(fact, info, actigator);
-      biteEl.textContent = `Клёв: ${bite.text}`;
-    }
-
-    function showCardError(spot) {
-      const card = document.getElementById(`card-${spot.id}`);
-      const body = card.querySelector('.card-body');
-      const biteEl = document.getElementById(`bite-${spot.id}`);
-
-      body.innerHTML = `<div class="error-msg">Данные недоступны</div>`;
-      biteEl.textContent = 'Клёв: нет данных';
+      biteEl.textContent = `Клёв: ${calculateBiteRating(pressMm, windVal, fIndex)}`;
     }
 
     async function loadWeatherForAllSpots() {
@@ -356,15 +335,34 @@
       container.innerHTML = SPOTS.map(renderCardSkeleton).join('');
 
       await Promise.all(SPOTS.map(async (spot) => {
+        let meteo = null;
+        let fIndex = null;
+
         try {
-          const response = await fetch(`${API_BASE_URL}/api/weather?lat=${spot.lat}&lon=${spot.lon}`);
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          const data = await response.json();
-          updateCardWithData(spot, data);
-        } catch (err) {
-          console.error(`Ошибка для ${spot.name}:`, err);
-          showCardError(spot);
+          const meteoRes = await fetch(
+            `https://api.open-meteo.com/v1/forecast?latitude=${spot.lat}&longitude=${spot.lon}&current=temperature_2m,surface_pressure,wind_speed_10m&wind_speed_unit=ms`
+          );
+          if (meteoRes.ok) {
+            const mData = await meteoRes.json();
+            meteo = mData?.current ?? null;
+          }
+        } catch (e) {
+          console.warn('Meteo error:', e);
         }
+
+        try {
+          const actRes = await fetch(
+            `https://api.actigator.com/v1/forecast?api_key=${encodeURIComponent(ACTIGATOR_KEY)}&fish_id=14&lat=${spot.lat}&lng=${spot.lon}&lang=ru`
+          );
+          if (actRes.ok) {
+            const aData = await actRes.json();
+            fIndex = aData?.forecast?.today?.f_index ?? null;
+          }
+        } catch (e) {
+          console.warn('Actigator error:', e);
+        }
+
+        updateCard(spot, meteo, fIndex);
       }));
     }
 
