@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Гидрометео-навигатор берегового клёва • Реки и озёра Марий Эл</title>
+  <title>Гидрометео-навигатор берегового клёва • Рельеф и глубина • Марий Эл</title>
   <script src="https://api-maps.yandex.ru/2.1/?apikey=42977bb2-731e-4eb1-8131-5ca94473b359&lang=ru_RU"></script>
   <style>
     :root {
@@ -52,7 +52,7 @@
     .s-low { background: var(--red-bg); color: var(--red); }
     .s-zero { background: rgba(134, 152, 173, 0.14); color: var(--muted); }
 
-    .spots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(285px, 1fr)); gap: 0.85rem; margin-bottom: 1.5rem; }
+    .spots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(295px, 1fr)); gap: 0.85rem; margin-bottom: 1.5rem; }
     .spot-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 0.95rem; cursor: pointer; position: relative; transition: transform 0.12s, border-color 0.15s; }
     .spot-card:hover { transform: translateY(-2px); border-color: #3a526d; }
     .spot-card.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); background: linear-gradient(180deg, rgba(56, 189, 248, 0.08) 0%, var(--card) 100%); }
@@ -63,10 +63,11 @@
     .wb-river { background: rgba(56, 189, 248, 0.14); color: var(--accent); }
     .wb-lake { background: rgba(167, 139, 250, 0.14); color: var(--purple); }
     .wb-zaton { background: rgba(16, 185, 129, 0.14); color: var(--green); }
-    .spot-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.4rem; }
+    .spot-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.35rem; }
     .spot-title { font-size: 1rem; font-weight: 700; }
     .spot-type { font-size: 0.75rem; color: var(--muted); }
-    .spot-note { font-size: 0.76rem; color: var(--muted); margin-bottom: 0.45rem; min-height: 2.1em; }
+    .spot-relief { font-size: 0.73rem; color: #7dd3fc; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 6px; padding: 0.24rem 0.5rem; margin-bottom: 0.4rem; }
+    .spot-note { font-size: 0.76rem; color: var(--muted); margin-bottom: 0.4rem; min-height: 2.1em; }
     .spot-fauna { font-size: 0.71rem; color: #a7bed3; background: rgba(255,255,255,0.03); border-radius: 6px; padding: 0.28rem 0.5rem; margin-bottom: 0.5rem; }
     .spot-metrics { display: flex; justify-content: space-between; font-size: 0.77rem; color: var(--text); padding-top: 0.5rem; border-top: 1px solid var(--border); }
 
@@ -127,7 +128,7 @@
     .radar-frame { width: 100%; height: 100%; border: none; display: none; }
     .input, .select { background: var(--card-2); border: 1px solid var(--border); color: var(--text); padding: 0.55rem 0.75rem; border-radius: 8px; font-size: 0.84rem; width: 100%; margin-bottom: 0.55rem; }
     .input:focus, .select:focus { outline: none; border-color: var(--accent); }
-    .saved-list { margin-top: 0.8rem; display: flex; flex-direction: column; gap: 0.45rem; max-height: 175px; overflow-y: auto; }
+    .saved-list { margin-top: 0.8rem; display: flex; flex-direction: column; gap: 0.45rem; max-height: 165px; overflow-y: auto; }
     .saved-row { display: flex; justify-content: space-between; align-items: center; background: var(--card-2); border: 1px solid var(--border); padding: 0.5rem 0.7rem; border-radius: 8px; font-size: 0.82rem; }
     .external-strip { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 0.95rem 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.25rem; }
     footer { text-align: center; font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
@@ -138,8 +139,8 @@
 <div class="container">
   <header>
     <div class="title-group">
-      <h1>🧭 Гидрометео-навигатор берегового клёва • Реки и озёра Марий Эл</h1>
-      <p>Ловля с берега • Матрица биотопов видов • ОДУ плавательного пузыря • Оптика воды (Люкс) • Солунар Миуса • Биоэнергетика</p>
+      <h1>🧭 Гидрометео-навигатор берегового клёва • Рельеф и глубина • Марий Эл</h1>
+      <p>Береговая батиметрия и рельеф дна • Биотопы видов • ОДУ пузыря • Оптика воды на глубине z • Солунар Миуса</p>
     </div>
     <div class="header-right">
       <span class="status-pill" id="radar-status">● Загрузка метеоархива 96ч и прогноза...</span>
@@ -168,24 +169,24 @@
 
   <div class="sec-head">
     <h2>1. Сравнение рек и озёр Марий Эл для ловли с берега («Куда лучше поехать»)</h2>
-    <span>Учтены реальные ареалы видов и доступность с берега (на русле Волги щука с берега не ловится)</span>
+    <span>Учтены рабочая глубина берегового заброса, рельеф дна, сезонная миграция по глубине и доступность вида</span>
   </div>
   <div class="spots-grid" id="spots-grid"></div>
 
   <div class="sec-head">
     <h2 id="hourly-heading">2. Почасовой ход клёва за все 24 часа (00:00 – 23:00)</h2>
-    <span>Нажмите на любой час: дробное заполнение рыбок отражает подводную освещённость (лк), окна Луны и адаптацию пузыря</span>
+    <span>Нажмите на любой час: освещённость Ew считается на реальной глубине стоянки z_eff данного водоёма</span>
   </div>
   <div class="hourly-grid" id="hourly-grid"></div>
 
   <div class="sec-head">
-    <h2 id="arsenal-heading">3. Береговой комплект под выбранный водоём и физику среды</h2>
-    <span>Адаптируется под дистанцию берегового заброса, течение, мутность (Kd) и состояние пузыря</span>
+    <h2 id="arsenal-heading">3. Береговой комплект под рельеф, глубину и физику среды</h2>
+    <span>Адаптируется под дистанцию/глубину свала, грунт, течение, мутность (Kd) и состояние пузыря</span>
   </div>
 
   <div class="scenario-banner" id="scenario-banner">
     <div class="scenario-title" id="scenario-title">Расчёт гидрометеорологического режима...</div>
-    <div class="scenario-desc" id="scenario-desc">Интегрирование барической и тепловой истории за 96 часов.</div>
+    <div class="scenario-desc" id="scenario-desc">Интегрирование барической, тепловой и батиметрической модели.</div>
   </div>
 
   <div class="arsenal-grid" id="arsenal-grid"></div>
@@ -204,22 +205,22 @@
       </div>
       <div id="factors-list"></div>
       <div class="honesty-note">
-        <strong>Научный фундамент береговой модели:</strong><br>
-        1) <em>Биотоп и береговая доступность ($K_{\text{shore}} \in [0, 1]$):</em> итоговый балл $\text{Score} = \text{Score}_{\text{bio}} \times K_{\text{shore}}$. На русловых участках Волги (Мумариха, Еникеево, Козьмодемьянск) для щуки $K_{\text{shore}} = 0$ (с берега недоступна); для карася и карпа $K_{\text{shore}} = 0$ на сильном речном течении.<br>
-        2) <em>Оптика воды (Kasten–Czeplak + Beer–Lambert) и плавательный пузырь (ОДУ Бойля–Мариотта):</em> учёт $E_w = E_{\text{surf}} e^{-K_d z}$ и экспоненциальной релаксации давления пузыря ($\tau = 6.5\text{–}9\text{ ч}$ для карповых/щуки/сома, $16\text{–}18\text{ ч}$ для окуня/судака).<br>
-        3) <em>Биоэнергетика (Thornton–Lessem) и Солунар (J.A. Knight / Meeus):</em> индекс питания $f(T_w)$ с порогом теплолюбивости карповых ($8\text{–}10^\circ\text{C}$) и гауссовы окна Луны.
+        <strong>Научный фундамент береговой модели с батиметрией и рельефом:</strong><br>
+        1) <em>Батиметрия берегового заброса и рельеф ($z_{\text{eff}}, K_{\text{relief}}, K_{\text{shore}}$):</em> рабочая глубина стоянки $z_{\text{eff}} = \min(z_{\text{spot}}, z_{\text{pref}}(T_w))$ сдвигается глубже при холодной воде ($T_w < 7^\circ\text{C}$) и к верхним бровкам при прогреве. Коэффициент $K_{\text{relief}}$ оценивает соответствие донного рельефа (свал, коряжник, перекат, ракушечник, травянистый полив) экологии вида.<br>
+        2) <em>Оптика воды на глубине $z_{\text{eff}}$ и гидростатика пузыря:</em> освещённость $E_w = E_{\text{surf}} e^{-K_d z_{\text{eff}}}$ и полное гидростатическое давление $P_{\text{hydro}} = P_{\text{atm}} + 73.56\,z_{\text{eff}}$ рассчитываются на фактической глубине точки.<br>
+        3) <em>Биоэнергетика (Thornton–Lessem) и Солунар (J.A. Knight / Meeus):</em> индекс питания $f(T_w)$ с порогом теплолюбивости карповых и гауссовы окна Луны.
       </div>
     </div>
 
     <div class="panel">
-      <div class="panel-title" style="margin-bottom: 0.75rem;">🌦 Физические параметры среды, Солнце и Солунарная астрономия</div>
+      <div class="panel-title" style="margin-bottom: 0.75rem;">🌦 Батиметрия, физические параметры среды, Солнце и Луна</div>
       <div id="meteo-details"></div>
     </div>
   </div>
 
   <div class="sec-head">
     <h2>5. Карта рек и озёр, радар осадков и свои точки</h2>
-    <span>Кликните по любому озеру или реке на карте — расчёт перестроится под эту координату и тип водоёма</span>
+    <span>Кликните по месту на карте, укажите глубину по эхолоту и тип рельефа дна — физика перестроится</span>
   </div>
 
   <div class="map-layout">
@@ -242,9 +243,9 @@
     </div>
 
     <div class="panel">
-      <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.35rem;">📍 Добавить своё озеро, реку или береговую точку</div>
+      <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.35rem;">📍 Добавить свою точку с глубиной и рельефом</div>
       <p style="font-size: 0.8rem; color: var(--muted); margin-bottom: 0.65rem;">
-        Кликните по месту на карте, выберите тип водоёма и сохраните точку со своей глубиной.
+        Кликните по водоёму на карте, выберите тип водоёма, рельеф дна и введите глубину в метрах.
       </p>
 
       <input type="text" id="custom-coords" class="input" readonly value="56.32353, 46.59376">
@@ -252,10 +253,18 @@
         <option value="lake_still">Озеро / пруд (стоячая вода: карась, карп, щука, окунь, плотва)</option>
         <option value="zaton_still">Затон / залив Волги (тихая вода: карась, щука, сазан, лещ, окунь)</option>
         <option value="river_medium">Река со средним течением (Ветлуга, Кокшага, Илеть: щука, окунь, лещ, плотва)</option>
-        <option value="river_high">Река с сильным течением (русло Волги: лещ, сазан, судак, жерех; щука с берега = 0)</option>
+        <option value="river_high">Река с сильным течением (русло Волги: лещ, сазан, судак, жерех; щука = 0)</option>
       </select>
-      <input type="text" id="custom-name" class="input" placeholder="Название (например: Озеро Карась / Протока)">
-      <input type="text" id="custom-depth" class="input" placeholder="Глубина по эхолоту (например: 3.5 м, бровка)">
+      <select id="custom-relief-type" class="select" onchange="onWaterTypeSelectChange()">
+        <option value="steep_karst">Рельеф: резкий прибрежный свал / бровка (песок, глина)</option>
+        <option value="shallow_weed">Рельеф: пологий травянистый полив / кувшинки (ил)</option>
+        <option value="peat_drop">Рельеф: торфяные бровки и подводные коряги</option>
+        <option value="river_snags">Рельеф: речные омуты, подмытые ямы и коряжник</option>
+        <option value="riffle_pool">Рельеф: галечно-песчаные перекаты и выходы из ям</option>
+        <option value="channel_shell">Рельеф: русловая бровка с дрейссеновым ракушечником</option>
+      </select>
+      <input type="text" id="custom-name" class="input" placeholder="Название (например: Озеро Карась / Бровка 4.5 м)">
+      <input type="text" id="custom-depth" class="input" placeholder="Глубина по эхолоту в метрах (например: 4.5)">
       <button class="btn" style="width: 100%;" onclick="saveCustomSpot()">Сохранить точку в список</button>
 
       <div class="saved-list" id="saved-list"></div>
@@ -277,7 +286,61 @@
 
 <script>
   /**
-   * Типовые профили береговой доступности и обитания видов (K_shore in [0, 1])
+   * Типы донного рельефа и субстрата с видовыми коэффициентами предпочтения
+   */
+  const RELIEF_PROFILES = {
+    channel_shell: {
+      shortName: 'Русловая бровка, ракушечник',
+      desc: 'Ступенчатый свал к судовому ходу с колониями дрейссены и твёрдой глиной',
+      affinity: {
+        bream: 1.00, silverbream: 1.00, sazan: 1.00, zander: 0.95, ide: 0.90,
+        perch: 0.85, catfish: 0.85, roach: 0.75, pike: 0.00, crucian: 0.00, carp: 0.00
+      }
+    },
+    steep_karst: {
+      shortName: 'Резкий карстовый свал, песок/ил',
+      desc: 'Крутой уход глубины у берега, ступеньки на 3–7.5 м, чистый песок и заиленные ямы',
+      affinity: {
+        perch: 1.00, roach: 0.95, bream: 0.90, pike: 0.90, carp: 0.85,
+        silverbream: 0.80, crucian: 0.65, zander: 0.75, sazan: 0.70, ide: 0.50, catfish: 0.50
+      }
+    },
+    shallow_weed: {
+      shortName: 'Пологий полив, кувшинки и ил',
+      desc: 'Мягкое заиленное дно, окна водной растительности и прибрежный камыш (1.5–3.2 м)',
+      affinity: {
+        crucian: 1.00, carp: 0.95, pike: 0.95, roach: 0.95, perch: 0.85,
+        silverbream: 0.70, bream: 0.60, sazan: 0.65, zander: 0.25, ide: 0.30, catfish: 0.25
+      }
+    },
+    peat_drop: {
+      shortName: 'Торфяные бровки, островной свал',
+      desc: 'Тёмное торфяно-песчаное дно с перепадами 2–4.5 м и затопленными корягами',
+      affinity: {
+        crucian: 0.95, carp: 0.95, pike: 1.00, perch: 0.95, roach: 0.95,
+        bream: 0.80, silverbream: 0.75, sazan: 0.75, zander: 0.40, ide: 0.40, catfish: 0.40
+      }
+    },
+    river_snags: {
+      shortName: 'Речные омуты, ямы и коряжник',
+      desc: 'Чередование подмытых береговых ям, обраток и затопленных деревьев (2.5–5 м)',
+      affinity: {
+        pike: 1.00, perch: 1.00, bream: 0.95, roach: 0.95, silverbream: 0.95,
+        ide: 0.90, zander: 0.85, sazan: 0.85, catfish: 0.85, crucian: 0.65, carp: 0.65
+      }
+    },
+    riffle_pool: {
+      shortName: 'Перекаты, косы и выходы из ям',
+      desc: 'Твёрдое песчано-галечное дно, струи перекатов и примыкающие приямки (1.5–3.5 м)',
+      affinity: {
+        ide: 1.00, roach: 1.00, perch: 0.95, pike: 0.90, bream: 0.80,
+        silverbream: 0.80, zander: 0.70, sazan: 0.50, catfish: 0.40, crucian: 0.25, carp: 0.30
+      }
+    }
+  };
+
+  /**
+   * Типовые профили береговой доступности и ареала видов (K_shore in [0, 1])
    */
   const HABITAT_PROFILES = {
     volga_bay: {
@@ -426,36 +489,39 @@
     }
   };
 
+  /**
+   * 12 водоёмов Марий Эл с батиметрией берегового заброса (shoreDepthM) и типом рельефа дна (reliefType)
+   */
   const BASE_SPOTS = [
-    { id: 'mumariha', name: 'Волга • Мумариха', category: 'river', badge: 'Река', type: 'Чебоксарское вдхр. • Залив и свал', exposure: 'open', flow: 'medium-high', kd: 0.85, tauThermal: 180, habitatKey: 'volga_bay', lat: 56.311946, lon: 46.496244, roadNote: 'После дождей низину к берегу размывает — осторожнее на недоприводе.' },
-    { id: 'zaton', name: 'Затон (Козьмодемьянск)', category: 'lake', badge: 'Затон', type: 'Закрытая акватория Волги • Стоячая вода', exposure: 'sheltered', flow: 'still', kd: 0.78, tauThermal: 95, habitatKey: 'zaton', lat: 56.323525, lon: 46.593755, roadNote: 'Защищён от волжской волны при сильном ветре; подъезд со стороны ул. Промышленная.' },
-    { id: 'enikeevo', name: 'Волга • Еникеево', category: 'river', badge: 'Река', type: 'Открытая Волга • Русловая бровка', exposure: 'open', flow: 'high', kd: 0.85, tauThermal: 190, habitatKey: 'volga_main', lat: 56.397161, lon: 46.435139, roadNote: 'Открытый плёс — при ветре выше 5.5 м/с поднимается крутая волжская волна.' },
-    { id: 'kozmodemyansk', name: 'Волга • Козьмодемьянск', category: 'river', badge: 'Река', type: 'Пристань • Судовой ход и обратки', exposure: 'semi', flow: 'high', kd: 0.85, tauThermal: 185, habitatKey: 'volga_main', lat: 56.330000, lon: 46.560000, roadNote: 'Твёрдый подъезд к набережной; сильное течение и обратки за причалами.' },
-    { id: 'vetluga', name: 'Р. Ветлуга (Юрино / устье)', category: 'river', badge: 'Река', type: 'Река • Русловые ямы, коряжник и бровки', exposure: 'semi', flow: 'medium-high', kd: 0.95, tauThermal: 120, habitatKey: 'river_vetluga', lat: 56.284500, lon: 46.298000, roadNote: 'Богатый коряжник и свалы; при подъёме ветра всегда можно уйти в затишки за мысами.' },
-    { id: 'bkokshaga', name: 'Р. Большая Кокшага (Кокшайск)', category: 'river', badge: 'Река', type: 'Река • Протоки, ямы и заливы', exposure: 'sheltered', flow: 'medium-high', kd: 0.82, tauThermal: 110, habitatKey: 'river_kokshaga', lat: 56.143000, lon: 47.826000, roadNote: 'Лесные берега прикрывают от ветра; много обраток и тиховодных стариц.' },
-    { id: 'mkokshaga', name: 'Р. Малая Кокшага (Чодраял)', category: 'river', badge: 'Река', type: 'Река • Среднее течение и омуты', exposure: 'sheltered', flow: 'medium-high', kd: 0.82, tauThermal: 105, habitatKey: 'river_kokshaga', lat: 56.605000, lon: 47.912000, roadNote: 'Умеренная тяга, хорошо работает лёгкий береговой джиг, поплавок и пикер.' },
-    { id: 'ilet', name: 'Р. Илеть (Красногорский)', category: 'river', badge: 'Река', type: 'Река • Прозрачная вода, перекаты и ямы', exposure: 'sheltered', flow: 'medium-high', kd: 0.52, tauThermal: 105, habitatKey: 'river_ilet', lat: 56.148000, lon: 48.335000, roadNote: 'Очень прозрачная родниковая вода (Kd 0.52) — критична тонкость поводка.' },
-    { id: 'yalchik', name: 'Озеро Яльчик', category: 'lake', badge: 'Озеро', type: 'Карстовое озеро • Глубины до 30 м, свалы', exposure: 'semi', flow: 'still', kd: 0.42, tauThermal: 135, habitatKey: 'lake_karst', lat: 56.017500, lon: 48.445000, roadNote: 'Прозрачная карстовая вода (Kd 0.42), стоячая акватория; рыба держится свалов.' },
-    { id: 'tair', name: 'Озеро Таир', category: 'lake', badge: 'Озеро', type: 'Лесное озеро • Остров и торфяные бровки', exposure: 'sheltered', flow: 'still', kd: 0.90, tauThermal: 85, habitatKey: 'lake_forest', lat: 56.365000, lon: 47.868000, roadNote: 'Окружено сосновым лесом — защищено от ветра; торфяной оттенок воды.' },
-    { id: 'kichier', name: 'Озеро Кичиер', category: 'lake', badge: 'Озеро', type: 'Проточное озеро • Вдоль травы и ям', exposure: 'sheltered', flow: 'still', kd: 0.65, tauThermal: 90, habitatKey: 'lake_forest', lat: 56.085000, lon: 48.332000, roadNote: 'Тихое лесное озеро в Марий Чодра; прогревается и остывает быстрее Волги.' },
-    { id: 'lisichkino', name: 'Озеро Лисичкино', category: 'lake', badge: 'Озеро', type: 'Лесное озеро • Тихая вода и кувшинки', exposure: 'sheltered', flow: 'still', kd: 0.72, tauThermal: 80, habitatKey: 'lake_small_crucian', lat: 56.068000, lon: 48.462000, roadNote: 'Закрытая от ветра чаша; работают деликатные береговые оснастки без течения.' }
+    { id: 'mumariha', name: 'Волга • Мумариха', category: 'river', badge: 'Река', type: 'Чебоксарское вдхр. • Залив и свал', shoreDepthM: 5.5, reliefType: 'channel_shell', exposure: 'open', flow: 'medium-high', kd: 0.85, tauThermal: 180, habitatKey: 'volga_bay', lat: 56.311946, lon: 46.496244, roadNote: 'После дождей низину к берегу размывает — осторожнее на недоприводе.' },
+    { id: 'zaton', name: 'Затон (Козьмодемьянск)', category: 'lake', badge: 'Затон', type: 'Закрытая акватория Волги • Стоячая вода', shoreDepthM: 3.2, reliefType: 'shallow_weed', exposure: 'sheltered', flow: 'still', kd: 0.78, tauThermal: 95, habitatKey: 'zaton', lat: 56.323525, lon: 46.593755, roadNote: 'Защищён от волжской волны при сильном ветре; подъезд со стороны ул. Промышленная.' },
+    { id: 'enikeevo', name: 'Волга • Еникеево', category: 'river', badge: 'Река', type: 'Открытая Волга • Русловая бровка', shoreDepthM: 8.0, reliefType: 'channel_shell', exposure: 'open', flow: 'high', kd: 0.85, tauThermal: 190, habitatKey: 'volga_main', lat: 56.397161, lon: 46.435139, roadNote: 'Открытый плёс — при ветре выше 5.5 м/с поднимается крутая волжская волна.' },
+    { id: 'kozmodemyansk', name: 'Волга • Козьмодемьянск', category: 'river', badge: 'Река', type: 'Пристань • Судовой ход и обратки', shoreDepthM: 7.0, reliefType: 'channel_shell', exposure: 'semi', flow: 'high', kd: 0.85, tauThermal: 185, habitatKey: 'volga_main', lat: 56.330000, lon: 46.560000, roadNote: 'Твёрдый подъезд к набережной; сильное течение и обратки за причалами.' },
+    { id: 'vetluga', name: 'Р. Ветлуга (Юрино / устье)', category: 'river', badge: 'Река', type: 'Река • Русловые ямы, коряжник и бровки', shoreDepthM: 5.0, reliefType: 'river_snags', exposure: 'semi', flow: 'medium-high', kd: 0.95, tauThermal: 120, habitatKey: 'river_vetluga', lat: 56.284500, lon: 46.298000, roadNote: 'Богатый коряжник и свалы; при подъёме ветра всегда можно уйти в затишки за мысами.' },
+    { id: 'bkokshaga', name: 'Р. Большая Кокшага (Кокшайск)', category: 'river', badge: 'Река', type: 'Река • Протоки, ямы и заливы', shoreDepthM: 4.2, reliefType: 'river_snags', exposure: 'sheltered', flow: 'medium-high', kd: 0.82, tauThermal: 110, habitatKey: 'river_kokshaga', lat: 56.143000, lon: 47.826000, roadNote: 'Лесные берега прикрывают от ветра; много обраток и тиховодных стариц.' },
+    { id: 'mkokshaga', name: 'Р. Малая Кокшага (Чодраял)', category: 'river', badge: 'Река', type: 'Река • Среднее течение и омуты', shoreDepthM: 3.0, reliefType: 'river_snags', exposure: 'sheltered', flow: 'medium-high', kd: 0.82, tauThermal: 105, habitatKey: 'river_kokshaga', lat: 56.605000, lon: 47.912000, roadNote: 'Умеренная тяга, хорошо работает лёгкий береговой джиг, поплавок и пикер.' },
+    { id: 'ilet', name: 'Р. Илеть (Красногорский)', category: 'river', badge: 'Река', type: 'Река • Прозрачная вода, перекаты и ямы', shoreDepthM: 2.6, reliefType: 'riffle_pool', exposure: 'sheltered', flow: 'medium-high', kd: 0.52, tauThermal: 105, habitatKey: 'river_ilet', lat: 56.148000, lon: 48.335000, roadNote: 'Очень прозрачная родниковая вода (Kd 0.52) — критична тонкость поводка.' },
+    { id: 'yalchik', name: 'Озеро Яльчик', category: 'lake', badge: 'Озеро', type: 'Карстовое озеро • Глубины до 30 м, свалы', shoreDepthM: 7.5, reliefType: 'steep_karst', exposure: 'semi', flow: 'still', kd: 0.42, tauThermal: 135, habitatKey: 'lake_karst', lat: 56.017500, lon: 48.445000, roadNote: 'Прозрачная карстовая вода (Kd 0.42), резкий свал прямо у берега.' },
+    { id: 'tair', name: 'Озеро Таир', category: 'lake', badge: 'Озеро', type: 'Лесное озеро • Остров и торфяные бровки', shoreDepthM: 4.0, reliefType: 'peat_drop', exposure: 'sheltered', flow: 'still', kd: 0.90, tauThermal: 85, habitatKey: 'lake_forest', lat: 56.365000, lon: 47.868000, roadNote: 'Окружено сосновым лесом — защищено от ветра; торфяной оттенок воды.' },
+    { id: 'kichier', name: 'Озеро Кичиер', category: 'lake', badge: 'Озеро', type: 'Проточное озеро • Вдоль травы и ям', shoreDepthM: 4.5, reliefType: 'peat_drop', exposure: 'sheltered', flow: 'still', kd: 0.65, tauThermal: 90, habitatKey: 'lake_forest', lat: 56.085000, lon: 48.332000, roadNote: 'Тихое лесное озеро в Марий Чодра; прогревается и остывает быстрее Волги.' },
+    { id: 'lisichkino', name: 'Озеро Лисичкино', category: 'lake', badge: 'Озеро', type: 'Лесное озеро • Тихая вода и кувшинки', shoreDepthM: 1.8, reliefType: 'shallow_weed', exposure: 'sheltered', flow: 'still', kd: 0.72, tauThermal: 80, habitatKey: 'lake_small_crucian', lat: 56.068000, lon: 48.462000, roadNote: 'Закрытая от ветра мелководная чаша (до 1.8–2.2 м); работают деликатные оснастки.' }
   ];
 
   /**
-   * 11 видов рыб (включая сазана, карася и карпа) с точными физиологическими параметрами
+   * 11 видов рыб с батиметрическими диапазонами [minDepthM, optDepthM, maxDepthM]
    */
   const FISH_MODELS = [
-    { id: 'perch',       name: 'Окунь',   bladderType: 'physoclist', tauAdapt: 16.0, typDepthM: 3.5, optLogLux: 2.1,  sigmaLogLux: 1.55, nightFloorFish: 0.40, tl: [1.0, 6.0, 19.0, 26.0],   isPredator: true },
-    { id: 'pike',        name: 'Щука',    bladderType: 'physostome', tauAdapt: 8.5,  typDepthM: 3.0, optLogLux: 2.2,  sigmaLogLux: 1.65, nightFloorFish: 0.55, tl: [0.8, 5.5, 18.0, 25.0],   isPredator: true },
-    { id: 'roach',       name: 'Плотва',  bladderType: 'physostome', tauAdapt: 7.5,  typDepthM: 2.5, optLogLux: 2.4,  sigmaLogLux: 1.60, nightFloorFish: 0.45, tl: [1.2, 7.0, 20.0, 27.0],   isPredator: false },
-    { id: 'bream',       name: 'Лещ',     bladderType: 'physostome', tauAdapt: 8.0,  typDepthM: 4.5, optLogLux: 1.2,  sigmaLogLux: 1.75, nightFloorFish: 0.90, tl: [3.0, 10.5, 22.0, 29.0],  isPredator: false },
-    { id: 'crucian',     name: 'Карась',  bladderType: 'physostome', tauAdapt: 6.5,  typDepthM: 1.5, optLogLux: 2.0,  sigmaLogLux: 1.70, nightFloorFish: 0.95, tl: [7.5, 15.0, 24.5, 30.5],  isPredator: false },
-    { id: 'sazan',       name: 'Сазан',   bladderType: 'physostome', tauAdapt: 7.5,  typDepthM: 4.5, optLogLux: 1.3,  sigmaLogLux: 1.65, nightFloorFish: 1.05, tl: [8.0, 16.5, 25.5, 31.0],  isPredator: false },
-    { id: 'carp',        name: 'Карп',    bladderType: 'physostome', tauAdapt: 7.5,  typDepthM: 3.0, optLogLux: 1.6,  sigmaLogLux: 1.65, nightFloorFish: 1.00, tl: [8.5, 17.0, 25.0, 30.5],  isPredator: false },
-    { id: 'zander',      name: 'Судак',   bladderType: 'physoclist', tauAdapt: 18.0, typDepthM: 5.5, optLogLux: 0.15, sigmaLogLux: 1.45, nightFloorFish: 1.15, tl: [1.5, 7.5, 20.0, 27.5],   isPredator: true },
-    { id: 'silverbream', name: 'Густера', bladderType: 'physostome', tauAdapt: 7.5,  typDepthM: 3.5, optLogLux: 1.6,  sigmaLogLux: 1.70, nightFloorFish: 0.70, tl: [2.5, 9.5, 22.0, 29.0],   isPredator: false },
-    { id: 'ide',         name: 'Жерех',   bladderType: 'physostome', tauAdapt: 8.0,  typDepthM: 1.2, optLogLux: 2.6,  sigmaLogLux: 1.50, nightFloorFish: 0.40, tl: [4.0, 11.5, 22.5, 28.5],  isPredator: true },
-    { id: 'catfish',     name: 'Сом',     bladderType: 'physostome', tauAdapt: 9.0,  typDepthM: 6.0, optLogLux: -1.4, sigmaLogLux: 1.40, nightFloorFish: 1.85, tl: [10.0, 17.5, 26.0, 32.0], isPredator: true }
+    { id: 'perch',       name: 'Окунь',   bladderType: 'physoclist', tauAdapt: 16.0, minDepthM: 1.0, optDepthM: 3.2, maxDepthM: 9.0,  optLogLux: 2.1,  sigmaLogLux: 1.55, nightFloorFish: 0.40, tl: [1.0, 6.0, 19.0, 26.0],   isPredator: true },
+    { id: 'pike',        name: 'Щука',    bladderType: 'physostome', tauAdapt: 8.5,  minDepthM: 1.2, optDepthM: 3.0, maxDepthM: 8.0,  optLogLux: 2.2,  sigmaLogLux: 1.65, nightFloorFish: 0.55, tl: [0.8, 5.5, 18.0, 25.0],   isPredator: true },
+    { id: 'roach',       name: 'Плотва',  bladderType: 'physostome', tauAdapt: 7.5,  minDepthM: 1.0, optDepthM: 2.5, maxDepthM: 7.5,  optLogLux: 2.4,  sigmaLogLux: 1.60, nightFloorFish: 0.45, tl: [1.2, 7.0, 20.0, 27.0],   isPredator: false },
+    { id: 'bream',       name: 'Лещ',     bladderType: 'physostome', tauAdapt: 8.0,  minDepthM: 2.5, optDepthM: 5.0, maxDepthM: 12.0, optLogLux: 1.2,  sigmaLogLux: 1.75, nightFloorFish: 0.90, tl: [3.0, 10.5, 22.0, 29.0],  isPredator: false },
+    { id: 'crucian',     name: 'Карась',  bladderType: 'physostome', tauAdapt: 6.5,  minDepthM: 0.8, optDepthM: 1.8, maxDepthM: 4.5,  optLogLux: 2.0,  sigmaLogLux: 1.70, nightFloorFish: 0.95, tl: [7.5, 15.0, 24.5, 30.5],  isPredator: false },
+    { id: 'sazan',       name: 'Сазан',   bladderType: 'physostome', tauAdapt: 7.5,  minDepthM: 2.5, optDepthM: 5.0, maxDepthM: 11.0, optLogLux: 1.3,  sigmaLogLux: 1.65, nightFloorFish: 1.05, tl: [8.0, 16.5, 25.5, 31.0],  isPredator: false },
+    { id: 'carp',        name: 'Карп',    bladderType: 'physostome', tauAdapt: 7.5,  minDepthM: 1.5, optDepthM: 3.2, maxDepthM: 8.0,  optLogLux: 1.6,  sigmaLogLux: 1.65, nightFloorFish: 1.00, tl: [8.5, 17.0, 25.0, 30.5],  isPredator: false },
+    { id: 'zander',      name: 'Судак',   bladderType: 'physoclist', tauAdapt: 18.0, minDepthM: 3.0, optDepthM: 6.0, maxDepthM: 14.0, optLogLux: 0.15, sigmaLogLux: 1.45, nightFloorFish: 1.15, tl: [1.5, 7.5, 20.0, 27.5],   isPredator: true },
+    { id: 'silverbream', name: 'Густера', bladderType: 'physostome', tauAdapt: 7.5,  minDepthM: 2.0, optDepthM: 4.0, maxDepthM: 10.0, optLogLux: 1.6,  sigmaLogLux: 1.70, nightFloorFish: 0.70, tl: [2.5, 9.5, 22.0, 29.0],   isPredator: false },
+    { id: 'ide',         name: 'Жерех',   bladderType: 'physostome', tauAdapt: 8.0,  minDepthM: 0.8, optDepthM: 1.8, maxDepthM: 6.0,  optLogLux: 2.6,  sigmaLogLux: 1.50, nightFloorFish: 0.40, tl: [4.0, 11.5, 22.5, 28.5],  isPredator: true },
+    { id: 'catfish',     name: 'Сом',     bladderType: 'physostome', tauAdapt: 9.0,  minDepthM: 4.0, optDepthM: 7.0, maxDepthM: 16.0, optLogLux: -1.4, sigmaLogLux: 1.40, nightFloorFish: 1.85, tl: [10.0, 17.5, 26.0, 32.0], isPredator: true }
   ];
 
   const DAY_SPECS = [
@@ -477,8 +543,8 @@
 
   let customSpots = [];
   try {
-    const v7 = JSON.parse(localStorage.getItem('mari_el_waypoints_v7') || 'null');
-    if (Array.isArray(v7)) customSpots = v7;
+    const v8 = JSON.parse(localStorage.getItem('mari_el_waypoints_v8') || 'null');
+    if (Array.isArray(v8)) customSpots = v8;
   } catch (e) { customSpots = []; }
 
   function getInitialMskHour() {
@@ -519,9 +585,69 @@
     return HABITAT_PROFILES[spot.habitatKey] || HABITAT_PROFILES.lake_forest;
   }
 
+  function getSpotRelief(spot) {
+    return RELIEF_PROFILES[spot.reliefType] || RELIEF_PROFILES.peat_drop;
+  }
+
   function getShoreSpeciesInfo(spot, fishId) {
     const hab = getSpotHabitat(spot);
     return hab.species[fishId] || { factor: 0.8, reason: 'Обитает в акватории водоёма' };
+  }
+
+  /**
+   * Расчёт сезонной глубины стоянки рыбы z_eff (м) и соответствия глубины и рельефа дна (K_relief)
+   */
+  function computeBathymetryAndRelief(fish, spot, waterTemp) {
+    const spotDepth = Math.max(0.8, Number(spot.shoreDepthM) || 3.5);
+    const relief = getSpotRelief(spot);
+
+    // Сезонный сдвиг предпочтительной глубины по температуре воды Tw:
+    // холодная вода (<7°C) -> скат глубже (+35%); прогрев (13..21°C) -> выход на столы (-20%); жара (>23°C) -> уход на свал (+25%)
+    let seasonShift = 1.0;
+    let seasonZoneLabel = 'средняя бровка';
+    if (waterTemp < 7.0) {
+      seasonShift = 1.35;
+      seasonZoneLabel = 'нижняя бровка / яма (холодная вода)';
+    } else if (waterTemp <= 12.0) {
+      seasonShift = 1.10;
+      seasonZoneLabel = 'свал у границы течения/травы';
+    } else if (waterTemp <= 21.5) {
+      seasonShift = 0.82;
+      seasonZoneLabel = 'верхняя бровка / кормовой стол';
+    } else {
+      seasonShift = 1.25;
+      seasonZoneLabel = 'глубинный свал / термоклин (жара)';
+    }
+
+    const desiredDepth = +(fish.optDepthM * seasonShift).toFixed(1);
+    const zEff = +Math.max(0.7, Math.min(spotDepth, desiredDepth)).toFixed(1);
+
+    // Проверка достаточности глубины водоёма для данного вида (например, сом/судак на мелководье 1.8 м)
+    let depthFit = 1.0;
+    let depthNote = `рабочая глубина ${zEff} м (макс. с берега ${spotDepth} м)`;
+    if (spotDepth < fish.minDepthM) {
+      depthFit = Math.max(0.25, +(spotDepth / fish.minDepthM).toFixed(2));
+      depthNote = `мелководно для вида: ${spotDepth} м при минимуме ${fish.minDepthM} м`;
+    } else if (spotDepth > fish.maxDepthM + 2.0 && spot.reliefType === 'steep_karst' && fish.id === 'crucian') {
+      depthFit = 0.72;
+      depthNote = `резкий свал до ${spotDepth} м (карась жмётся к узким заливам)`;
+    }
+
+    const reliefAffinity = relief.affinity[fish.id] ?? 0.75;
+    const combinedFactor = +(depthFit * reliefAffinity).toFixed(2);
+
+    return {
+      spotDepth,
+      desiredDepth,
+      zEff,
+      seasonZoneLabel,
+      reliefShort: relief.shortName,
+      reliefDesc: relief.desc,
+      depthFit,
+      reliefAffinity,
+      combinedFactor,
+      depthNote
+    };
   }
 
   /**
@@ -758,9 +884,9 @@
   }
 
   /**
-   * 2. Подводная освещённость в люксах (Kasten–Czeplak + Beer–Lambert) -> база в рыбках (0.4 .. 2.55)
+   * 2. Подводная освещённость в люксах на реальной глубине стоянки z_eff (Kasten–Czeplak + Beer–Lambert)
    */
-  function computeUnderwaterOptics(fish, spot, astro, cloudPct) {
+  function computeUnderwaterOptics(fish, spot, astro, cloudPct, zEff) {
     const h = astro.sunAltDeg;
     const C = Math.max(0, Math.min(1, (Number(cloudPct) || 0) / 100));
 
@@ -776,7 +902,7 @@
     const moonSurfLux = 0.25 * Math.pow(astro.illum, 1.3) * moonSin * (1 - 0.8 * C);
 
     const totalSurfLux = Math.max(0.0008, sunSurfLux + moonSurfLux);
-    const waterLux = totalSurfLux * Math.exp(-(spot.kd || 0.75) * fish.typDepthM);
+    const waterLux = totalSurfLux * Math.exp(-(spot.kd || 0.75) * zEff);
     const logWaterLux = Math.log10(Math.max(1e-5, waterLux));
 
     const zOpt = (logWaterLux - fish.optLogLux) / fish.sigmaLogLux;
@@ -831,9 +957,9 @@
   }
 
   /**
-   * 5. ОДУ барической адаптации плавательного пузыря (закон Бойля–Мариотта)
+   * 5. ОДУ барической адаптации плавательного пузыря на фактической глубине z_eff (закон Бойля–Мариотта)
    */
-  function computeSwimBladderState(pArrMm, idx, fish) {
+  function computeSwimBladderState(pArrMm, idx, fish, zEff) {
     const startIdx = Math.max(0, idx - 96);
     let pEq = pArrMm[startIdx] ?? 755;
     const alpha = 1 / fish.tauAdapt;
@@ -848,7 +974,7 @@
     const p24 = pArrMm[Math.max(0, idx - 24)] ?? pNow;
 
     const uncompensatedMm = +(pNow - pEq).toFixed(2);
-    const totalHydroMm = pNow + 73.56 * fish.typDepthM;
+    const totalHydroMm = +(pNow + 73.56 * zEff).toFixed(1);
     const volumeStrainPct = +((Math.abs(uncompensatedMm) / totalHydroMm) * 100).toFixed(2);
     const dpDt6 = +((pNow - p6) / 6).toFixed(2);
     const pressDelta24 = +(pNow - p24).toFixed(1);
@@ -860,7 +986,7 @@
       else break;
     }
 
-    return { pressMm: Math.round(pNow), pEqMm: +pEq.toFixed(1), uncompensatedMm, volumeStrainPct, dpDt6, pressDelta24, stableHours };
+    return { pressMm: Math.round(pNow), pEqMm: +pEq.toFixed(1), totalHydroMm, uncompensatedMm, volumeStrainPct, dpDt6, pressDelta24, stableHours };
   }
 
   function getSprayRecommendation(fishId, waterTemp, isBaroStress, isHighFlow) {
@@ -910,37 +1036,40 @@
   function buildReadyKit(fishObj, ctx) {
     const fish = fishObj || getActiveFish();
     const shoreInfo = getShoreSpeciesInfo(ctx.spot, fish.id);
+    const bath = ctx.bath;
     const isCold = ctx.waterTemp < 8.5;
     const isStill = ctx.spot.flow === 'still';
     const isHighFlow = ctx.spot.flow === 'high';
     const isBaroStress = Math.abs(ctx.bladder.uncompensatedMm) >= 2.8;
     const isWindy = ctx.wind >= 5.5;
     const windAdd = (isWindy && ctx.spot.exposure !== 'sheltered') ? 3 : 0;
+    const isSnaggy = ctx.spot.reliefType === 'river_snags' || ctx.spot.reliefType === 'peat_drop';
+    const isShell = ctx.spot.reliefType === 'channel_shell';
 
     let scenarioName = '', scenarioWhy = '', isWarn = false;
     if (shoreInfo.factor <= 0.05) {
       isWarn = true;
       scenarioName = `🚫 Не ловится с берега на этом водоёме (${fish.name} • ${ctx.spot.name})`;
-      scenarioWhy = `${shoreInfo.reason}. Выберите другой водоём в блоке №1 (например, для береговой щуки — Затон, Ветлуга, Кокшага, Илеть или озёра Таир, Кичиер, Яльчик).`;
+      scenarioWhy = `${shoreInfo.reason}. Выберите другой водоём в блоке №1 (для береговой щуки — Затон, Ветлуга, Кокшага, Илеть или озёра Таир, Кичиер, Яльчик).`;
     } else if (Math.abs(ctx.bladder.uncompensatedMm) >= 4.2) {
       isWarn = true;
-      scenarioName = `🚨 Острый барический сдвиг (ΔP пузыря: ${ctx.bladder.uncompensatedMm >= 0 ? '+' : ''}${ctx.bladder.uncompensatedMm} мм, деформация ${ctx.bladder.volumeStrainPct}%)`;
-      scenarioWhy = `Газовая железа (${fish.bladderType === 'physoclist' ? 'закрытый пузырь, τ=' + fish.tauAdapt + 'ч' : 'открытый пузырь, τ=' + fish.tauAdapt + 'ч'}) не успевает компенсировать перепад давления. Нужна пассивная береговая подача у дна.`;
+      scenarioName = `🚨 Острый барический сдвиг на глубине ${bath.zEff} м (ΔP пузыря: ${ctx.bladder.uncompensatedMm >= 0 ? '+' : ''}${ctx.bladder.uncompensatedMm} мм, деформ. ${ctx.bladder.volumeStrainPct}%)`;
+      scenarioWhy = `На глубине ${bath.zEff} м (${bath.reliefShort}) газовая железа (${fish.bladderType === 'physoclist' ? 'закрытый пузырь, τ=' + fish.tauAdapt + 'ч' : 'открытый пузырь, τ=' + fish.tauAdapt + 'ч'}) не успевает выровнять объём. Нужна пассивная подача у дна.`;
     } else if (isBaroStress) {
-      scenarioName = `⏳ Фаза барической адаптации (остаточный сдвиг ΔP: ${ctx.bladder.uncompensatedMm >= 0 ? '+' : ''}${ctx.bladder.uncompensatedMm} мм)`;
-      scenarioWhy = 'Давление выравнивается, рыба заканчивает компенсацию плавучести. Деликатные оснастки и выходы в солунарные окна.';
+      scenarioName = `⏳ Фаза барической адаптации на глубине ${bath.zEff} м (остаточный сдвиг ΔP: ${ctx.bladder.uncompensatedMm >= 0 ? '+' : ''}${ctx.bladder.uncompensatedMm} мм)`;
+      scenarioWhy = `Горизонт стоянки: ${bath.seasonZoneLabel} (${bath.zEff} м из ${bath.spotDepth} м). Деликатные оснастки и выходы в солунарные окна.`;
     } else if (ctx.bladder.stableHours >= 18) {
-      scenarioName = `✅ Полная барическая адаптация (давление ровно ${ctx.bladder.stableHours}ч, ΔP пузыря ≈ 0)`;
-      scenarioWhy = `Плавательный пузырь полностью сбалансирован. ${shoreInfo.reason}.`;
+      scenarioName = `✅ Полная адаптация на глубине ${bath.zEff} м (давление ровно ${ctx.bladder.stableHours}ч, ΔP ≈ 0)`;
+      scenarioWhy = `Горизонт: ${bath.seasonZoneLabel} (${bath.reliefShort}). ${shoreInfo.reason}.`;
     } else if (ctx.bladder.dpDt6 <= -0.25 && ctx.bladder.dpDt6 >= -0.95) {
-      scenarioName = `📉 Предфронтальный плавный спад давления (${ctx.bladder.dpDt6} мм/ч)`;
-      scenarioWhy = 'Мягкое снижение давления перед фронтом стимулирует активный береговой выход перед сменой погоды.';
+      scenarioName = `📉 Предфронтальный плавный спад (${ctx.bladder.dpDt6} мм/ч) • глубина ${bath.zEff} м`;
+      scenarioWhy = `Мягкое снижение давления стимулирует выход рыбы на ${bath.seasonZoneLabel} (${bath.reliefShort}).`;
     } else if (isWindy && ctx.spot.exposure !== 'sheltered') {
-      scenarioName = `💨 Свежий ветер (${ctx.wind.toFixed(1)} м/с) и волна на открытом берегу`;
+      scenarioName = `💨 Свежий ветер (${ctx.wind.toFixed(1)} м/с) на открытом берегу (глубина до ${bath.spotDepth} м)`;
       scenarioWhy = 'Выдувает дугу шнура при береговом забросе — утяжеляем груз/кормушку на 20–30%.';
     } else {
-      scenarioName = `🌤 Умеренный барический фон (${ctx.bladder.pressMm} мм), свет у дна ${ctx.optics.waterLux} лк`;
-      scenarioWhy = `${shoreInfo.reason}. Прозрачность водоёма Kd = ${ctx.spot.kd} м⁻¹.`;
+      scenarioName = `🌤 Рабочий горизонт ${bath.zEff} м (${bath.reliefShort}), свет у дна ${ctx.optics.waterLux} лк`;
+      scenarioWhy = `${shoreInfo.reason}. Горизонт: ${bath.seasonZoneLabel}. Прозрачность Kd = ${ctx.spot.kd} м⁻¹.`;
     }
 
     const sprayObj = getSprayRecommendation(fish.id, ctx.waterTemp, isBaroStress, isHighFlow);
@@ -952,131 +1081,135 @@
     const basePack = { isWarn, scenarioName, scenarioWhy, ...sprayObj, checklist: gearChecklist, gearLinks: [{ label: 'Подсачек и экипировка (Ozon)', url: 'https://www.ozon.ru/search/?text=подсачек+рыболовный+телескопический' }] };
 
     if (fish.id === 'perch') {
-      const w = (isStill ? 3 : (isHighFlow ? 12 : 7)) + windAdd;
-      const rig = isBaroStress ? `Береговой отводной поводок 1.4 м (груз ${isStill ? 6 : 14} г, пауза 7–10 сек)` : (isStill ? `Микроджиг / джиг-риг ${w} г с берега` : `Шарнирный джиг ${w} г под береговую бровку`);
-      return { ...basePack, bait: isBaroStress ? 'Пассивный микро-слаг / танта 1.5" (машинное масло, лох)' : (isCold ? 'Танта / полярис 2" в натуральных тонах' : 'Твистер 2.2" / виброхвост 2.5"'), baitWhy: 'Подобрано под прозрачность и оптику воды.', baitLinks: [{ label: 'Микросиликон (Ozon)', url: 'https://www.ozon.ru/search/?text=силиконовые+приманки+танты+2+дюйма' }], rig, rigWhy: isStill ? 'Лёгкий вес даёт долгое зависание.' : 'Уверенный контроль дна на тяге.', rigLinks: [{ label: 'Чебурашки (Ozon)', url: 'https://www.ozon.ru/search/?text=грузила+чебурашка+набор' }], lineHook: 'Шнур #0.4–#0.6 PE + флюр 0.14–0.16 мм, крючок №8–10', lineWhy: `При Kd=${ctx.spot.kd} м⁻¹ тонкий флюр исключает настороженность.`, lineLinks: [{ label: 'Флюр 0.16 (Ozon)', url: 'https://www.ozon.ru/search/?text=флюорокарбон+0.16' }], groundbait: 'Без прикормки — береговой поиск по ракушечнику и бровкам.', groundbaitLinks: [{ label: 'Коробки (Ozon)', url: 'https://www.ozon.ru/search/?text=коробка+рыболовная' }], tactic: isBaroStress ? 'Медленное волочение с паузами 8–10 сек.' : 'Двойной подрыв с паузой 2–3 сек.' };
+      const w = (isStill ? (bath.zEff > 4.5 ? 6 : 3) : (isHighFlow ? 14 : 8)) + windAdd;
+      const rig = isSnaggy
+        ? `Офсетный джиг-риг / техас ${w} г (проходимость через коряги на ${bath.zEff} м)`
+        : (isBaroStress ? `Береговой отводной поводок 1.4 м (груз ${isStill ? 8 : 16} г, пауза 7–10 сек)` : `Шарнирный джиг ${w} г по бровке ${bath.zEff} м`);
+      return { ...basePack, bait: isBaroStress ? 'Пассивный микро-слаг / танта 1.5" (машинное масло, лох)' : (isCold ? 'Танта / полярис 2" в натуральных тонах' : 'Твистер 2.2" / виброхвост 2.5"'), baitWhy: `Подобрано под глубину ${bath.zEff} м и прозрачность Kd=${ctx.spot.kd}.`, baitLinks: [{ label: 'Микросиликон (Ozon)', url: 'https://www.ozon.ru/search/?text=силиконовые+приманки+танты+2+дюйма' }], rig, rigWhy: isSnaggy ? 'Офсетный крючок спасает от зацепов в коряжнике.' : 'Уверенный контроль дна на выбранной глубине.', rigLinks: [{ label: 'Чебурашки и джиг-риг (Ozon)', url: 'https://www.ozon.ru/search/?text=грузила+чебурашка+набор' }], lineHook: `Шнур #0.4–#0.6 PE + флюр ${isShell ? '0.20 мм (защита от ракушки)' : '0.14–0.16 мм'}, крючок №8–10`, lineWhy: isShell ? 'На ракушечной бровке тонкий флюр мгновенно режется.' : `При Kd=${ctx.spot.kd} м⁻¹ тонкий флюр исключает настороженность.`, lineLinks: [{ label: 'Флюр 0.16–0.20 (Ozon)', url: 'https://www.ozon.ru/search/?text=флюорокарбон+0.18' }], groundbait: 'Без прикормки — береговой поиск по перепадам глубин.', groundbaitLinks: [{ label: 'Коробки (Ozon)', url: 'https://www.ozon.ru/search/?text=коробка+рыболовная' }], tactic: isBaroStress ? 'Медленное волочение с паузами 8–10 сек.' : 'Двойной подрыв на ступеньке свала.' };
     }
     if (fish.id === 'pike') {
-      const w = (isStill ? 7 : (isHighFlow ? 22 : 14)) + windAdd * 2;
+      const w = (isStill ? (bath.zEff > 4.0 ? 10 : 7) : (isHighFlow ? 22 : 14)) + windAdd * 2;
       const rig = shoreInfo.factor <= 0.05
         ? 'На открытой Волге с берега не ловится — смените точку на Затон, Ветлугу, Кокшагу, Илеть или озёра'
-        : (isStill ? `Береговой твич вдоль травы / лёгкий джиг ${w} г + титан 20 см` : `Береговой джиг ${w} г вдоль коряжника и обраток + титан 25 см`);
-      return { ...basePack, bait: isBaroStress ? 'Суспендер минноу 110–130 мм (паузы 5–7 сек) или виброхвост 4"' : (isCold ? 'Крупный виброхвост 4–4.5" / поролон' : 'Воблер минноу 110 мм / колебалка 18 г'), baitWhy: 'Зависающая приманка провоцирует хищника у прибрежной бровки.', baitLinks: [{ label: 'Воблеры 110–130 (Ozon)', url: 'https://www.ozon.ru/search/?text=воблер+минноу+110+суспендер' }], rig, rigWhy: 'Надёжная подсечка и защита от среза.', rigLinks: [{ label: 'Поводки титан (Ozon)', url: 'https://www.ozon.ru/search/?text=поводок+титановый+рыболовный' }], lineHook: 'Шнур #1.2–#1.5 PE + двойник/офсет 3/0–4/0', lineWhy: 'Запас прочности для берегового вываживания через траву и коряги.', lineLinks: [{ label: 'Шнур 1.2 PE (Ozon)', url: 'https://www.ozon.ru/search/?text=плетеный+шнур+1.2+pe' }], groundbait: 'Без прикормки — облов границы камыша, омутов и обраток с берега.', groundbaitLinks: [{ label: 'Зевник и экстрактор (Ozon)', url: 'https://www.ozon.ru/search/?text=зевник+и+экстрактор+рыболовный' }], tactic: 'Плавная ступенька с паузами 3–5 секунд.' };
+        : (isSnaggy ? `Незацепляющийся береговой джиг ${w} г (офсет 4/0) вдоль коряжника на ${bath.zEff} м + титан 25 см` : `Береговой твич вдоль травы / джиг ${w} г по бровке ${bath.zEff} м + титан 20 см`);
+      return { ...basePack, bait: isBaroStress ? 'Суспендер минноу 110–130 мм (паузы 5–7 сек) или виброхвост 4"' : (isCold ? 'Крупный виброхвост 4–4.5" / поролон' : 'Воблер минноу 110 мм / колебалка 18 г'), baitWhy: `Оптимально для горизонта ${bath.zEff} м (${bath.reliefShort}).`, baitLinks: [{ label: 'Воблеры 110–130 (Ozon)', url: 'https://www.ozon.ru/search/?text=воблер+минноу+110+суспендер' }], rig, rigWhy: 'Защита от коряг/травы и щучьих зубов.', rigLinks: [{ label: 'Поводки титан (Ozon)', url: 'https://www.ozon.ru/search/?text=поводок+титановый+рыболовный' }], lineHook: 'Шнур #1.2–#1.5 PE + офсет/двойник 3/0–4/0', lineWhy: 'Запас прочности для форсированного вываживания с берега.', lineLinks: [{ label: 'Шнур 1.2 PE (Ozon)', url: 'https://www.ozon.ru/search/?text=плетеный+шнур+1.2+pe' }], groundbait: 'Без прикормки — облов бровки, омутов и обраток с берега.', groundbaitLinks: [{ label: 'Зевник и экстрактор (Ozon)', url: 'https://www.ozon.ru/search/?text=зевник+и+экстрактор+рыболовный' }], tactic: 'Плавная ступенька по свалу с паузами 3–5 секунд.' };
     }
     if (fish.id === 'crucian') {
-      const rig = isStill
-        ? `Маховая удочка 5–6 м (поплавок 1.2–1.5 г) или береговой флэт-метод ${25 + windAdd * 3} г`
-        : `Лёгкий пикер / донка ${35 + windAdd * 4} г в тихой старице или заводи без течения`;
+      const rig = (isStill && bath.zEff <= 2.5)
+        ? `Маховая удочка 5–6 м (поплавок 1.2–1.5 г) у травы на глубине ${bath.zEff} м`
+        : `Береговой флэт-метод / лёгкий пикер ${30 + windAdd * 3} г на бровке ${bath.zEff} м`;
       return {
         ...basePack,
         bait: (isCold || isBaroStress) ? 'Пучок крупного мотыля + 1 подрезанный навозный червь' : 'Навозный червь / опарыш / перловка / чесночная болтушка',
-        baitWhy: 'Классические береговые насадки для карася у границы камыша и кувшинок.',
+        baitWhy: `Подобрано под глубину ${bath.zEff} м и рельеф (${bath.reliefShort}).`,
         baitLinks: [{ label: 'Поплавки на карася (Ozon)', url: 'https://www.ozon.ru/search/?text=поплавок+на+карася+1.5г' }],
         rig,
-        rigWhy: 'Деликатная подача у границы водной растительности в 8–20 м от берега.',
+        rigWhy: bath.zEff > 2.5 ? 'На глубине >2.5 м удобнее достать карася лёгким флэт-методом.' : 'Деликатная подача у окна кувшинок.',
         rigLinks: [{ label: 'Кормушки флэт-метод (Ozon)', url: 'https://www.ozon.ru/search/?text=кормушка+флэт+метод+30г' }],
         lineHook: 'Основная 0.16 мм + поводок 0.10–0.12 мм (35 см), лёгкий тонкий крючок №12–14',
         lineWhy: 'Карась выплёвывает насадку при малейшем сопротивлении тяжёлого крючка.',
         lineLinks: [{ label: 'Крючки на карася №12 (Ozon)', url: 'https://www.ozon.ru/search/?text=крючки+рыболовные+12+тонкая+проволока' }],
         groundbait: isCold ? 'DUNAEV Карась Гибрид Чёрный (минимум ароматики, мелкофракционная пыль)' : 'DUNAEV Карась Гибрид (чеснок/творог) + рубленый червь',
         groundbaitLinks: [{ label: 'DUNAEV Карась (Ozon)', url: 'https://www.ozon.ru/search/?text=прикормка+dunaev+карась+гибрид' }],
-        tactic: 'Стартовый закорм 3–4 апельсина у окна кувшинок, выжидательная тактика.'
+        tactic: 'Стартовый закорм 3–4 апельсина, выжидательная тактика.'
       };
     }
     if (fish.id === 'sazan') {
-      const feederW = (isStill ? 60 : (isHighFlow ? 120 : 90)) + windAdd * 5;
+      const feederW = (isStill ? 65 : (isHighFlow ? 120 : 90)) + windAdd * 5;
       const rig = isStill
-        ? `Береговой флэт-метод (Method Feeder) ${feederW} г с волосяной оснасткой`
-        : `Мощный речной хэви-фидер / карповик: кормушка-клетка ${feederW} г, инлайн + волос`;
+        ? `Береговой флэт-метод (Method Feeder) ${feederW} г на свале ${bath.zEff} м`
+        : `Мощный речной хэви-фидер / карповик: кормушка ${feederW} г на бровке ${bath.zEff} м`;
       return {
         ...basePack,
         bait: isCold ? 'Пучок крупных выползков / перловица + тонущий бойл 14 мм (специи)' : '2–3 зёрна кукурузы Бондюэль на волосе или варёный бойл 15 мм (слива / клубника)',
-        baitWhy: 'Отсекает мелкую густеру и плотву на ракушечной бровке.',
+        baitWhy: 'Отсекает мелкую густеру и плотву на глубинной бровке.',
         baitLinks: [{ label: 'Бойлы 15 мм Слива (Ozon)', url: 'https://www.ozon.ru/search/?text=бойлы+тонущие+15мм+слива' }],
         rig,
         rigWhy: 'Самоподсечка мощной рыбы при береговом забросе на русловой свал.',
-        rigLinks: [{ label: 'Карповые грузила / кормушки (Ozon)', url: 'https://www.ozon.ru/search/?text=кормушка+речная+120г' }],
-        lineHook: 'Основная 0.30 мм (или шнур #1.5 PE + шок-лидер) + поводок 15–20 lb (18 см), крючок Wide Gape №4–6',
-        lineWhy: 'Защита от обреза об острый дрейссеновый ракушечник на волжской бровке.',
+        rigLinks: [{ label: 'Карповые кормушки 120 г (Ozon)', url: 'https://www.ozon.ru/search/?text=кормушка+речная+120г' }],
+        lineHook: `Основная 0.30 мм + шок-лидер ${isShell ? '0.45 мм (от ракушки на бровке)' : '0.35 мм'}, поводок 20 lb, крючок Wide Gape №4–6`,
+        lineWhy: isShell ? 'Дрейссеновый ракушечник на волжском свале режет обычный шнур за секунду.' : 'Надёжное удержание трофея у коряг.',
         lineLinks: [{ label: 'Крючки Wide Gape №4 (Ozon)', url: 'https://www.ozon.ru/search/?text=крючки+карповые+wide+gape+4' }],
         groundbait: 'Крупнофракционный зерновой микс (варёная кукуруза, пшеница, пеллетс 8–12 мм) + DUNAEV Карп/Сазан',
         groundbaitLinks: [{ label: 'DUNAEV Карп-Сазан (Ozon)', url: 'https://www.ozon.ru/search/?text=прикормка+dunaev+карп+сазан' }],
-        tactic: 'Обильный стартовый закорм бровки крупной фракцией, перезаброс раз в 25–35 минут.'
+        tactic: 'Обильный стартовый закорм нижней кромки свала, перезаброс раз в 25–35 минут.'
       };
     }
     if (fish.id === 'carp') {
-      const methodW = (isStill ? 45 : 65) + windAdd * 4;
-      const rig = `Береговой флэт-метод (Flat Method) ${methodW} г с коротким поводком 10–12 см`;
+      const methodW = (isStill ? (bath.zEff > 4.5 ? 55 : 40) : 65) + windAdd * 4;
+      const rig = `Береговой флэт-метод (Flat Method) ${methodW} г на бровке ${bath.zEff} м (поводок 10–12 см)`;
       return {
         ...basePack,
         bait: isCold ? 'Поп-ап 8 мм (чеснок / краб) или пучок червя с кукурузой' : 'Снеговик: кукуруза + поп-ап 8–10 мм (ананас / клубника / слива)',
-        baitWhy: 'Приподнятая насадка выделяется над озёрным илом и травой.',
+        baitWhy: 'Приподнятая насадка не проваливается в озёрный/торфяной ил.',
         baitLinks: [{ label: 'Поп-апы 8-10 мм (Ozon)', url: 'https://www.ozon.ru/search/?text=бойлы+pop+up+10мм+ананас' }],
         rig,
-        rigWhy: 'Идеально для береговой ловли на озёрах Яльчик, Таир, Кичиер и Лисичкино.',
+        rigWhy: `Оптимально для береговой ловли на озёрах (${bath.reliefShort}).`,
         rigLinks: [{ label: 'Набор флэт-метод (Ozon)', url: 'https://www.ozon.ru/search/?text=набор+кормушек+флэт+метод' }],
-        lineHook: 'Монофил 0.26–0.28 мм (амортизирует рывки у берега) + поводковый материал 15 lb, крючок Kurv Shank №6–8',
-        lineWhy: 'Растяжимость монофильной лески спасает от сходов при вываживании у береговых кувшинок.',
+        lineHook: 'Монофил 0.26–0.28 мм + поводковый материал 15 lb, крючок Kurv Shank №6–8',
+        lineWhy: 'Растяжимость монофильной лески гасит рывки карпа на короткой дистанции у берега.',
         lineLinks: [{ label: 'Леска карповая 0.28 (Ozon)', url: 'https://www.ozon.ru/search/?text=леска+карповая+0.28+мм' }],
         groundbait: 'Метод-микс (пеллетс 2–4 мм + сладкая кукурузная сыпуха)',
         groundbaitLinks: [{ label: 'Пеллетс методный 2мм (Ozon)', url: 'https://www.ozon.ru/search/?text=пеллетс+методный+2мм' }],
-        tactic: 'Поиск точки на границе свала и ила; обязателен фрикцион в режиме байтраннера.'
+        tactic: 'Поиск твёрдой ступеньки на границе свала и ила; ослабленный фрикцион.'
       };
     }
     if (fish.id === 'zander') {
-      const w = (isStill ? 10 : (isHighFlow ? 28 : 18)) + windAdd * 2;
-      const rig = isStill ? `Береговой джиг ${w} г на глубоких свалах` : `Дальний береговой джиг ${w} г с перегрузом 2–3 г для стука по бровке`;
-      return { ...basePack, bait: isBaroStress ? 'Узкий слаг / виброхвост 3.5–4" (натурал, фиолет)' : 'Прогонистый виброхвост 4" / мандула (билайн)', baitWhy: 'Узкий силуэт под пасть судака.', baitLinks: [{ label: 'Мандула (Ozon)', url: 'https://www.ozon.ru/search/?text=мандула+на+судака' }], rig, rigWhy: 'Чёткая ступенька по твёрдой ракушке.', rigLinks: [{ label: 'Джиг-головки (Ozon)', url: 'https://www.ozon.ru/search/?text=джиг+головки+набор' }], lineHook: 'Шнур #1.0–#1.2 PE + флюр 0.35 мм (60 см)', lineWhy: 'Защита от ракушки на береговой бровке.', lineLinks: [{ label: 'Флюр 0.35 (Ozon)', url: 'https://www.ozon.ru/search/?text=флюорокарбон+0.35' }], groundbait: 'Без прикормки — береговые выходы в мезопических сумерках (0.1–15 лк).', groundbaitLinks: [{ label: 'Офсеты 4/0 (Ozon)', url: 'https://www.ozon.ru/search/?text=офсетные+крючки+4%2F0' }], tactic: 'Облов береговой бровки на заходе Солнца и ночью.' };
+      const w = (isStill ? 12 : (isHighFlow ? 28 : 18)) + windAdd * 2;
+      const rig = `Дальний береговой джиг ${w} г по бровке ${bath.zEff} м с перегрузом 2–3 г для отбоя дна`;
+      return { ...basePack, bait: isBaroStress ? 'Узкий слаг / виброхвост 3.5–4" (натурал, фиолет)' : 'Прогонистый виброхвост 4" / мандула (билайн)', baitWhy: 'Узкий силуэт под пасть судака.', baitLinks: [{ label: 'Мандула (Ozon)', url: 'https://www.ozon.ru/search/?text=мандула+на+судака' }], rig, rigWhy: 'Чёткая ступенька по твёрдой ракушке.', rigLinks: [{ label: 'Джиг-головки (Ozon)', url: 'https://www.ozon.ru/search/?text=джиг+головки+набор' }], lineHook: 'Шнур #1.0–#1.2 PE + флюр 0.35 мм (60 см)', lineWhy: 'Защита от дрейссеновой ракушки на бровке.', lineLinks: [{ label: 'Флюр 0.35 (Ozon)', url: 'https://www.ozon.ru/search/?text=флюорокарбон+0.35' }], groundbait: 'Без прикормки — береговые выходы в мезопических сумерках (0.1–15 лк).', groundbaitLinks: [{ label: 'Офсеты 4/0 (Ozon)', url: 'https://www.ozon.ru/search/?text=офсетные+крючки+4%2F0' }], tactic: 'Облов береговой бровки на заходе Солнца и ночью.' };
     }
     if (fish.id === 'bream') {
-      const feederW = (isStill ? 25 : (isHighFlow ? 90 : 55)) + windAdd * 5;
-      const rig = isStill ? `Береговой инлайн / флэт или кормушка-пуля ${feederW} г` : `Асимметричная петля / инлайн, речная кормушка ${feederW} г`;
-      return { ...basePack, bait: (isCold || isBaroStress) ? '2–3 мотыля + 1 утопленный опарыш' : 'Пучок мотыля с опарышем / червь', baitWhy: 'Деликатная подача насадкой.', baitLinks: [{ label: 'Кормушки (Ozon)', url: 'https://www.ozon.ru/search/?text=кормушка+фидерная' }], rig, rigWhy: 'Держит точку на дне.', rigLinks: [{ label: 'Фидергам (Ozon)', url: 'https://www.ozon.ru/search/?text=фидергам+для+рыбалки' }], lineHook: `Шнур #0.8 PE + фидергам 15 см + поводок ${isBaroStress ? '0.10 мм (90 см)' : '0.12–0.14 мм (70 см)'}, крючок №14–16`, lineWhy: 'Тонкий поводок для осторожного леща.', lineLinks: [{ label: 'Крючки №14 (Ozon)', url: 'https://www.ozon.ru/search/?text=крючки+рыболовные+14' }], groundbait: isCold ? 'DUNAEV Лещ Чёрный + кормовой мотыль (без каш)' : 'DUNAEV Лещ + крупная фракция + резаный опарыш', groundbaitLinks: [{ label: 'DUNAEV Лещ (Ozon)', url: 'https://www.ozon.ru/search/?text=прикормка+dunaev+лещ+черный' }], tactic: 'Стартовый закорм 5 кормушек, темп 6–8 мин.' };
+      const feederW = (isStill ? (bath.zEff > 5.0 ? 40 : 25) : (isHighFlow ? 90 : 55)) + windAdd * 5;
+      const rig = isStill ? `Береговой инлайн / кормушка-пуля ${feederW} г на свал ${bath.zEff} м` : `Асимметричная петля / инлайн, речная кормушка ${feederW} г на бровке ${bath.zEff} м`;
+      return { ...basePack, bait: (isCold || isBaroStress) ? '2–3 мотыля + 1 утопленный опарыш' : 'Пучок мотыля с опарышем / червь', baitWhy: 'Деликатная подача насадкой.', baitLinks: [{ label: 'Кормушки (Ozon)', url: 'https://www.ozon.ru/search/?text=кормушка+фидерная' }], rig, rigWhy: `Уверенно держит нижнюю бровку на ${bath.zEff} м.`, rigLinks: [{ label: 'Фидергам (Ozon)', url: 'https://www.ozon.ru/search/?text=фидергам+для+рыбалки' }], lineHook: `Шнур #0.8 PE + фидергам 15 см + поводок ${isBaroStress ? '0.10 мм (90 см)' : '0.12–0.14 мм (70 см)'}, крючок №14–16`, lineWhy: 'Тонкий поводок для осторожного леща.', lineLinks: [{ label: 'Крючки №14 (Ozon)', url: 'https://www.ozon.ru/search/?text=крючки+рыболовные+14' }], groundbait: isCold ? 'DUNAEV Лещ Чёрный + кормовой мотыль (без каш)' : 'DUNAEV Лещ + крупная фракция + резаный опарыш', groundbaitLinks: [{ label: 'DUNAEV Лещ (Ozon)', url: 'https://www.ozon.ru/search/?text=прикормка+dunaev+лещ+черный' }], tactic: 'Стартовый закорм 5 кормушек в точку у подножия свала.' };
     }
     if (fish.id === 'roach' || fish.id === 'silverbream') {
-      const rig = isStill ? 'Мах / болонка 5–6 м (поплавок 1.5–2 г) или пикер 25 г' : `Фидер: кормушка ${isHighFlow ? 70 : 45} г, патерностер`;
+      const rig = (isStill && bath.zEff <= 3.0) ? `Мах / болонка 5–6 м (поплавок 1.5–2 г) на ${bath.zEff} м` : `Фидер / пикер: кормушка ${isHighFlow ? 70 : (isStill ? 30 : 45)} г на бровке ${bath.zEff} м`;
       return { ...basePack, bait: (isCold || isBaroStress) ? '1–2 личинки мотыля или 1 мелкий опарыш' : 'Опарыш (белый + красный) / перловка / мотыль', baitWhy: 'Нежная насадка под аккуратную поклёвку.', baitLinks: [{ label: 'Поплавки 2 г (Ozon)', url: 'https://www.ozon.ru/search/?text=поплавок+рыболовный+2г' }], rig, rigWhy: 'Максимальная чувствительность оснастки.', rigLinks: [{ label: 'Леска 0.10 (Ozon)', url: 'https://www.ozon.ru/search/?text=леска+поводковая+0.10' }], lineHook: 'Основная 0.16 мм + поводок 0.09–0.10 мм (70 см), крючок №16–18', lineWhy: 'Не настораживает рыбу в чистой воде.', lineLinks: [{ label: 'Крючки №16 (Ozon)', url: 'https://www.ozon.ru/search/?text=крючки+рыболовные+16' }], groundbait: isCold ? 'DUNAEV Плотва Чёрная + грунт 1:1' : 'DUNAEV Плотва + копра-меласса', groundbaitLinks: [{ label: 'DUNAEV Плотва (Ozon)', url: 'https://www.ozon.ru/search/?text=прикормка+dunaev+плотва' }], tactic: 'Регулярный докорм малыми порциями.' };
     }
     if (fish.id === 'ide') {
       const rig = 'Дальний береговой заброс + флюр-лидер 0.28 мм (1.2 м) без блестящих застёжек';
-      return { ...basePack, bait: isBaroStress ? 'Тонущий стик / тейл-спиннер 14–18 г у дна' : 'Пилькер / кастмастер 18–24 г (серебро)', baitWhy: 'Дальний заброс 60+ м к осторожному жереху.', baitLinks: [{ label: 'Пилькеры (Ozon)', url: 'https://www.ozon.ru/search/?text=пилькер+на+жереха+20г' }], rig, rigWhy: 'Маскировка шнура перед приманкой.', rigLinks: [{ label: 'Тейл-спиннеры (Ozon)', url: 'https://www.ozon.ru/search/?text=тейл+спиннер+18г' }], lineHook: '8-жильный шнур #0.8–#1.0 PE + тройник с опушкой', lineWhy: 'Дальность и мягкость вылета.', lineLinks: [{ label: 'Шнур 8-жильный (Ozon)', url: 'https://www.ozon.ru/search/?text=шнур+8+жильный+0.8+pe' }], groundbait: 'Без прикормки — поиск боя и обраток на струе.', groundbaitLinks: [{ label: 'Полярики (Ozon)', url: 'https://www.ozon.ru/search/?text=очки+поляризационные+для+рыбалки' }], tactic: isCold ? 'Медленная проводка у дна на выходе из ям.' : 'Быстрая проводка в верхнем слое.' };
+      return { ...basePack, bait: isBaroStress ? 'Тонущий стик / тейл-спиннер 14–18 г у дна' : 'Пилькер / кастмастер 18–24 г (серебро)', baitWhy: 'Дальний заброс 60+ м к осторожному жереху.', baitLinks: [{ label: 'Пилькеры (Ozon)', url: 'https://www.ozon.ru/search/?text=пилькер+на+жереха+20г' }], rig, rigWhy: 'Маскировка шнура перед приманкой.', rigLinks: [{ label: 'Тейл-спиннеры (Ozon)', url: 'https://www.ozon.ru/search/?text=тейл+спиннер+18г' }], lineHook: '8-жильный шнур #0.8–#1.0 PE + тройник с опушкой', lineWhy: 'Дальность и мягкость вылета.', lineLinks: [{ label: 'Шнур 8-жильный (Ozon)', url: 'https://www.ozon.ru/search/?text=шнур+8+жильный+0.8+pe' }], groundbait: 'Без прикормки — поиск боя и обраток на перекате/струе.', groundbaitLinks: [{ label: 'Полярики (Ozon)', url: 'https://www.ozon.ru/search/?text=очки+поляризационные+для+рыбалки' }], tactic: isCold ? 'Медленная проводка у дна на выходе из ям.' : 'Быстрая проводка в верхнем слое.' };
     }
     const sinkerW = (isStill ? 50 : 120) + windAdd * 10;
-    const rig = `Береговая донная снасть с подводным поплавком 15 г и грузилом ${sinkerW} г`;
+    const rig = `Береговая донная снасть с подводным поплавком 15 г и грузилом ${sinkerW} г на яме ${bath.zEff} м`;
     return { ...basePack, bait: isCold ? 'Пучок выползков на дне ямы (минимальная активность)' : 'Пучок выползков + перловица / нарезка рыбы', baitWhy: 'Приподнята над илом и ракушкой.', baitLinks: [{ label: 'Подводный поплавок (Ozon)', url: 'https://www.ozon.ru/search/?text=подводный+поплавок+на+сома' }], rig, rigWhy: 'Держит насадку в горизонте прохода сома.', rigLinks: [{ label: 'Грузила 120 г (Ozon)', url: 'https://www.ozon.ru/search/?text=грузило+рыболовное+120г' }], lineHook: 'Шнур 0.35–0.45 мм + поводок 0.8–1.0 мм, одинарник 6/0–8/0', lineWhy: 'Защита от «щётки» сома.', lineLinks: [{ label: 'Крючки на сома (Ozon)', url: 'https://www.ozon.ru/search/?text=крючки+на+сома+8%2F0' }], groundbait: 'Без прикормки — постановка на выходе из ямы в темноте.', groundbaitLinks: [{ label: 'Сигнализаторы (Ozon)', url: 'https://www.ozon.ru/search/?text=сигнализатор+поклёвки+бубенчик' }], tactic: isCold ? 'При воде <12°C сом стоит в ямах.' : 'Ловля после захода Солнца.' };
   }
 
   /**
-   * 6. Интегральная оценка по 5-балльной шкале рыбок с учётом биотопа и береговой доступности
+   * 6. Интегральная оценка по 5-балльной шкале с учётом батиметрии (z_eff), рельефа (K_relief) и ареала (K_shore)
    */
   function evaluateBite(params) {
-    const { hour, bladder, optics, wind, gusts, waterTemp, astro, spot } = params;
+    const { hour, bladder, optics, wind, gusts, waterTemp, astro, spot, bath } = params;
     const fish = params.fish || getActiveFish();
     const shoreInfo = getShoreSpeciesInfo(spot, fish.id);
     const factors = [];
 
-    // 1. Базовая активность из подводной оптики (Люкс на глубине z при Kd водоёма) -> 0.40 .. 2.55 рыбки
+    // 1. Базовая активность из подводной оптики на реальной глубине z_eff -> 0.40 .. 2.55 рыбки
     factors.push({
-      name: `Оптика воды (${fish.name}, ${String(hour).padStart(2, '0')}:00 • ${optics.waterLux} лк на ${fish.typDepthM} м, ${astro.solarPhaseLabel})`,
+      name: `Оптика воды на глубине ${bath.zEff} м (${fish.name}, ${String(hour).padStart(2, '0')}:00 • ${optics.waterLux} лк, ${astro.solarPhaseLabel})`,
       val: optics.baseFish,
       base: true
     });
 
-    // 2. Физика плавательного пузыря (ОДУ Бойля–Мариотта)
+    // 2. Физика плавательного пузыря на глубине z_eff (ОДУ Бойля–Мариотта)
     const absUncomp = Math.abs(bladder.uncompensatedMm);
     let baroFish = 0;
     let baroLabel = '';
 
     if (absUncomp >= 1.8) {
-      baroFish = -Math.min(2.40, +(0.30 * Math.pow(absUncomp - 1.2, 1.35)).toFixed(2));
-      baroLabel = `Плавательный пузырь (ΔP: ${bladder.uncompensatedMm >= 0 ? '+' : ''}${bladder.uncompensatedMm} мм, деформ. ${bladder.volumeStrainPct}%, τ=${fish.tauAdapt}ч)`;
+      // На малой глубине относительная деформация пузыря выше, что дополнительно штрафует активность
+      const shallowMultiplier = bath.zEff < 2.5 ? 1.18 : (bath.zEff > 5.5 ? 0.90 : 1.0);
+      baroFish = -Math.min(2.45, +(0.30 * Math.pow(absUncomp - 1.2, 1.35) * shallowMultiplier).toFixed(2));
+      baroLabel = `Плавательный пузырь на ${bath.zEff} м (ΔP: ${bladder.uncompensatedMm >= 0 ? '+' : ''}${bladder.uncompensatedMm} мм, деформ. ${bladder.volumeStrainPct}%, τ=${fish.tauAdapt}ч)`;
     } else if (bladder.dpDt6 <= -0.22 && bladder.dpDt6 >= -0.95) {
       baroFish = +0.50;
       baroLabel = `Барометр (${bladder.pressMm} мм — мягкий предфронтальный спад ${bladder.dpDt6} мм/ч)`;
     } else {
       const adaptProgress = 1 - Math.exp(-bladder.stableHours / 16);
       baroFish = +(0.20 + 0.65 * adaptProgress).toFixed(2);
-      baroLabel = `Барометр (${bladder.pressMm} мм — пузырь адаптирован, ровно ${bladder.stableHours}ч)`;
+      baroLabel = `Барометр (${bladder.pressMm} мм — пузырь адаптирован на ${bath.zEff} м, ровно ${bladder.stableHours}ч)`;
     }
     factors.push({ name: baroLabel, val: baroFish });
 
@@ -1130,9 +1263,18 @@
 
     const rawBioSum = Math.max(0.2, Math.min(5.0, factors.reduce((s, f) => s + f.val, 0)));
 
-    // 6. Множитель биотопа и береговой доступности K_shore in [0, 1]
+    // 6. Рельеф дна и рабочая глубина берегового заброса K_relief
+    const kRelief = bath.combinedFactor;
+    const afterReliefSum = rawBioSum * kRelief;
+    const reliefDelta = +(afterReliefSum - rawBioSum).toFixed(2);
+    factors.push({
+      name: `Рельеф и глубина (K_relief = ${kRelief.toFixed(2)} • ${bath.reliefShort}, ${bath.depthNote})`,
+      val: reliefDelta
+    });
+
+    // 7. Биотоп и береговая доступность вида K_shore in [0, 1]
     const kShore = shoreInfo.factor;
-    const shoreDelta = +(rawBioSum * kShore - rawBioSum).toFixed(2);
+    const shoreDelta = +(afterReliefSum * kShore - afterReliefSum).toFixed(2);
     factors.push({
       name: `Биотоп и береговая доступность (K_shore = ${kShore.toFixed(2)} • ${shoreInfo.reason})`,
       val: shoreDelta
@@ -1140,9 +1282,9 @@
 
     const scoreFish = kShore <= 0.01
       ? 0.0
-      : +Math.max(0.2, Math.min(5.0, rawBioSum * kShore)).toFixed(1);
+      : +Math.max(0.2, Math.min(5.0, afterReliefSum * kShore)).toFixed(1);
 
-    return { scoreFish, factors, fT, kShore, shoreReason: shoreInfo.reason };
+    return { scoreFish, factors, fT, kShore, kRelief, shoreReason: shoreInfo.reason };
   }
 
   async function fetchWithTimeout(url, ms = 7000) {
@@ -1238,11 +1380,12 @@
     const precip = h.precipitation[idx] ?? 0;
     const wCode = h.weather_code ? (h.weather_code[idx] ?? 2) : 2;
 
-    const bladder = computeSwimBladderState(pArrMm, idx, fish);
+    const bath = computeBathymetryAndRelief(fish, spot, waterTemp);
+    const bladder = computeSwimBladderState(pArrMm, idx, fish, bath.zEff);
     const astro = getAstronomy(spot.lat, spot.lon, daySpec.offset, hour);
-    const optics = computeUnderwaterOptics(fish, spot, astro, cloud);
+    const optics = computeUnderwaterOptics(fish, spot, astro, cloud, bath.zEff);
 
-    return { spot, fish, daySpec, mskDateStr, hour, temp, waterTemp, bladder, astro, optics, wind, gusts, windDir, cloud, precip, wCode };
+    return { spot, fish, daySpec, mskDateStr, hour, temp, waterTemp, bath, bladder, astro, optics, wind, gusts, windDir, cloud, precip, wCode };
   }
 
   function renderPills() {
@@ -1283,10 +1426,11 @@
       document.getElementById('spots-grid').innerHTML = spotResults.map(r => {
         const wbCls = r.spot.category === 'river' ? 'wb-river' : (r.spot.badge === 'Затон' ? 'wb-zaton' : 'wb-lake');
         const hab = getSpotHabitat(r.spot);
+        const rel = getSpotRelief(r.spot);
         const isUnavail = r.res.kShore <= 0.05;
         const baroText = Math.abs(r.ctx.bladder.uncompensatedMm) < 1.8
-          ? `Пузырь норма (${r.ctx.bladder.stableHours}ч)`
-          : `ΔP пуз: ${r.ctx.bladder.uncompensatedMm >= 0 ? '+' : ''}${r.ctx.bladder.uncompensatedMm} мм`;
+          ? `Пузырь норма`
+          : `ΔP: ${r.ctx.bladder.uncompensatedMm >= 0 ? '+' : ''}${r.ctx.bladder.uncompensatedMm} мм`;
         return `
           <div class="spot-card ${r.spot.id === activeSpot.id ? 'selected' : ''} ${isUnavail ? 'unavailable' : ''}" onclick="selectSpotById('${escapeHtml(r.spot.id)}')">
             ${(!isUnavail && bestScore > 0 && r.res.scoreFish === bestScore) ? '<div class="best-badge">Лучший берег</div>' : ''}
@@ -1299,6 +1443,7 @@
               </div>
               ${renderFishScaleSVG(r.res.scoreFish, { width: 20, showLabel: true, align: 'right' })}
             </div>
+            <div class="spot-relief">📐 <strong>До ${r.ctx.bath.spotDepth} м</strong> (раб. ${r.ctx.bath.zEff} м) • ${escapeHtml(rel.shortName)}</div>
             <div class="spot-note">${escapeHtml(isUnavail ? r.res.shoreReason : (r.spot.roadNote || 'Пользовательская точка'))}</div>
             <div class="spot-fauna"><strong>С берега:</strong> ${escapeHtml(hab.faunaSummary)}</div>
             <div class="spot-metrics">
@@ -1325,7 +1470,7 @@
             <div class="h-time">${String(hVal).padStart(2, '0')}:00</div>
             ${renderFishScaleSVG(ev.scoreFish, { width: 17, showLabel: false, align: 'center' })}
             <div class="h-val-num" style="color:${scoreColor(ev.scoreFish)}">${ev.scoreFish.toFixed(1)} <span style="font-size:0.72rem; color:var(--muted); font-weight:600;">/ 5</span></div>
-            <div class="h-sub">${c.optics.waterLux >= 1 ? Math.round(c.optics.waterLux) : c.optics.waterLux} лк</div>
+            <div class="h-sub">${c.optics.waterLux >= 1 ? Math.round(c.optics.waterLux) : c.optics.waterLux} лк • ${c.bath.zEff}м</div>
             ${tags.length ? `<div class="h-tags">${tags.join('')}</div>` : ''}
           </div>`;
       }).join('');
@@ -1334,16 +1479,16 @@
       const curEval = evaluateBite(curCtx);
       const kit = buildReadyKit(fish, curCtx);
 
-      document.getElementById('arsenal-heading').textContent = `3. Береговой комплект: ${fish.name} • ${activeSpot.name} (${String(hour).padStart(2, '0')}:00)`;
+      document.getElementById('arsenal-heading').textContent = `3. Береговой комплект: ${fish.name} • ${activeSpot.name} (глубина ${curCtx.bath.zEff} м • ${String(hour).padStart(2, '0')}:00)`;
       const bannerEl = document.getElementById('scenario-banner');
       bannerEl.classList.toggle('warn-banner', Boolean(kit.isWarn));
-      document.getElementById('scenario-title').textContent = `Гидрометеорологический и биотопный сценарий: ${kit.scenarioName}`;
+      document.getElementById('scenario-title').textContent = `Гидрометеорологический и батиметрический сценарий: ${kit.scenarioName}`;
       document.getElementById('scenario-desc').textContent = kit.scenarioWhy;
 
       const renderBuy = (links) => `<div class="buy-links">${(links || []).map(l => `<a class="buy-chip" href="${l.url}" target="_blank" rel="noopener">${escapeHtml(l.label)} ↗</a>`).join('')}</div>`;
       document.getElementById('arsenal-grid').innerHTML = `
         <div class="arsenal-card"><div><div class="arsenal-kicker">🎯 1. Приманка / Насадка</div><div class="arsenal-main">${escapeHtml(kit.bait)}</div></div><div class="arsenal-sub">${escapeHtml(kit.baitWhy)}${renderBuy(kit.baitLinks)}</div></div>
-        <div class="arsenal-card"><div><div class="arsenal-kicker">⚙️ 2. Береговая оснастка</div><div class="arsenal-main">${escapeHtml(kit.rig)}</div></div><div class="arsenal-sub">${escapeHtml(kit.rigWhy)}${renderBuy(kit.rigLinks)}</div></div>
+        <div class="arsenal-card"><div><div class="arsenal-kicker">⚙️ 2. Береговая оснастка под рельеф</div><div class="arsenal-main">${escapeHtml(kit.rig)}</div></div><div class="arsenal-sub">${escapeHtml(kit.rigWhy)}${renderBuy(kit.rigLinks)}</div></div>
         <div class="arsenal-card"><div><div class="arsenal-kicker">🪝 3. Леска / Поводок / Крючок</div><div class="arsenal-main">${escapeHtml(kit.lineHook)}</div></div><div class="arsenal-sub">${escapeHtml(kit.lineWhy)}${renderBuy(kit.lineLinks)}</div></div>
         <div class="arsenal-card"><div><div class="arsenal-kicker">🪣 4. Прикормка / Тактика</div><div class="arsenal-main">${escapeHtml(kit.groundbait)}</div></div><div class="arsenal-sub">${escapeHtml(kit.tactic)}${renderBuy(kit.groundbaitLinks)}</div></div>
         <div class="arsenal-card spray-card"><div><div class="arsenal-kicker" style="color:var(--green)">💨 5. Брызгалка (Аттрактант / Дип)</div><div class="arsenal-main">${escapeHtml(kit.spray)}</div></div><div class="arsenal-sub">${escapeHtml(kit.sprayWhy)}<br><strong>Нюанс:</strong> ${escapeHtml(kit.doseNote)}${renderBuy(kit.links)}</div></div>
@@ -1387,17 +1532,16 @@
         : `открытый (воздушный проток, τ = ${fish.tauAdapt} ч)`;
 
       document.getElementById('meteo-details').innerHTML = `
-        <div class="factor-item"><span>Коэффициент биотопа с берега K_shore:</span><span style="color:${curEval.kShore > 0 ? 'var(--green)' : 'var(--red)'}; font-weight:700;">${curEval.kShore.toFixed(2)} (${curEval.kShore > 0 ? 'доступна' : 'недоступна'})</span></div>
-        <div class="factor-item"><span>Атм. давление / равновесное Peq:</span><span>${curCtx.bladder.pressMm} / ${curCtx.bladder.pEqMm} мм рт.ст.</span></div>
+        <div class="factor-item"><span>Рабочая глубина / береговой предел:</span><span style="color:var(--accent); font-weight:700;">z_eff = ${curCtx.bath.zEff} м (свал до ${curCtx.bath.spotDepth} м)</span></div>
+        <div class="factor-item"><span>Рельеф дна и горизонт стоянки:</span><span>${escapeHtml(curCtx.bath.reliefShort)} (${escapeHtml(curCtx.bath.seasonZoneLabel)})</span></div>
+        <div class="factor-item"><span>Полное гидростат. давление на ${curCtx.bath.zEff} м:</span><span>${curCtx.bladder.totalHydroMm} мм рт.ст. (атм. ${curCtx.bladder.pressMm} мм)</span></div>
         <div class="factor-item"><span>Плавательный пузырь (${fish.name}):</span><span style="color:${Math.abs(curCtx.bladder.uncompensatedMm) < 1.8 ? 'var(--green)' : 'var(--red)'}; font-weight:600;">${bladderTypeRus}</span></div>
-        <div class="factor-item"><span>Нескомпенс. сдвиг ΔP / стабильность:</span><span>${curCtx.bladder.uncompensatedMm >= 0 ? '+' : ''}${curCtx.bladder.uncompensatedMm} мм (${curCtx.bladder.volumeStrainPct}%) • ровно ${curCtx.bladder.stableHours}ч</span></div>
+        <div class="factor-item"><span>Нескомпенс. сдвиг ΔP / деформация:</span><span>${curCtx.bladder.uncompensatedMm >= 0 ? '+' : ''}${curCtx.bladder.uncompensatedMm} мм (${curCtx.bladder.volumeStrainPct}%) • ровно ${curCtx.bladder.stableHours}ч</span></div>
         <div class="factor-item"><span>Освещённость у дна Ew (Kd=${activeSpot.kd}):</span><span>${curCtx.optics.waterLux} лк (log₁₀ Ew = ${curCtx.optics.logWaterLux}, оптимум ${fish.optLogLux})</span></div>
         <div class="factor-item"><span>Темп. воды / индекс Торнтона–Лессема:</span><span>~${curCtx.waterTemp}°C (τ=${activeSpot.tauThermal}ч) • f(T) = ${curEval.fT.toFixed(2)}</span></div>
         <div class="factor-item"><span>Ветер и порывы:</span><span>${curCtx.wind.toFixed(1)} м/с (порывы ${curCtx.gusts.toFixed(1)} м/с), ${windDirText(curCtx.windDir)}</span></div>
         <div class="factor-item"><span>Солнце (высота / восход / закат):</span><span>${curCtx.astro.sunAltDeg}° • ${curCtx.astro.sunriseStr} / ${curCtx.astro.sunsetStr}</span></div>
-        <div class="factor-item"><span>Луна (день / фаза / свет):</span><span>${curCtx.astro.lunarDay} л.д. • ${escapeHtml(curCtx.astro.phaseName)} (${curCtx.astro.illumPct}%)</span></div>
-        <div class="factor-item"><span>Major-окна Луны (зенит / надир):</span><span style="color:var(--purple); font-weight:600;">${curCtx.astro.majorWindows}</span></div>
-        <div class="factor-item"><span>Minor-окна (восход / заход Луны):</span><span>${curCtx.astro.minorWindows}</span></div>
+        <div class="factor-item"><span>Луна и солунарные Major-окна:</span><span style="color:var(--purple); font-weight:600;">${curCtx.astro.lunarDay} л.д. (${curCtx.astro.illumPct}%) • ${curCtx.astro.majorWindows}</span></div>
       `;
       renderSavedList();
     } catch (err) {
@@ -1424,42 +1568,57 @@
 
   function forceRefresh() { weatherCache = {}; renderAll(); }
 
+  function parseDepthMeters(rawStr, fallbackDepth) {
+    const match = String(rawStr || '').replace(',', '.').match(/(\d+(?:\.\d+)?)/);
+    if (!match) return fallbackDepth;
+    const val = parseFloat(match[1]);
+    return (isNaN(val) || val < 0.5 || val > 35) ? fallbackDepth : +val.toFixed(1);
+  }
+
   function getWaterTypeConfig(wt) {
     return ({
-      lake_still:   { category: 'lake',  badge: 'Озеро', exposure: 'sheltered', flow: 'still',       kd: 0.65, tauThermal: 90,  habitatKey: 'lake_forest',    label: 'Озеро / пруд' },
-      zaton_still:  { category: 'lake',  badge: 'Затон', exposure: 'sheltered', flow: 'still',       kd: 0.78, tauThermal: 95,  habitatKey: 'zaton',          label: 'Затон / залив Волги' },
-      river_medium: { category: 'river', badge: 'Река',  exposure: 'sheltered', flow: 'medium-high', kd: 0.82, tauThermal: 115, habitatKey: 'river_kokshaga', label: 'Река (средняя тяга)' },
-      river_high:   { category: 'river', badge: 'Река',  exposure: 'open',      flow: 'high',        kd: 0.85, tauThermal: 185, habitatKey: 'volga_main',     label: 'Река (русло Волги)' }
-    })[wt] || { category: 'lake', badge: 'Озеро', exposure: 'sheltered', flow: 'still', kd: 0.70, tauThermal: 90, habitatKey: 'lake_forest', label: 'Озеро' };
+      lake_still:   { category: 'lake',  badge: 'Озеро', defaultDepth: 3.5, exposure: 'sheltered', flow: 'still',       kd: 0.65, tauThermal: 90,  habitatKey: 'lake_forest',    label: 'Озеро / пруд' },
+      zaton_still:  { category: 'lake',  badge: 'Затон', defaultDepth: 3.2, exposure: 'sheltered', flow: 'still',       kd: 0.78, tauThermal: 95,  habitatKey: 'zaton',          label: 'Затон / залив Волги' },
+      river_medium: { category: 'river', badge: 'Река',  defaultDepth: 4.0, exposure: 'sheltered', flow: 'medium-high', kd: 0.82, tauThermal: 115, habitatKey: 'river_kokshaga', label: 'Река (средняя тяга)' },
+      river_high:   { category: 'river', badge: 'Река',  defaultDepth: 6.5, exposure: 'open',      flow: 'high',        kd: 0.85, tauThermal: 185, habitatKey: 'volga_main',     label: 'Река (русло Волги)' }
+    })[wt] || { category: 'lake', badge: 'Озеро', defaultDepth: 3.5, exposure: 'sheltered', flow: 'still', kd: 0.70, tauThermal: 90, habitatKey: 'lake_forest', label: 'Озеро' };
   }
 
   function onWaterTypeSelectChange() {
     if (activeSpot && activeSpot.id === 'temp_click') {
       const cfg = getWaterTypeConfig(document.getElementById('custom-water-type').value);
-      activeSpot = { ...activeSpot, category: cfg.category, badge: cfg.badge, exposure: cfg.exposure, flow: cfg.flow, kd: cfg.kd, tauThermal: cfg.tauThermal, habitatKey: cfg.habitatKey };
+      const reliefType = document.getElementById('custom-relief-type').value;
+      const shoreDepthM = parseDepthMeters(document.getElementById('custom-depth').value, cfg.defaultDepth);
+      const tauThermal = Math.round(Math.max(60, Math.min(200, 55 + shoreDepthM * 16)));
+      activeSpot = { ...activeSpot, category: cfg.category, badge: cfg.badge, shoreDepthM, reliefType, exposure: cfg.exposure, flow: cfg.flow, kd: cfg.kd, tauThermal, habitatKey: cfg.habitatKey };
       renderAll();
     }
   }
 
   function saveCustomSpot() {
     const name = document.getElementById('custom-name').value.trim();
-    const depth = document.getElementById('custom-depth').value.trim();
+    const depthRaw = document.getElementById('custom-depth').value.trim();
     const parts = document.getElementById('custom-coords').value.split(',').map(Number);
     if (!name) { alert('Введите название озера, реки или точки'); return; }
     if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1])) return;
 
     const cfg = getWaterTypeConfig(document.getElementById('custom-water-type').value);
+    const reliefType = document.getElementById('custom-relief-type').value;
+    const shoreDepthM = parseDepthMeters(depthRaw, cfg.defaultDepth);
+    const tauThermal = Math.round(Math.max(60, Math.min(200, 55 + shoreDepthM * 16)));
+
     const newSpot = {
       id: 'custom_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
       name, category: cfg.category, badge: cfg.badge,
-      type: depth ? `${cfg.label} • Эхолот: ${depth}` : `${cfg.label} • Своя береговая точка`,
-      exposure: cfg.exposure, flow: cfg.flow, kd: cfg.kd, tauThermal: cfg.tauThermal,
+      type: `${cfg.label} • Свал до ${shoreDepthM} м`,
+      shoreDepthM, reliefType,
+      exposure: cfg.exposure, flow: cfg.flow, kd: cfg.kd, tauThermal,
       habitatKey: cfg.habitatKey,
       lat: parts[0], lon: parts[1],
-      roadNote: depth ? `Глубина по эхолоту: ${depth}` : 'Пользовательская береговая точка'
+      roadNote: depthRaw ? `Глубина по эхолоту: ${shoreDepthM} м` : 'Пользовательская береговая точка'
     };
     customSpots.push(newSpot);
-    try { localStorage.setItem('mari_el_waypoints_v7', JSON.stringify(customSpots)); } catch (e) {}
+    try { localStorage.setItem('mari_el_waypoints_v8', JSON.stringify(customSpots)); } catch (e) {}
     if (tempMarker && yandexMap) { yandexMap.geoObjects.remove(tempMarker); tempMarker = null; }
     document.getElementById('custom-name').value = '';
     document.getElementById('custom-depth').value = '';
@@ -1471,7 +1630,7 @@
   function deleteCustomSpot(id, e) {
     e.stopPropagation();
     customSpots = customSpots.filter(s => s.id !== id);
-    try { localStorage.setItem('mari_el_waypoints_v7', JSON.stringify(customSpots)); } catch (e) {}
+    try { localStorage.setItem('mari_el_waypoints_v8', JSON.stringify(customSpots)); } catch (e) {}
     if (spotMarkers[id] && yandexMap) { yandexMap.geoObjects.remove(spotMarkers[id]); delete spotMarkers[id]; }
     if (activeSpot.id === id) activeSpot = { ...BASE_SPOTS[0] };
     renderAll();
@@ -1485,7 +1644,7 @@
     }
     wrap.innerHTML = customSpots.map(s => `
       <div class="saved-row" style="cursor:pointer" onclick="selectSpotById('${escapeHtml(s.id)}')">
-        <div><strong>${escapeHtml(s.name)}</strong><div style="font-size:0.73rem; color:var(--muted)">${escapeHtml(s.type)}</div></div>
+        <div><strong>${escapeHtml(s.name)}</strong><div style="font-size:0.73rem; color:var(--muted)">${escapeHtml(s.type)} • ${escapeHtml(getSpotRelief(s).shortName)}</div></div>
         <button class="btn-outline" style="padding:0.2rem 0.5rem; color:var(--red)" onclick="deleteCustomSpot('${escapeHtml(s.id)}', event)">✕</button>
       </div>`).join('');
   }
@@ -1506,7 +1665,7 @@
     if (!yandexMap || typeof ymaps === 'undefined') return;
     if (spotMarkers[sp.id]) yandexMap.geoObjects.remove(spotMarkers[sp.id]);
     const preset = sp.category === 'lake' ? 'islands#violetCircleDotIcon' : 'islands#blueFishingIcon';
-    const pm = new ymaps.Placemark([sp.lat, sp.lon], { balloonContentHeader: escapeHtml(sp.name), balloonContentBody: escapeHtml(sp.type) }, { preset });
+    const pm = new ymaps.Placemark([sp.lat, sp.lon], { balloonContentHeader: escapeHtml(sp.name), balloonContentBody: `${escapeHtml(sp.type)} (до ${sp.shoreDepthM} м)` }, { preset });
     pm.events.add('click', () => selectSpotById(sp.id));
     yandexMap.geoObjects.add(pm);
     spotMarkers[sp.id] = pm;
@@ -1524,7 +1683,10 @@
         tempMarker = new ymaps.Placemark(coords, {}, { preset: 'islands#redDotIcon' });
         yandexMap.geoObjects.add(tempMarker);
         const cfg = getWaterTypeConfig(document.getElementById('custom-water-type').value);
-        activeSpot = { id: 'temp_click', name: `Точка (${coords[0].toFixed(3)}, ${coords[1].toFixed(3)})`, category: cfg.category, badge: cfg.badge, type: 'Выбранная береговая точка', exposure: cfg.exposure, flow: cfg.flow, kd: cfg.kd, tauThermal: cfg.tauThermal, habitatKey: cfg.habitatKey, lat: coords[0], lon: coords[1], roadNote: 'Временная точка клика — выберите тип водоёма и нажмите «Сохранить».' };
+        const reliefType = document.getElementById('custom-relief-type').value;
+        const shoreDepthM = parseDepthMeters(document.getElementById('custom-depth').value, cfg.defaultDepth);
+        const tauThermal = Math.round(Math.max(60, Math.min(200, 55 + shoreDepthM * 16)));
+        activeSpot = { id: 'temp_click', name: `Точка (${coords[0].toFixed(3)}, ${coords[1].toFixed(3)})`, category: cfg.category, badge: cfg.badge, type: `Выбранная береговая точка (до ${shoreDepthM} м)`, shoreDepthM, reliefType, exposure: cfg.exposure, flow: cfg.flow, kd: cfg.kd, tauThermal, habitatKey: cfg.habitatKey, lat: coords[0], lon: coords[1], roadNote: 'Временная точка — укажите глубину, рельеф и нажмите «Сохранить».' };
         renderAll();
       });
     });
